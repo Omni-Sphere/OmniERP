@@ -3,8 +3,8 @@
 #include "Base/BaseCreateDTO.hpp"
 #include <string>
 
-namespace omnicore::dto {
-struct CreateItemGroup : public BaseCreateDTO {
-  using BaseCreateDTO::BaseCreateDTO;
+namespace omnisphere::omnierp::dtos {
+struct CreateItemGroup : public omnisphere::omnicore::dtos::BaseCreateDTO {
+  using omnisphere::omnicore::dtos::BaseCreateDTO::BaseCreateDTO;
 };
-}; // namespace omnicore::dto
+}; // namespace omnisphere::omnierp::dtos

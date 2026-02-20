@@ -3,9 +3,8 @@
 #include <optional>
 #include <string>
 
-
-namespace omnicore::model {
-class Item : public BaseModel {
+namespace omnisphere::omnierp::models {
+class Item : public omnisphere::omnicore::models::BaseModel {
 public:
   Item(int _Entry, std::string _Code, std::string _Name,
        std::optional<std::string> _Description,
@@ -19,9 +18,9 @@ public:
        int _CreatedBy, std::string _CreateDate,
        std::optional<int> _LastUpdatedBy,
        std::optional<std::string> _LastUpdateDate)
-      : BaseModel(_Entry, std::move(_Code), std::move(_Name), _CreatedBy,
-                  std::move(_CreateDate), _LastUpdatedBy,
-                  std::move(_LastUpdateDate)),
+      : omnisphere::omnicore::models::BaseModel(
+            _Entry, std::move(_Code), std::move(_Name), _CreatedBy,
+            std::move(_CreateDate), _LastUpdatedBy, std::move(_LastUpdateDate)),
         Description(std::move(_Description)), Image(std::move(_Image)),
         IsActive(_IsActive), PurchaseItem(_PurchaseItem), SellItem(_SellItem),
         InventoryItem(_InventoryItem), Price(_Price), Brand(_Brand),
@@ -108,4 +107,4 @@ private:
       R"(^[A-Za-z0-9\s\.,;:!¡¿\?\-_()]*$)"};
 };
 
-} // namespace omnicore::model
+} // namespace omnisphere::omnierp::models

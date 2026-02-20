@@ -1,14 +1,12 @@
 #pragma once
 
-#include <string>
 #include <optional>
+#include <string>
 
-namespace omnicore::dto
-{
-    struct GetItemBrand
-    {
-        std::optional<int> Entry;
-        std::optional<std::string> Code;
-        std::optional<std::string> Name;
-    };
-}
+namespace omnisphere::omnierp::dtos {
+struct GetItemBrand {
+  std::optional<int> Entry;
+  std::optional<std::string> Code;
+  std::optional<std::string> Name;
+};
+} // namespace omnisphere::omnierp::dtos

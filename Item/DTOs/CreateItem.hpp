@@ -6,10 +6,10 @@
 #include <stdexcept>
 #include <string>
 
-namespace omnicore::dto {
+namespace omnisphere::omnierp::dtos {
 
-struct CreateItem : public BaseCreateDTO {
-  using BaseCreateDTO::BaseCreateDTO;
+struct CreateItem : public omnisphere::omnicore::dtos::BaseCreateDTO {
+  using omnisphere::omnicore::dtos::BaseCreateDTO::BaseCreateDTO;
 
   CreateItem(std::string _Code, std::string _Name,
              std::optional<std::string> _Description,
@@ -21,8 +21,9 @@ struct CreateItem : public BaseCreateDTO {
              std::optional<double> _MinRequest,
              std::optional<double> _MaxRequest, int _CreatedBy,
              std::string _CreateDate)
-      : BaseCreateDTO(std::move(_Code), std::move(_Name), _CreatedBy,
-                      std::move(_CreateDate)),
+      : omnisphere::omnicore::dtos::BaseCreateDTO(std::move(_Code),
+                                                  std::move(_Name), _CreatedBy,
+                                                  std::move(_CreateDate)),
         Description(std::move(_Description)), Image(std::move(_Image)),
         PurchaseItem(_PurchaseItem), SellItem(_SellItem),
         InventoryItem(_InventoryItem), Price(_Price), Brand(_Brand),
@@ -118,4 +119,4 @@ private:
       R"(^[A-Za-z0-9\s\.,;:!¡¿\?\-_()]*$)"};
 };
 
-} // namespace omnicore::dto
+} // namespace omnisphere::omnierp::dtos

@@ -1,7 +1,8 @@
 #include "ItemBrand.hpp"
 
-namespace omnicore::repository {
-ItemBrand::ItemBrand(std::shared_ptr<service::Database> _database)
+namespace omnisphere::omnierp::repositories {
+ItemBrand::ItemBrand(
+    std::shared_ptr<omnisphere::omnidata::services::Database> _database)
     : database(std::move(_database)) {}
 
 int ItemBrand::GetCurrentSequence() const {
@@ -10,7 +11,8 @@ int ItemBrand::GetCurrentSequence() const {
         "SELECT ISNULL(ItemBrandsSequence, 0) + 1 ItemBrandsSequence FROM "
         "Sequences WHERE SeqEntry = 1";
 
-    type::DataTable data = database->FetchResults(sQuery);
+    omnisphere::omnidata::types::DataTable data =
+        database->FetchResults(sQuery);
 
     if (data.RowsCount() == 1)
       return data[0]["ItemBrandsSequence"];
@@ -37,12 +39,13 @@ bool ItemBrand::UpdateItemBrandsSequence() const {
   }
 }
 
-bool ItemBrand::Create(const dto::CreateItemBrand &createItemBrand) const {
+bool ItemBrand::Create(
+    const omnisphere::omnierp::dtos::CreateItemBrand &createItemBrand) const {
   try {
     std::string sQuery = "INSERT INTO ItemBrands (ItBEntry, Code, Name, "
                          "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?);";
 
-    std::vector<type::SQLParam> params = {
+    std::vector<omnisphere::omnidata::types::SQLParam> params = {
         GetCurrentSequence(), createItemBrand.Code, createItemBrand.Name,
         createItemBrand.CreatedBy, createItemBrand.CreateDate};
 
@@ -62,12 +65,13 @@ bool ItemBrand::Create(const dto::CreateItemBrand &createItemBrand) const {
   }
 }
 
-bool ItemBrand::Update(const dto::UpdateItemBrand &updateItemBrand) const {
+bool ItemBrand::Update(
+    const omnisphere::omnierp::dtos::UpdateItemBrand &updateItemBrand) const {
   try {
     std::string sQuery = "UPDATE ItemBrands SET Name = ?, LastUpdatedBy = ?, "
                          "UpdateDate = ? WHERE Code = ?;";
 
-    std::vector<type::SQLParam> params = {
+    std::vector<omnisphere::omnidata::types::SQLParam> params = {
         updateItemBrand.Name.value(), updateItemBrand.LastUpdatedBy,
         updateItemBrand.UpdateDate, updateItemBrand.Code};
 
@@ -84,7 +88,7 @@ bool ItemBrand::Update(const dto::UpdateItemBrand &updateItemBrand) const {
   }
 }
 
-type::DataTable ItemBrand::ReadAll() const {
+omnisphere::omnidata::types::DataTable ItemBrand::ReadAll() const {
   try {
     std::string sQuery = "SELECT "
                          "ItBEntry [Entry], "
@@ -96,7 +100,8 @@ type::DataTable ItemBrand::ReadAll() const {
                          "UpdateDate "
                          "FROM ItemBrands";
 
-    type::DataTable dataTable = database->FetchResults(sQuery);
+    omnisphere::omnidata::types::DataTable dataTable =
+        database->FetchResults(sQuery);
 
     return dataTable;
   } catch (const std::exception &e) {
@@ -105,7 +110,8 @@ type::DataTable ItemBrand::ReadAll() const {
   }
 }
 
-type::DataTable ItemBrand::Read(const dto::GetItemBrand itemBrand) const {
+omnisphere::omnidata::types::DataTable
+ItemBrand::Read(const omnisphere::omnierp::dtos::GetItemBrand itemBrand) const {
   try {
     std::string sQuery = "SELECT "
                          "ItBEntry [Entry], "
@@ -117,24 +123,28 @@ type::DataTable ItemBrand::Read(const dto::GetItemBrand itemBrand) const {
                          "UpdateDate "
                          "FROM ItemBrands WHERE ";
 
-    std::vector<type::SQLParam> parameters;
+    std::vector<omnisphere::omnidata::types::SQLParam> parameters;
 
     if (itemBrand.Entry.has_value()) {
       sQuery += "ItBEntry = ?";
-      parameters.emplace_back(type::MakeSQLParam(itemBrand.Entry.value()));
+      parameters.emplace_back(
+          omnisphere::omnidata::types::MakeSQLParam(itemBrand.Entry.value()));
     }
 
     if (itemBrand.Code.has_value()) {
       sQuery += "Code = ?";
-      parameters.emplace_back(type::MakeSQLParam(itemBrand.Code.value()));
+      parameters.emplace_back(
+          omnisphere::omnidata::types::MakeSQLParam(itemBrand.Code.value()));
     }
 
     if (itemBrand.Name.has_value()) {
       sQuery += "Name = ?";
-      parameters.emplace_back(type::MakeSQLParam(itemBrand.Name.value()));
+      parameters.emplace_back(
+          omnisphere::omnidata::types::MakeSQLParam(itemBrand.Name.value()));
     }
 
-    type::DataTable dataTable = database->FetchPrepared(sQuery, parameters);
+    omnisphere::omnidata::types::DataTable dataTable =
+        database->FetchPrepared(sQuery, parameters);
 
     return dataTable;
   } catch (const std::exception &e) {
@@ -142,4 +152,4 @@ type::DataTable ItemBrand::Read(const dto::GetItemBrand itemBrand) const {
                              e.what());
   }
 }
-} // namespace omnicore::repository
+} // namespace omnisphere::omnierp::repositories

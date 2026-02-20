@@ -3,30 +3,31 @@
 #include <optional>
 #include <string>
 
-
 #include "DTOs/CreateItem.hpp"
 #include "DTOs/GetItem.hpp"
 #include "DTOs/SearchItems.hpp"
 #include "DTOs/UpdateItem.hpp"
-#include "Database/Database.hpp"
+#include "Database.hpp"
 
-
-namespace omnicore::repository {
+namespace omnisphere::omnierp::repositories {
 class Item {
 public:
-  explicit Item(std::shared_ptr<service::Database> database);
+  explicit Item(
+      std::shared_ptr<omnisphere::omnidata::services::Database> database);
   ~Item();
 
-  bool Create(const dto::CreateItem &_item) const;
-  bool Update(const dto::UpdateItem &_item) const;
-  type::DataTable Read(const dto::SearchItems &_item) const;
-  type::DataTable Read(const dto::GetItem &_item) const;
-  type::DataTable Read() const;
+  bool Create(const omnisphere::omnierp::dtos::CreateItem &_item) const;
+  bool Update(const omnisphere::omnierp::dtos::UpdateItem &_item) const;
+  omnisphere::omnidata::types::DataTable
+  Read(const omnisphere::omnierp::dtos::SearchItems &_item) const;
+  omnisphere::omnidata::types::DataTable
+  Read(const omnisphere::omnierp::dtos::GetItem &_item) const;
+  omnisphere::omnidata::types::DataTable Read() const;
 
 private:
-  std::shared_ptr<service::Database> Database;
+  std::shared_ptr<omnisphere::omnidata::services::Database> Database;
 
   int GetCurrentSequence() const;
   bool UpdateUserSequence() const;
 };
-} // namespace omnicore::repository
+} // namespace omnisphere::omnierp::repositories

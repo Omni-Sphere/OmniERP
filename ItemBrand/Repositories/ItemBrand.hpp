@@ -3,21 +3,25 @@
 #include "DTOs/CreateItemBrand.hpp"
 #include "DTOs/GetItemBrand.hpp"
 #include "DTOs/UpdateItemBrand.hpp"
-#include "Database/Database.hpp"
+#include "Database.hpp"
 
-namespace omnicore::repository {
+namespace omnisphere::omnierp::repositories {
 class ItemBrand {
 private:
-  std::shared_ptr<service::Database> database;
+  std::shared_ptr<omnisphere::omnidata::services::Database> database;
   int GetCurrentSequence() const;
   bool UpdateItemBrandsSequence() const;
 
 public:
-  explicit ItemBrand(std::shared_ptr<service::Database> Database);
+  explicit ItemBrand(
+      std::shared_ptr<omnisphere::omnidata::services::Database> Database);
   ~ItemBrand() {};
-  bool Create(const dto::CreateItemBrand &createItemBrand) const;
-  bool Update(const dto::UpdateItemBrand &updateItemBrand) const;
-  type::DataTable ReadAll() const;
-  type::DataTable Read(const dto::GetItemBrand) const;
+  bool Create(
+      const omnisphere::omnierp::dtos::CreateItemBrand &createItemBrand) const;
+  bool Update(
+      const omnisphere::omnierp::dtos::UpdateItemBrand &updateItemBrand) const;
+  omnisphere::omnidata::types::DataTable ReadAll() const;
+  omnisphere::omnidata::types::DataTable
+  Read(const omnisphere::omnierp::dtos::GetItemBrand) const;
 };
-} // namespace omnicore::repository
+} // namespace omnisphere::omnierp::repositories

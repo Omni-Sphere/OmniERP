@@ -6,10 +6,10 @@
 #include "DTOs/CreateItemBrand.hpp"
 #include "DTOs/GetItemBrand.hpp"
 #include "DTOs/UpdateItemBrand.hpp"
-#include "Database/Database.hpp"
+#include "Database.hpp"
 #include "Models/ItemBrand.hpp"
 
-namespace omnicore::service {
+namespace omnisphere::omnierp::services {
 
 class ItemBrand {
 private:
@@ -17,16 +17,20 @@ private:
   std::unique_ptr<Impl> pimpl;
 
 public:
-  explicit ItemBrand(std::shared_ptr<Database> db);
+  explicit ItemBrand(
+      std::shared_ptr<omnisphere::omnidata::services::Database> db);
 
   ~ItemBrand();
 
-  bool Add(const dto::CreateItemBrand &createItemBrand) const;
+  bool
+  Add(const omnisphere::omnierp::dtos::CreateItemBrand &createItemBrand) const;
 
-  bool Modify(const dto::UpdateItemBrand &updateItemBrand) const;
+  bool Modify(
+      const omnisphere::omnierp::dtos::UpdateItemBrand &updateItemBrand) const;
 
-  std::vector<model::ItemBrand> GetAll() const;
+  std::vector<omnisphere::omnierp::models::ItemBrand> GetAll() const;
 
-  model::ItemBrand Get(const dto::GetItemBrand &getItemBrand) const;
+  omnisphere::omnierp::models::ItemBrand
+  Get(const omnisphere::omnierp::dtos::GetItemBrand &getItemBrand) const;
 };
-} // namespace omnicore::service
+} // namespace omnisphere::omnierp::services

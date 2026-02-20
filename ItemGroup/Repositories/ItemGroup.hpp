@@ -3,26 +3,30 @@
 #include "DTOs/CreateItemGroup.hpp"
 #include "DTOs/GetItemGroup.hpp"
 #include "DTOs/UpdateItemGroup.hpp"
-#include "Database/Database.hpp"
+#include "Database.hpp"
 
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-namespace omnicore::repository {
+namespace omnisphere::omnierp::repositories {
 class ItemGroup {
 private:
-  std::shared_ptr<service::Database> database;
+  std::shared_ptr<omnisphere::omnidata::services::Database> database;
   int GetCurrentSequence() const;
   bool UpdateItemGroupsSequence() const;
 
 public:
-  explicit ItemGroup(std::shared_ptr<service::Database> Database);
+  explicit ItemGroup(
+      std::shared_ptr<omnisphere::omnidata::services::Database> Database);
   ~ItemGroup() {};
 
-  bool Create(const dto::CreateItemGroup &createItemGroup) const;
-  bool Update(const dto::UpdateItemGroup &updateItemGroup) const;
-  type::DataTable ReadAll() const;
-  type::DataTable Read(const dto::GetItemGroup) const;
+  bool Create(
+      const omnisphere::omnierp::dtos::CreateItemGroup &createItemGroup) const;
+  bool Update(
+      const omnisphere::omnierp::dtos::UpdateItemGroup &updateItemGroup) const;
+  omnisphere::omnidata::types::DataTable ReadAll() const;
+  omnisphere::omnidata::types::DataTable
+  Read(const omnisphere::omnierp::dtos::GetItemGroup) const;
 };
-} // namespace omnicore::repository
+} // namespace omnisphere::omnierp::repositories

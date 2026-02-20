@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <string>
 
-namespace omnicore::dto {
-struct UpdateItem : public BaseUpdateDTO {
+namespace omnisphere::omnierp::dtos {
+struct UpdateItem : public omnisphere::omnicore::dtos::BaseUpdateDTO {
   UpdateItem(std::string _Code, std::optional<std::string> _Name,
              std::optional<std::string> _Description,
              std::optional<std::string> _Image, std::optional<bool> _IsActive,
@@ -18,8 +18,9 @@ struct UpdateItem : public BaseUpdateDTO {
              std::optional<double> _MinRequest,
              std::optional<double> _MaxRequest, int _LastUpdatedBy,
              std::string _UpdateDate)
-      : BaseUpdateDTO(std::move(_Code), std::move(_Name), _LastUpdatedBy,
-                      std::move(_UpdateDate)),
+      : omnisphere::omnicore::dtos::BaseUpdateDTO(
+            std::move(_Code), std::move(_Name), _LastUpdatedBy,
+            std::move(_UpdateDate)),
         Description(std::move(_Description)), Image(std::move(_Image)),
         IsActive(_IsActive), PurchaseItem(_PurchaseItem), SellItem(_SellItem),
         InventoryItem(_InventoryItem), Price(_Price), Brand(std::move(_Brand)),
@@ -83,4 +84,4 @@ struct UpdateItem : public BaseUpdateDTO {
                                " cannot be negative or zero");
   }
 };
-} // namespace omnicore::dto
+} // namespace omnisphere::omnierp::dtos

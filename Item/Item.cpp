@@ -2,34 +2,37 @@
 #include "DTOs/CreateItem.hpp"
 #include "DTOs/GetItem.hpp"
 #include "DTOs/SearchItems.hpp"
-#include "Database/DataTable.hpp"
-#include "Database/Database.hpp" // Add new include for database
+#include "DataTable.hpp"
+#include "Database.hpp"          // Add new include for database
 #include "Repositories/Item.hpp" // Add new include for repository
 
-namespace omnicore::service {
+namespace omnisphere::omnierp::services {
 // Define the Impl struct for Pimpl idiom
 struct Item::Impl {
-  std::shared_ptr<repository::Item> item;
-  explicit Impl(std::shared_ptr<service::Database> database)
-      : item(std::make_shared<repository::Item>(database)) {}
+  std::shared_ptr<omnisphere::omnierp::repositories::Item> item;
+  explicit Impl(
+      std::shared_ptr<omnisphere::omnidata::services::Database> database)
+      : item(std::make_shared<omnisphere::omnierp::repositories::Item>(
+            database)) {}
 };
 
 // Update constructor to initialize pimpl
-Item::Item(std::shared_ptr<service::Database> database)
+Item::Item(std::shared_ptr<omnisphere::omnidata::services::Database> database)
     : pimpl(std::make_unique<Impl>(database)) {}
 
 // Define destructor
 Item::~Item() = default;
 
-model::Item Item::Get(const dto::GetItem &_item) const {
+omnisphere::omnierp::models::Item
+Item::Get(const omnisphere::omnierp::dtos::GetItem &_item) const {
   try {
     // Use pimpl to access the repository
-    type::DataTable data = pimpl->item->Read(_item);
+    omnisphere::omnidata::types::DataTable data = pimpl->item->Read(_item);
 
     if (data.RowsCount() == 0)
       throw std::runtime_error("Item doesn't exists");
 
-    model::Item item(
+    omnisphere::omnierp::models::Item item(
         data[0]["ItemEntry"], data[0]["Code"], data[0]["Name"],
         data[0]["Description"].GetOptional<std::string>(),
         data[0]["Image"].GetOptional<std::string>(), data[0]["IsActive"],
@@ -53,11 +56,11 @@ model::Item Item::Get(const dto::GetItem &_item) const {
   }
 };
 
-std::vector<model::Item> Item::GetAll() const {
+std::vector<omnisphere::omnierp::models::Item> Item::GetAll() const {
   try {
-    std::vector<model::Item> items;
+    std::vector<omnisphere::omnierp::models::Item> items;
     // Use pimpl to access the repository and call Read (alias for ReadAll)
-    type::DataTable data = pimpl->item->Read();
+    omnisphere::omnidata::types::DataTable data = pimpl->item->Read();
 
     for (int i = 0; i < data.RowsCount(); i++) {
       items.emplace_back(data[i]["ItemEntry"], data[i]["Code"], data[i]["Name"],
@@ -87,11 +90,12 @@ std::vector<model::Item> Item::GetAll() const {
   }
 }
 
-std::vector<model::Item> Item::Search(dto::SearchItems &_item) const {
+std::vector<omnisphere::omnierp::models::Item>
+Item::Search(omnisphere::omnierp::dtos::SearchItems &_item) const {
   try {
-    std::vector<model::Item> items;
+    std::vector<omnisphere::omnierp::models::Item> items;
     // Use pimpl to access the repository
-    type::DataTable data = pimpl->item->Read(_item);
+    omnisphere::omnidata::types::DataTable data = pimpl->item->Read(_item);
 
     for (int i = 0; i < data.RowsCount(); i++) {
       items.emplace_back(data[i]["ItemEntry"], data[i]["Code"], data[i]["Name"],
@@ -121,33 +125,34 @@ std::vector<model::Item> Item::Search(dto::SearchItems &_item) const {
   }
 }
 
-model::Item Item::Add(const dto::CreateItem &_item) const {
+omnisphere::omnierp::models::Item
+Item::Add(const omnisphere::omnierp::dtos::CreateItem &_item) const {
   try {
     // Use pimpl to access the repository
     if (pimpl->item->Create(_item)) {
       // Read the newly created item using its code
-      dto::GetItem getItem;
+      omnisphere::omnierp::dtos::GetItem getItem;
       getItem.Code = _item.Code;
-      type::DataTable data = pimpl->item->Read(getItem);
+      omnisphere::omnidata::types::DataTable data = pimpl->item->Read(getItem);
 
-      model::Item item(data[0]["ItemEntry"], data[0]["Code"], data[0]["Name"],
-                       data[0]["Description"].GetOptional<std::string>(),
-                       data[0]["Image"].GetOptional<std::string>(),
-                       data[0]["IsActive"], data[0]["PurchaseItem"],
-                       data[0]["SellItem"], data[0]["InventoryItem"],
-                       data[0]["Price"], data[0]["Brand"].GetOptional<int>(),
-                       data[0]["Group"].GetOptional<int>(), data[0]["OnHand"],
-                       data[0]["OnOrder"].GetOptional<double>(),
-                       data[0]["OnRequest"].GetOptional<double>(),
-                       data[0]["MinStock"].GetOptional<double>(),
-                       data[0]["MaxStock"].GetOptional<double>(),
-                       data[0]["MinOrder"].GetOptional<double>(),
-                       data[0]["MaxOrder"].GetOptional<double>(),
-                       data[0]["MinRequest"].GetOptional<double>(),
-                       data[0]["MaxRequest"].GetOptional<double>(),
-                       data[0]["CreatedBy"], data[0]["CreateDate"],
-                       data[0]["LastUpdatedBy"].GetOptional<int>(),
-                       data[0]["UpdateDate"].GetOptional<std::string>());
+      omnisphere::omnierp::models::Item item(
+          data[0]["ItemEntry"], data[0]["Code"], data[0]["Name"],
+          data[0]["Description"].GetOptional<std::string>(),
+          data[0]["Image"].GetOptional<std::string>(), data[0]["IsActive"],
+          data[0]["PurchaseItem"], data[0]["SellItem"],
+          data[0]["InventoryItem"], data[0]["Price"],
+          data[0]["Brand"].GetOptional<int>(),
+          data[0]["Group"].GetOptional<int>(), data[0]["OnHand"],
+          data[0]["OnOrder"].GetOptional<double>(),
+          data[0]["OnRequest"].GetOptional<double>(),
+          data[0]["MinStock"].GetOptional<double>(),
+          data[0]["MaxStock"].GetOptional<double>(),
+          data[0]["MinOrder"].GetOptional<double>(),
+          data[0]["MaxOrder"].GetOptional<double>(),
+          data[0]["MinRequest"].GetOptional<double>(),
+          data[0]["MaxRequest"].GetOptional<double>(), data[0]["CreatedBy"],
+          data[0]["CreateDate"], data[0]["LastUpdatedBy"].GetOptional<int>(),
+          data[0]["UpdateDate"].GetOptional<std::string>());
 
       return item;
     } else
@@ -157,13 +162,14 @@ model::Item Item::Add(const dto::CreateItem &_item) const {
   }
 };
 
-model::Item Item::Modify(const dto::UpdateItem &_item) const {
+omnisphere::omnierp::models::Item
+Item::Modify(const omnisphere::omnierp::dtos::UpdateItem &_item) const {
   try {
 
-    dto::GetItem getItem;
+    omnisphere::omnierp::dtos::GetItem getItem;
     getItem.Code = _item.Code;
 
-    model::Item item = Get(getItem);
+    omnisphere::omnierp::models::Item item = Get(getItem);
 
     return item;
   } catch (const std::exception &e) {
@@ -171,4 +177,4 @@ model::Item Item::Modify(const dto::UpdateItem &_item) const {
                              e.what());
   }
 };
-} // namespace omnicore::service
+} // namespace omnisphere::omnierp::services

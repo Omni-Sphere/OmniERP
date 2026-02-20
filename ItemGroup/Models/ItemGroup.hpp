@@ -4,10 +4,9 @@
 #include <optional>
 #include <string>
 
-
-namespace omnicore::model {
-class ItemGroup : public BaseModel {
+namespace omnisphere::omnierp::models {
+class ItemGroup : public omnisphere::omnicore::models::BaseModel {
 public:
-  using BaseModel::BaseModel;
+  using omnisphere::omnicore::models::BaseModel::BaseModel;
 };
-} // namespace omnicore::model
+} // namespace omnisphere::omnierp::models
