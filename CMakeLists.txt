@@ -29,11 +29,8 @@ target_include_directories(OmniERP
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/Include
 )
 
-find_package(Boost REQUIRED COMPONENTS json)
-
 if(WIN32)
     target_link_libraries(OmniERP PUBLIC
-        Boost::json
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.dll.a
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.dll.a
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.dll.a
