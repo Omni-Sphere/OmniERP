@@ -5,8 +5,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set(LIBS_DIR "${CMAKE_BINARY_DIR}/OmniERP/Libs")
 set(INCLUDE_DIR "${CMAKE_BINARY_DIR}/OmniERP/Include")
+set(LIBS_DIR "${CMAKE_BINARY_DIR}/OmniERP")
+
+if(WIN32)
+    set(ARCHIVE_DIR "${CMAKE_BINARY_DIR}/OmniERP/Libs")
+else()
+    set(ARCHIVE_DIR "${LIBS_DIR}")
+endif()
 
 add_library(OmniERP SHARED
     Item/Item.cpp
@@ -38,20 +44,21 @@ if(WIN32)
     add_custom_command(TARGET OmniERP POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${LIBS_DIR}"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${INCLUDE_DIR}"
-        # Copy dependency DLLs to Libs directory
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/OmniData/Libs/libOmniData.dll"
-            "${LIBS_DIR}/libOmniData.dll"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/Libs/libOmniUtils.dll"
-            "${LIBS_DIR}/libOmniUtils.dll"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/Libs/libOmniCore.dll"
-            "${LIBS_DIR}/libOmniCore.dll"
+    )
+elseif(APPLE)
+    target_link_libraries(OmniERP PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.dylib
+        ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.dylib
+        ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.dylib
+    )
+else()
+    target_link_libraries(OmniERP PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.so
+        ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.so
+        ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.so
     )
 endif()
 
-# Build output directories
 if(WIN32)
     set_target_properties(OmniERP PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${LIBS_DIR}"
