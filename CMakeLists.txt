@@ -42,19 +42,17 @@ if(WIN32)
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/Libs/libOmniData.dll.a
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/Libs/libOmniCore.dll.a
     )
+
     add_custom_command(TARGET OmniERP POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${ARCHIVE_DIR}"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${INCLUDE_DIR}"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libboost_container-mt.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libboost_json-mt.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libsodium-26.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libboost_container-mt.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libboost_json-mt.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libsodium-26.dll" "${CORE_RUNTIME_DIR}/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:OmniERP>" "${CORE_RUNTIME_DIR}/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.dll" "${CORE_RUNTIME_DIR}/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.dll" "${CORE_RUNTIME_DIR}/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.dll" "${CORE_RUNTIME_DIR}/"
+        COMMENT "Copying OmniLibs DLLs to OmniCore root..."
     )
+
 elseif(APPLE)
     target_link_libraries(OmniERP PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.dylib
@@ -71,8 +69,8 @@ endif()
 
 if(WIN32)
     set_target_properties(OmniERP PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CORE_RUNTIME_DIR}"
-        LIBRARY_OUTPUT_DIRECTORY "${CORE_RUNTIME_DIR}"
+        RUNTIME_OUTPUT_DIRECTORY "${LIBS_DIR}"
+        LIBRARY_OUTPUT_DIRECTORY "${LIBS_DIR}"
         ARCHIVE_OUTPUT_DIRECTORY "${ARCHIVE_DIR}"
     )
 else()
