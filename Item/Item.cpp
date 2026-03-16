@@ -6,33 +6,31 @@
 #include "Database.hpp"          // Add new include for database
 #include "Repositories/Item.hpp" // Add new include for repository
 
-namespace omnisphere::omnierp::services {
+namespace omnisphere::services {
 // Define the Impl struct for Pimpl idiom
 struct Item::Impl {
-  std::shared_ptr<omnisphere::omnierp::repositories::Item> item;
-  explicit Impl(
-      std::shared_ptr<omnisphere::omnidata::services::Database> database)
-      : item(std::make_shared<omnisphere::omnierp::repositories::Item>(
-            database)) {}
+  std::shared_ptr<omnisphere::repositories::Item> item;
+  explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+      : item(std::make_shared<omnisphere::repositories::Item>(database)) {}
 };
 
 // Update constructor to initialize pimpl
-Item::Item(std::shared_ptr<omnisphere::omnidata::services::Database> database)
+Item::Item(std::shared_ptr<omnisphere::services::Database> database)
     : pimpl(std::make_unique<Impl>(database)) {}
 
 // Define destructor
 Item::~Item() = default;
 
-omnisphere::omnierp::models::Item
-Item::Get(const omnisphere::omnierp::dtos::GetItem &_item) const {
+omnisphere::models::Item
+Item::Get(const omnisphere::dtos::GetItem &_item) const {
   try {
     // Use pimpl to access the repository
-    omnisphere::omnidata::types::DataTable data = pimpl->item->Read(_item);
+    omnisphere::types::DataTable data = pimpl->item->Read(_item);
 
     if (data.RowsCount() == 0)
       throw std::runtime_error("Item doesn't exists");
 
-    omnisphere::omnierp::models::Item item(
+    omnisphere::models::Item item(
         data[0]["ItemEntry"], data[0]["Code"], data[0]["Name"],
         data[0]["Description"].GetOptional<std::string>(),
         data[0]["Image"].GetOptional<std::string>(), data[0]["IsActive"],
@@ -56,11 +54,11 @@ Item::Get(const omnisphere::omnierp::dtos::GetItem &_item) const {
   }
 };
 
-std::vector<omnisphere::omnierp::models::Item> Item::GetAll() const {
+std::vector<omnisphere::models::Item> Item::GetAll() const {
   try {
-    std::vector<omnisphere::omnierp::models::Item> items;
+    std::vector<omnisphere::models::Item> items;
     // Use pimpl to access the repository and call Read (alias for ReadAll)
-    omnisphere::omnidata::types::DataTable data = pimpl->item->Read();
+    omnisphere::types::DataTable data = pimpl->item->Read();
 
     for (int i = 0; i < data.RowsCount(); i++) {
       items.emplace_back(data[i]["ItemEntry"], data[i]["Code"], data[i]["Name"],
@@ -90,12 +88,12 @@ std::vector<omnisphere::omnierp::models::Item> Item::GetAll() const {
   }
 }
 
-std::vector<omnisphere::omnierp::models::Item>
-Item::Search(omnisphere::omnierp::dtos::SearchItems &_item) const {
+std::vector<omnisphere::models::Item>
+Item::Search(omnisphere::dtos::SearchItems &_item) const {
   try {
-    std::vector<omnisphere::omnierp::models::Item> items;
+    std::vector<omnisphere::models::Item> items;
     // Use pimpl to access the repository
-    omnisphere::omnidata::types::DataTable data = pimpl->item->Read(_item);
+    omnisphere::types::DataTable data = pimpl->item->Read(_item);
 
     for (int i = 0; i < data.RowsCount(); i++) {
       items.emplace_back(data[i]["ItemEntry"], data[i]["Code"], data[i]["Name"],
@@ -125,17 +123,17 @@ Item::Search(omnisphere::omnierp::dtos::SearchItems &_item) const {
   }
 }
 
-omnisphere::omnierp::models::Item
-Item::Add(const omnisphere::omnierp::dtos::CreateItem &_item) const {
+omnisphere::models::Item
+Item::Add(const omnisphere::dtos::CreateItem &_item) const {
   try {
     // Use pimpl to access the repository
     if (pimpl->item->Create(_item)) {
       // Read the newly created item using its code
-      omnisphere::omnierp::dtos::GetItem getItem;
+      omnisphere::dtos::GetItem getItem;
       getItem.Code = _item.Code;
-      omnisphere::omnidata::types::DataTable data = pimpl->item->Read(getItem);
+      omnisphere::types::DataTable data = pimpl->item->Read(getItem);
 
-      omnisphere::omnierp::models::Item item(
+      omnisphere::models::Item item(
           data[0]["ItemEntry"], data[0]["Code"], data[0]["Name"],
           data[0]["Description"].GetOptional<std::string>(),
           data[0]["Image"].GetOptional<std::string>(), data[0]["IsActive"],
@@ -162,14 +160,14 @@ Item::Add(const omnisphere::omnierp::dtos::CreateItem &_item) const {
   }
 };
 
-omnisphere::omnierp::models::Item
-Item::Modify(const omnisphere::omnierp::dtos::UpdateItem &_item) const {
+omnisphere::models::Item
+Item::Modify(const omnisphere::dtos::UpdateItem &_item) const {
   try {
 
-    omnisphere::omnierp::dtos::GetItem getItem;
+    omnisphere::dtos::GetItem getItem;
     getItem.Code = _item.Code;
 
-    omnisphere::omnierp::models::Item item = Get(getItem);
+    omnisphere::models::Item item = Get(getItem);
 
     return item;
   } catch (const std::exception &e) {
@@ -177,4 +175,4 @@ Item::Modify(const omnisphere::omnierp::dtos::UpdateItem &_item) const {
                              e.what());
   }
 };
-} // namespace omnisphere::omnierp::services
+} // namespace omnisphere::services

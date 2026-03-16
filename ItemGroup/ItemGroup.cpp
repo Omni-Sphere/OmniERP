@@ -5,25 +5,22 @@
 #include "Models/ItemGroup.hpp"
 #include "Repositories/ItemGroup.hpp"
 
-namespace omnisphere::omnierp::services {
+namespace omnisphere::services {
 
 struct ItemGroup::Impl {
-  std::shared_ptr<omnisphere::omnierp::repositories::ItemGroup>
-      itemGroupRepository;
-  explicit Impl(std::shared_ptr<omnisphere::omnidata::services::Database> db)
+  std::shared_ptr<omnisphere::repositories::ItemGroup> itemGroupRepository;
+  explicit Impl(std::shared_ptr<omnisphere::services::Database> db)
       : itemGroupRepository(
-            std::make_shared<omnisphere::omnierp::repositories::ItemGroup>(
-                db)) {}
+            std::make_shared<omnisphere::repositories::ItemGroup>(db)) {}
 };
 
-ItemGroup::ItemGroup(
-    std::shared_ptr<omnisphere::omnidata::services::Database> db)
+ItemGroup::ItemGroup(std::shared_ptr<omnisphere::services::Database> db)
     : pimpl(std::make_unique<Impl>(db)) {}
 
 ItemGroup::~ItemGroup() = default;
 
 bool ItemGroup::Add(
-    const omnisphere::omnierp::dtos::CreateItemGroup &createItemGroup) const {
+    const omnisphere::dtos::CreateItemGroup &createItemGroup) const {
   try {
     return pimpl->itemGroupRepository->Create(createItemGroup);
   } catch (const std::exception &e) {
@@ -33,7 +30,7 @@ bool ItemGroup::Add(
 }
 
 bool ItemGroup::Modify(
-    const omnisphere::omnierp::dtos::UpdateItemGroup &updateItemGroup) const {
+    const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const {
   try {
     return pimpl->itemGroupRepository->Update(updateItemGroup);
   } catch (const std::exception &e) {
@@ -42,14 +39,14 @@ bool ItemGroup::Modify(
   }
 }
 
-std::vector<omnisphere::omnierp::models::ItemGroup> ItemGroup::GetAll() const {
+std::vector<omnisphere::models::ItemGroup> ItemGroup::GetAll() const {
   try {
-    std::vector<omnisphere::omnierp::models::ItemGroup> itemGroups;
-    omnisphere::omnidata::types::DataTable dataTable =
+    std::vector<omnisphere::models::ItemGroup> itemGroups;
+    omnisphere::types::DataTable dataTable =
         pimpl->itemGroupRepository->ReadAll();
 
     for (int i = 0; i < dataTable.RowsCount(); i++)
-      itemGroups.emplace_back(omnisphere::omnierp::models::ItemGroup{
+      itemGroups.emplace_back(omnisphere::models::ItemGroup{
           dataTable[i]["Entry"], dataTable[i]["Code"], dataTable[i]["Name"],
           dataTable[i]["CreatedBy"], dataTable[i]["CreateDate"],
           dataTable[i]["LastUpdatedBy"].GetOptional<int>(),
@@ -62,16 +59,16 @@ std::vector<omnisphere::omnierp::models::ItemGroup> ItemGroup::GetAll() const {
   }
 }
 
-omnisphere::omnierp::models::ItemGroup ItemGroup::Get(
-    const omnisphere::omnierp::dtos::GetItemGroup &getItemGroup) const {
+omnisphere::models::ItemGroup
+ItemGroup::Get(const omnisphere::dtos::GetItemGroup &getItemGroup) const {
   try {
-    omnisphere::omnidata::types::DataTable dataTable =
+    omnisphere::types::DataTable dataTable =
         pimpl->itemGroupRepository->Read(getItemGroup);
 
     if (dataTable.RowsCount() == 0)
       throw std::runtime_error("No ItemGroups found");
 
-    omnisphere::omnierp::models::ItemGroup itemGroup{
+    omnisphere::models::ItemGroup itemGroup{
         dataTable[0]["Entry"],
         dataTable[0]["Code"],
         dataTable[0]["Name"],
@@ -86,4 +83,4 @@ omnisphere::omnierp::models::ItemGroup ItemGroup::Get(
                              e.what());
   }
 }
-} // namespace omnisphere::omnierp::services
+} // namespace omnisphere::services

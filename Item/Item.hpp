@@ -11,31 +11,28 @@
 #include "DTOs/UpdateItem.hpp"
 #include "Models/Item.hpp"
 
-namespace omnisphere::omnierp::services {
+namespace omnisphere::services {
 
 class Item {
 public:
-  explicit Item(
-      std::shared_ptr<omnisphere::omnidata::services::Database> database);
+  explicit Item(std::shared_ptr<omnisphere::services::Database> database);
 
   ~Item();
 
-  omnisphere::omnierp::models::Item
-  Get(const omnisphere::omnierp::dtos::GetItem &_item) const;
+  omnisphere::models::Item Get(const omnisphere::dtos::GetItem &_item) const;
 
-  std::vector<omnisphere::omnierp::models::Item> GetAll() const;
+  std::vector<omnisphere::models::Item> GetAll() const;
 
-  std::vector<omnisphere::omnierp::models::Item>
-  Search(omnisphere::omnierp::dtos::SearchItems &_item) const;
+  std::vector<omnisphere::models::Item>
+  Search(omnisphere::dtos::SearchItems &_item) const;
 
-  omnisphere::omnierp::models::Item
-  Add(const omnisphere::omnierp::dtos::CreateItem &_item) const;
+  omnisphere::models::Item Add(const omnisphere::dtos::CreateItem &_item) const;
 
-  omnisphere::omnierp::models::Item
-  Modify(const omnisphere::omnierp::dtos::UpdateItem &_item) const;
+  omnisphere::models::Item
+  Modify(const omnisphere::dtos::UpdateItem &_item) const;
 
 private:
   struct Impl;
   std::unique_ptr<Impl> pimpl;
 };
-} // namespace omnisphere::omnierp::services
+} // namespace omnisphere::services

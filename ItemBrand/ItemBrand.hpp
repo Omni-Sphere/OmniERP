@@ -9,7 +9,7 @@
 #include "Database.hpp"
 #include "Models/ItemBrand.hpp"
 
-namespace omnisphere::omnierp::services {
+namespace omnisphere::services {
 
 class ItemBrand {
 private:
@@ -17,20 +17,17 @@ private:
   std::unique_ptr<Impl> pimpl;
 
 public:
-  explicit ItemBrand(
-      std::shared_ptr<omnisphere::omnidata::services::Database> db);
+  explicit ItemBrand(std::shared_ptr<omnisphere::services::Database> db);
 
   ~ItemBrand();
 
-  bool
-  Add(const omnisphere::omnierp::dtos::CreateItemBrand &createItemBrand) const;
+  bool Add(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
 
-  bool Modify(
-      const omnisphere::omnierp::dtos::UpdateItemBrand &updateItemBrand) const;
+  bool Modify(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
 
-  std::vector<omnisphere::omnierp::models::ItemBrand> GetAll() const;
+  std::vector<omnisphere::models::ItemBrand> GetAll() const;
 
-  omnisphere::omnierp::models::ItemBrand
-  Get(const omnisphere::omnierp::dtos::GetItemBrand &getItemBrand) const;
+  omnisphere::models::ItemBrand
+  Get(const omnisphere::dtos::GetItemBrand &getItemBrand) const;
 };
-} // namespace omnisphere::omnierp::services
+} // namespace omnisphere::services

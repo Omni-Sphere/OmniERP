@@ -7,25 +7,22 @@
 #include "Models/ItemBrand.hpp"
 #include "Repositories/ItemBrand.hpp"
 
-namespace omnisphere::omnierp::services {
+namespace omnisphere::services {
 
 struct ItemBrand::Impl {
-  std::shared_ptr<omnisphere::omnierp::repositories::ItemBrand>
-      itemBrandRepository;
-  explicit Impl(std::shared_ptr<omnisphere::omnidata::services::Database> db)
+  std::shared_ptr<omnisphere::repositories::ItemBrand> itemBrandRepository;
+  explicit Impl(std::shared_ptr<omnisphere::services::Database> db)
       : itemBrandRepository(
-            std::make_shared<omnisphere::omnierp::repositories::ItemBrand>(
-                db)) {}
+            std::make_shared<omnisphere::repositories::ItemBrand>(db)) {}
 };
 
-ItemBrand::ItemBrand(
-    std::shared_ptr<omnisphere::omnidata::services::Database> db)
+ItemBrand::ItemBrand(std::shared_ptr<omnisphere::services::Database> db)
     : pimpl(std::make_unique<Impl>(db)) {}
 
 ItemBrand::~ItemBrand() = default;
 
 bool ItemBrand::Add(
-    const omnisphere::omnierp::dtos::CreateItemBrand &createItemBrand) const {
+    const omnisphere::dtos::CreateItemBrand &createItemBrand) const {
   try {
     return pimpl->itemBrandRepository->Create(createItemBrand);
   } catch (const std::exception &e) {
@@ -35,7 +32,7 @@ bool ItemBrand::Add(
 }
 
 bool ItemBrand::Modify(
-    const omnisphere::omnierp::dtos::UpdateItemBrand &updateItemBrand) const {
+    const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const {
   try {
     return pimpl->itemBrandRepository->Update(updateItemBrand);
   } catch (const std::exception &e) {
@@ -44,14 +41,14 @@ bool ItemBrand::Modify(
   }
 }
 
-std::vector<omnisphere::omnierp::models::ItemBrand> ItemBrand::GetAll() const {
+std::vector<omnisphere::models::ItemBrand> ItemBrand::GetAll() const {
   try {
-    std::vector<omnisphere::omnierp::models::ItemBrand> itemBrands;
-    omnisphere::omnidata::types::DataTable dataTable =
+    std::vector<omnisphere::models::ItemBrand> itemBrands;
+    omnisphere::types::DataTable dataTable =
         pimpl->itemBrandRepository->ReadAll();
 
     for (int i = 0; i < dataTable.RowsCount(); i++)
-      itemBrands.emplace_back(omnisphere::omnierp::models::ItemBrand{
+      itemBrands.emplace_back(omnisphere::models::ItemBrand{
           dataTable[i]["Entry"], dataTable[i]["Name"], dataTable[i]["Code"],
           dataTable[i]["CreatedBy"], dataTable[i]["CreateDate"],
           dataTable[i]["LastUpdatedBy"].GetOptional<int>(),
@@ -64,16 +61,16 @@ std::vector<omnisphere::omnierp::models::ItemBrand> ItemBrand::GetAll() const {
   }
 }
 
-omnisphere::omnierp::models::ItemBrand ItemBrand::Get(
-    const omnisphere::omnierp::dtos::GetItemBrand &getItemBrand) const {
+omnisphere::models::ItemBrand
+ItemBrand::Get(const omnisphere::dtos::GetItemBrand &getItemBrand) const {
   try {
-    omnisphere::omnidata::types::DataTable dataTable =
+    omnisphere::types::DataTable dataTable =
         pimpl->itemBrandRepository->Read(getItemBrand);
 
     if (dataTable.RowsCount() == 0)
       throw std::runtime_error("No ItemBrands found");
 
-    omnisphere::omnierp::models::ItemBrand itemBrand{
+    omnisphere::models::ItemBrand itemBrand{
         dataTable[0]["Entry"],
         dataTable[0]["Code"],
         dataTable[0]["Name"],
@@ -89,4 +86,4 @@ omnisphere::omnierp::models::ItemBrand ItemBrand::Get(
   }
 }
 
-} // namespace omnisphere::omnierp::services
+} // namespace omnisphere::services

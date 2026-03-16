@@ -3,7 +3,7 @@
 #include <optional>
 #include <string>
 
-namespace omnisphere::omnierp::dtos {
+namespace omnisphere::dtos {
 struct SearchItems {
   std::optional<std::string> CodeEqualsTo;
   std::optional<std::string> CodeContains;
@@ -44,4 +44,4 @@ struct SearchItems {
   std::optional<double> MaxRequestGreaterThan;
   std::optional<double> MaxRequestLessThan;
 };
-} // namespace omnisphere::omnierp::dtos
+} // namespace omnisphere::dtos

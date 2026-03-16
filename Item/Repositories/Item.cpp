@@ -1,12 +1,12 @@
 #include "Item.hpp"
 
-namespace omnisphere::omnierp::repositories {
-Item::Item(std::shared_ptr<omnisphere::omnidata::services::Database> database)
+namespace omnisphere::repositories {
+Item::Item(std::shared_ptr<omnisphere::services::Database> database)
     : Database(std::move(database)) {}
 
 Item::~Item() = default;
 
-bool Item::Create(const omnisphere::omnierp::dtos::CreateItem &item) const {
+bool Item::Create(const omnisphere::dtos::CreateItem &item) const {
   try {
     std::string sQuery =
         "INSERT INTO Items ("
@@ -32,26 +32,26 @@ bool Item::Create(const omnisphere::omnierp::dtos::CreateItem &item) const {
         ")"
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    const std::vector<omnisphere::omnidata::types::SQLParam> params = {
-        omnisphere::omnidata::types::MakeSQLParam(GetCurrentSequence()),
-        omnisphere::omnidata::types::MakeSQLParam(item.Code),
-        omnisphere::omnidata::types::MakeSQLParam(item.Name),
-        omnisphere::omnidata::types::MakeSQLParam(item.Description),
-        omnisphere::omnidata::types::MakeSQLParam(item.Image),
-        omnisphere::omnidata::types::MakeSQLParam(item.PurchaseItem),
-        omnisphere::omnidata::types::MakeSQLParam(item.SellItem),
-        omnisphere::omnidata::types::MakeSQLParam(item.InventoryItem),
-        omnisphere::omnidata::types::MakeSQLParam(item.Price),
-        omnisphere::omnidata::types::MakeSQLParam(item.Brand),
-        omnisphere::omnidata::types::MakeSQLParam(item.Group),
-        omnisphere::omnidata::types::MakeSQLParam(item.MinStock),
-        omnisphere::omnidata::types::MakeSQLParam(item.MaxStock),
-        omnisphere::omnidata::types::MakeSQLParam(item.MinOrder),
-        omnisphere::omnidata::types::MakeSQLParam(item.MaxOrder),
-        omnisphere::omnidata::types::MakeSQLParam(item.MinRequest),
-        omnisphere::omnidata::types::MakeSQLParam(item.MaxRequest),
-        omnisphere::omnidata::types::MakeSQLParam(item.CreatedBy),
-        omnisphere::omnidata::types::MakeSQLParam(item.CreateDate)};
+    const std::vector<omnisphere::types::SQLParam> params = {
+        omnisphere::types::MakeSQLParam(GetCurrentSequence()),
+        omnisphere::types::MakeSQLParam(item.Code),
+        omnisphere::types::MakeSQLParam(item.Name),
+        omnisphere::types::MakeSQLParam(item.Description),
+        omnisphere::types::MakeSQLParam(item.Image),
+        omnisphere::types::MakeSQLParam(item.PurchaseItem),
+        omnisphere::types::MakeSQLParam(item.SellItem),
+        omnisphere::types::MakeSQLParam(item.InventoryItem),
+        omnisphere::types::MakeSQLParam(item.Price),
+        omnisphere::types::MakeSQLParam(item.Brand),
+        omnisphere::types::MakeSQLParam(item.Group),
+        omnisphere::types::MakeSQLParam(item.MinStock),
+        omnisphere::types::MakeSQLParam(item.MaxStock),
+        omnisphere::types::MakeSQLParam(item.MinOrder),
+        omnisphere::types::MakeSQLParam(item.MaxOrder),
+        omnisphere::types::MakeSQLParam(item.MinRequest),
+        omnisphere::types::MakeSQLParam(item.MaxRequest),
+        omnisphere::types::MakeSQLParam(item.CreatedBy),
+        omnisphere::types::MakeSQLParam(item.CreateDate)};
 
     if (!Database->RunPrepared(sQuery, params))
       throw std::runtime_error("Error creating item");
@@ -65,63 +65,58 @@ bool Item::Create(const omnisphere::omnierp::dtos::CreateItem &item) const {
   }
 }
 
-bool Item::Update(const omnisphere::omnierp::dtos::UpdateItem &item) const {
+bool Item::Update(const omnisphere::dtos::UpdateItem &item) const {
   try {
     std::string sQuery = "UPDATE Items SET ";
-    std::vector<omnisphere::omnidata::types::SQLParam> params;
+    std::vector<omnisphere::types::SQLParam> params;
 
     if (item.Name.has_value()) {
       sQuery += "Name = ?, ";
-      params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.Name.value()));
+      params.emplace_back(omnisphere::types::MakeSQLParam(item.Name.value()));
     }
 
     if (item.Description.has_value()) {
       sQuery += "Description = ?, ";
       params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.Description.value()));
+          omnisphere::types::MakeSQLParam(item.Description.value()));
     }
 
     if (item.Image.has_value()) {
       sQuery += "Image = ?, ";
-      params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.Image.value()));
+      params.emplace_back(omnisphere::types::MakeSQLParam(item.Image.value()));
     }
 
     if (item.PurchaseItem.has_value()) {
       sQuery += "PurchaseItem = ?, ";
       params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.PurchaseItem.value()));
+          omnisphere::types::MakeSQLParam(item.PurchaseItem.value()));
     }
 
     if (item.SellItem.has_value()) {
       sQuery += "SellItem = ?, ";
       params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.SellItem.value()));
+          omnisphere::types::MakeSQLParam(item.SellItem.value()));
     }
 
     if (item.InventoryItem.has_value()) {
       sQuery += "InventoryItem = ?, ";
-      params.emplace_back(omnisphere::omnidata::types::MakeSQLParam(
-          item.InventoryItem.value()));
+      params.emplace_back(
+          omnisphere::types::MakeSQLParam(item.InventoryItem.value()));
     }
 
     if (item.Price.has_value()) {
       sQuery += "Price = ?, ";
-      params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.Price.value()));
+      params.emplace_back(omnisphere::types::MakeSQLParam(item.Price.value()));
     }
 
     if (item.Brand.has_value()) {
       sQuery += "Brand = ?, ";
-      params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.Brand.value()));
+      params.emplace_back(omnisphere::types::MakeSQLParam(item.Brand.value()));
     }
 
     if (item.Group.has_value()) {
       sQuery += "Group = ?, ";
-      params.emplace_back(
-          omnisphere::omnidata::types::MakeSQLParam(item.Group.value()));
+      params.emplace_back(omnisphere::types::MakeSQLParam(item.Group.value()));
     }
 
     sQuery += "WHERE ItemEntry = ?";
@@ -136,10 +131,10 @@ bool Item::Update(const omnisphere::omnierp::dtos::UpdateItem &item) const {
   }
 }
 
-omnisphere::omnidata::types::DataTable
-Item::Read(const omnisphere::omnierp::dtos::SearchItems &filter) const {
+omnisphere::types::DataTable
+Item::Read(const omnisphere::dtos::SearchItems &filter) const {
   try {
-    omnisphere::omnidata::types::DataTable datatable;
+    omnisphere::types::DataTable datatable;
 
     std::string sQuery = "SELECT "
                          "[ItemEntry], "
@@ -169,45 +164,45 @@ Item::Read(const omnisphere::omnierp::dtos::SearchItems &filter) const {
                          "UpdateDate "
                          "FROM Items WHERE ";
 
-    const std::vector<omnisphere::omnidata::types::SQLParam> params = {
-        omnisphere::omnidata::types::MakeSQLParam(filter.CodeEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.CodeContains),
-        omnisphere::omnidata::types::MakeSQLParam(filter.NameEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.NameContains),
-        omnisphere::omnidata::types::MakeSQLParam(filter.DescriptionEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.DescriptionContains),
-        omnisphere::omnidata::types::MakeSQLParam(filter.IsActive),
-        omnisphere::omnidata::types::MakeSQLParam(filter.PurchaseItem),
-        omnisphere::omnidata::types::MakeSQLParam(filter.SellItem),
-        omnisphere::omnidata::types::MakeSQLParam(filter.InventoryItem),
-        omnisphere::omnidata::types::MakeSQLParam(filter.Price),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnHandEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnHandGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnHandLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnRequestEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnRequestGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnRequestLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnOrderEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnOrderGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.OnOrderLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinStockEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinStockGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinStockLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxStockEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxStockGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxStockLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinOrderEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinOrderGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinOrderLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxOrderEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxOrderGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxOrderLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinRequestEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinRequestGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MinRequestLessThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxReqeuestEqualsTo),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxRequestGreaterThan),
-        omnisphere::omnidata::types::MakeSQLParam(filter.MaxRequestLessThan)};
+    const std::vector<omnisphere::types::SQLParam> params = {
+        omnisphere::types::MakeSQLParam(filter.CodeEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.CodeContains),
+        omnisphere::types::MakeSQLParam(filter.NameEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.NameContains),
+        omnisphere::types::MakeSQLParam(filter.DescriptionEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.DescriptionContains),
+        omnisphere::types::MakeSQLParam(filter.IsActive),
+        omnisphere::types::MakeSQLParam(filter.PurchaseItem),
+        omnisphere::types::MakeSQLParam(filter.SellItem),
+        omnisphere::types::MakeSQLParam(filter.InventoryItem),
+        omnisphere::types::MakeSQLParam(filter.Price),
+        omnisphere::types::MakeSQLParam(filter.OnHandEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.OnHandGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.OnHandLessThan),
+        omnisphere::types::MakeSQLParam(filter.OnRequestEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.OnRequestGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.OnRequestLessThan),
+        omnisphere::types::MakeSQLParam(filter.OnOrderEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.OnOrderGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.OnOrderLessThan),
+        omnisphere::types::MakeSQLParam(filter.MinStockEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.MinStockGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.MinStockLessThan),
+        omnisphere::types::MakeSQLParam(filter.MaxStockEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.MaxStockGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.MaxStockLessThan),
+        omnisphere::types::MakeSQLParam(filter.MinOrderEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.MinOrderGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.MinOrderLessThan),
+        omnisphere::types::MakeSQLParam(filter.MaxOrderEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.MaxOrderGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.MaxOrderLessThan),
+        omnisphere::types::MakeSQLParam(filter.MinRequestEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.MinRequestGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.MinRequestLessThan),
+        omnisphere::types::MakeSQLParam(filter.MaxReqeuestEqualsTo),
+        omnisphere::types::MakeSQLParam(filter.MaxRequestGreaterThan),
+        omnisphere::types::MakeSQLParam(filter.MaxRequestLessThan)};
 
     return datatable;
   } catch (const std::exception &e) {
@@ -215,10 +210,10 @@ Item::Read(const omnisphere::omnierp::dtos::SearchItems &filter) const {
   }
 }
 
-omnisphere::omnidata::types::DataTable
-Item::Read(const omnisphere::omnierp::dtos::GetItem &filter) const {
+omnisphere::types::DataTable
+Item::Read(const omnisphere::dtos::GetItem &filter) const {
   try {
-    omnisphere::omnidata::types::DataTable datatable;
+    omnisphere::types::DataTable datatable;
 
     std::string sQuery = "SELECT "
                          "[ItemEntry], "
@@ -265,9 +260,9 @@ Item::Read(const omnisphere::omnierp::dtos::GetItem &filter) const {
   }
 }
 
-omnisphere::omnidata::types::DataTable Item::Read() const {
+omnisphere::types::DataTable Item::Read() const {
   try {
-    omnisphere::omnidata::types::DataTable datatable;
+    omnisphere::types::DataTable datatable;
 
     std::string sQuery = "SELECT "
                          "[ItemEntry], "
@@ -309,8 +304,7 @@ int Item::GetCurrentSequence() const {
     const std::string sQuery = "SELECT ISNULL(ItemSequence, 0) + 1 "
                                "ItemSequence FROM Sequences WHERE SeqEntry = 1";
 
-    omnisphere::omnidata::types::DataTable data =
-        Database->FetchResults(sQuery);
+    omnisphere::types::DataTable data = Database->FetchResults(sQuery);
 
     if (data.RowsCount() == 1)
       return data[0]["ItemSequence"];
@@ -336,4 +330,4 @@ bool Item::UpdateUserSequence() const {
                              " " + e.what());
   }
 };
-}; // namespace omnisphere::omnierp::repositories
+}; // namespace omnisphere::repositories

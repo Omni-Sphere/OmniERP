@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace omnisphere::omnierp::models {
+namespace omnisphere::models {
 class ItemBrand {
 public:
   int Entry;
@@ -13,4 +13,4 @@ public:
   std::optional<int> LastUpdatedBy;
   std::optional<std::string> UpdateDate;
 };
-} // namespace omnisphere::omnierp::models
+} // namespace omnisphere::models

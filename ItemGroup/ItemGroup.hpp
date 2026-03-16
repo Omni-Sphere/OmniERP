@@ -9,7 +9,7 @@
 #include "Database.hpp"
 #include "Models/ItemGroup.hpp"
 
-namespace omnisphere::omnierp::services {
+namespace omnisphere::services {
 
 class ItemGroup {
 private:
@@ -17,20 +17,17 @@ private:
   std::unique_ptr<Impl> pimpl;
 
 public:
-  explicit ItemGroup(
-      std::shared_ptr<omnisphere::omnidata::services::Database> db);
+  explicit ItemGroup(std::shared_ptr<omnisphere::services::Database> db);
 
   ~ItemGroup();
 
-  bool
-  Add(const omnisphere::omnierp::dtos::CreateItemGroup &createItemGroup) const;
+  bool Add(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
 
-  bool Modify(
-      const omnisphere::omnierp::dtos::UpdateItemGroup &updateItemGroup) const;
+  bool Modify(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
 
-  std::vector<omnisphere::omnierp::models::ItemGroup> GetAll() const;
+  std::vector<omnisphere::models::ItemGroup> GetAll() const;
 
-  omnisphere::omnierp::models::ItemGroup
-  Get(const omnisphere::omnierp::dtos::GetItemGroup &getItemGroup) const;
+  omnisphere::models::ItemGroup
+  Get(const omnisphere::dtos::GetItemGroup &getItemGroup) const;
 };
-} // namespace omnisphere::omnierp::services
+} // namespace omnisphere::services

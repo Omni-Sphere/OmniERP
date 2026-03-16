@@ -9,25 +9,24 @@
 #include "DTOs/UpdateItem.hpp"
 #include "Database.hpp"
 
-namespace omnisphere::omnierp::repositories {
+namespace omnisphere::repositories {
 class Item {
 public:
-  explicit Item(
-      std::shared_ptr<omnisphere::omnidata::services::Database> database);
+  explicit Item(std::shared_ptr<omnisphere::services::Database> database);
   ~Item();
 
-  bool Create(const omnisphere::omnierp::dtos::CreateItem &_item) const;
-  bool Update(const omnisphere::omnierp::dtos::UpdateItem &_item) const;
-  omnisphere::omnidata::types::DataTable
-  Read(const omnisphere::omnierp::dtos::SearchItems &_item) const;
-  omnisphere::omnidata::types::DataTable
-  Read(const omnisphere::omnierp::dtos::GetItem &_item) const;
-  omnisphere::omnidata::types::DataTable Read() const;
+  bool Create(const omnisphere::dtos::CreateItem &_item) const;
+  bool Update(const omnisphere::dtos::UpdateItem &_item) const;
+  omnisphere::types::DataTable
+  Read(const omnisphere::dtos::SearchItems &_item) const;
+  omnisphere::types::DataTable
+  Read(const omnisphere::dtos::GetItem &_item) const;
+  omnisphere::types::DataTable Read() const;
 
 private:
-  std::shared_ptr<omnisphere::omnidata::services::Database> Database;
+  std::shared_ptr<omnisphere::services::Database> Database;
 
   int GetCurrentSequence() const;
   bool UpdateUserSequence() const;
 };
-} // namespace omnisphere::omnierp::repositories
+} // namespace omnisphere::repositories
