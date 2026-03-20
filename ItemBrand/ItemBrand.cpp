@@ -21,20 +21,32 @@ ItemBrand::ItemBrand(std::shared_ptr<omnisphere::services::Database> db)
 
 ItemBrand::~ItemBrand() = default;
 
-bool ItemBrand::Add(
+omnisphere::models::ItemBrand ItemBrand::Add(
     const omnisphere::dtos::CreateItemBrand &createItemBrand) const {
   try {
-    return pimpl->itemBrandRepository->Create(createItemBrand);
+    if (pimpl->itemBrandRepository->Create(createItemBrand)) {
+      omnisphere::dtos::GetItemBrand getItemBrand;
+      getItemBrand.Code = createItemBrand.Code;
+      return Get(getItemBrand);
+    } else {
+      throw std::runtime_error("Error creating item brand");
+    }
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[AddItemBrand Exception] ") +
                              e.what());
   }
 }
 
-bool ItemBrand::Modify(
+omnisphere::models::ItemBrand ItemBrand::Modify(
     const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const {
   try {
-    return pimpl->itemBrandRepository->Update(updateItemBrand);
+    if (pimpl->itemBrandRepository->Update(updateItemBrand)) {
+      omnisphere::dtos::GetItemBrand getItemBrand;
+      getItemBrand.Code = updateItemBrand.Code;
+      return Get(getItemBrand);
+    } else {
+      throw std::runtime_error("Error updating item brand");
+    }
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[ModifyItemBrand Exception] ") +
                              e.what());

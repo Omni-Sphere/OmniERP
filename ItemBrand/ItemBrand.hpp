@@ -21,9 +21,11 @@ public:
 
   ~ItemBrand();
 
-  bool Add(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
+  omnisphere::models::ItemBrand
+  Add(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
 
-  bool Modify(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
+  omnisphere::models::ItemBrand
+  Modify(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
 
   std::vector<omnisphere::models::ItemBrand> GetAll() const;
 

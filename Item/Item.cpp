@@ -126,33 +126,11 @@ Item::Search(omnisphere::dtos::SearchItems &_item) const {
 omnisphere::models::Item
 Item::Add(const omnisphere::dtos::CreateItem &_item) const {
   try {
-    // Use pimpl to access the repository
     if (pimpl->item->Create(_item)) {
-      // Read the newly created item using its code
       omnisphere::dtos::GetItem getItem;
       getItem.Code = _item.Code;
-      omnisphere::types::DataTable data = pimpl->item->Read(getItem);
-
-      omnisphere::models::Item item(
-          data[0]["ItemEntry"], data[0]["Code"], data[0]["Name"],
-          data[0]["Description"].GetOptional<std::string>(),
-          data[0]["Image"].GetOptional<std::string>(), data[0]["IsActive"],
-          data[0]["PurchaseItem"], data[0]["SellItem"],
-          data[0]["InventoryItem"], data[0]["Price"],
-          data[0]["Brand"].GetOptional<int>(),
-          data[0]["Group"].GetOptional<int>(), data[0]["OnHand"],
-          data[0]["OnOrder"].GetOptional<double>(),
-          data[0]["OnRequest"].GetOptional<double>(),
-          data[0]["MinStock"].GetOptional<double>(),
-          data[0]["MaxStock"].GetOptional<double>(),
-          data[0]["MinOrder"].GetOptional<double>(),
-          data[0]["MaxOrder"].GetOptional<double>(),
-          data[0]["MinRequest"].GetOptional<double>(),
-          data[0]["MaxRequest"].GetOptional<double>(), data[0]["CreatedBy"],
-          data[0]["CreateDate"], data[0]["LastUpdatedBy"].GetOptional<int>(),
-          data[0]["UpdateDate"].GetOptional<std::string>());
-
-      return item;
+      
+      return Get(getItem);
     } else
       throw std::runtime_error("Error creating item ");
   } catch (const std::exception &e) {
@@ -163,13 +141,13 @@ Item::Add(const omnisphere::dtos::CreateItem &_item) const {
 omnisphere::models::Item
 Item::Modify(const omnisphere::dtos::UpdateItem &_item) const {
   try {
+    if (pimpl->item->Update(_item)) {
+      omnisphere::dtos::GetItem getItem;
+      getItem.Code = _item.Code;
 
-    omnisphere::dtos::GetItem getItem;
-    getItem.Code = _item.Code;
-
-    omnisphere::models::Item item = Get(getItem);
-
-    return item;
+      return Get(getItem);
+    } else
+      throw std::runtime_error("Error updating item ");
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[Item::Modify Exception] ") +
                              e.what());

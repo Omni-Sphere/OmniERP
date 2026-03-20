@@ -21,9 +21,11 @@ public:
 
   ~ItemGroup();
 
-  bool Add(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
+  omnisphere::models::ItemGroup
+  Add(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
 
-  bool Modify(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
+  omnisphere::models::ItemGroup
+  Modify(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
 
   std::vector<omnisphere::models::ItemGroup> GetAll() const;
 

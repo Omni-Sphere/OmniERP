@@ -1,7 +1,6 @@
 #include "ItemGroup.hpp"
 #include "DataTable.hpp"
 #include "Database.hpp"
-#include "Models/ItemBrand.hpp"
 #include "Models/ItemGroup.hpp"
 #include "Repositories/ItemGroup.hpp"
 
@@ -19,20 +18,32 @@ ItemGroup::ItemGroup(std::shared_ptr<omnisphere::services::Database> db)
 
 ItemGroup::~ItemGroup() = default;
 
-bool ItemGroup::Add(
+omnisphere::models::ItemGroup ItemGroup::Add(
     const omnisphere::dtos::CreateItemGroup &createItemGroup) const {
   try {
-    return pimpl->itemGroupRepository->Create(createItemGroup);
+    if (pimpl->itemGroupRepository->Create(createItemGroup)) {
+      omnisphere::dtos::GetItemGroup getItemGroup;
+      getItemGroup.Code = createItemGroup.Code;
+      return Get(getItemGroup);
+    } else {
+      throw std::runtime_error("Error creating item group");
+    }
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[AddItemGroup Exception] ") +
                              e.what());
   }
 }
 
-bool ItemGroup::Modify(
+omnisphere::models::ItemGroup ItemGroup::Modify(
     const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const {
   try {
-    return pimpl->itemGroupRepository->Update(updateItemGroup);
+    if (pimpl->itemGroupRepository->Update(updateItemGroup)) {
+      omnisphere::dtos::GetItemGroup getItemGroup;
+      getItemGroup.Code = updateItemGroup.Code;
+      return Get(getItemGroup);
+    } else {
+      throw std::runtime_error("Error updating item group");
+    }
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[ModifyItemGroup Exception] ") +
                              e.what());
