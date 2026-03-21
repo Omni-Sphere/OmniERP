@@ -24,9 +24,6 @@ bool FloorRepository::Create(const omnisphere::dtos::CreateFloor &floor) const
             omnisphere::types::MakeSQLParam(floor.CreatedBy),
             omnisphere::types::MakeSQLParam(floor.CreateDate)};
 
-        std::cout << "[FloorRepository::Create] Query: " << query << std::endl;
-
-        std::cout << "[FloorRepository::Create] Parameters: " << std::to_string(GetCurrentSequence()) << " " << floor.Code << " " << floor.Name << " " << std::to_string(floor.CreatedBy) << " " << floor.CreateDate << std::endl;
         if (!database->RunPrepared(query, parameters))
             throw std::runtime_error("[RunPrepared exception]");
 
@@ -40,8 +37,7 @@ bool FloorRepository::Create(const omnisphere::dtos::CreateFloor &floor) const
     catch (const std::exception &e) 
     {
         database->RollbackTransaction();
-        throw(std::runtime_error(std::string("[CreateFloor Exception]") + " " +
-                             e.what()));
+        throw(std::runtime_error(std::string("[CreateFloor Exception]") + " " + e.what()));
   }
 }
 

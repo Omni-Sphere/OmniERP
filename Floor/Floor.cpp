@@ -51,7 +51,7 @@ std::vector<omnisphere::models::Floor> Floor::GetAll() const {
   try {
     std::vector<omnisphere::models::Floor> floors;
     omnisphere::types::DataTable data = pImpl->floorRepository->ReadAll();
-
+    
     for (int i = 0; i < data.RowsCount(); i++) {
       floors.emplace_back(data[i]["Entry"], 
                           data[i]["Code"], 
