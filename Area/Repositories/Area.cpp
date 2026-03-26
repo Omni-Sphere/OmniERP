@@ -18,7 +18,7 @@ namespace omnisphere::repositories
     bool AreaRepository::Create(const omnisphere::dtos::CreateArea &area) const {
         try 
         {
-            const std::string query = "INSERT INTO Areas (AreaEntry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            const std::string query = "INSERT INTO Areas (AreaEntry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             std::vector<omnisphere::types::SQLParam> parameters = {
                 omnisphere::types::MakeSQLParam(GetCurrentSequence()),

@@ -26,6 +26,8 @@ add_library(OmniERP SHARED
     Floor/Repositories/Floor.cpp
     Area/Area.cpp
     Area/Repositories/Area.cpp
+    Table/Table.cpp
+    Table/Repositories/Table.cpp
 )
 
 target_include_directories(OmniERP
@@ -35,6 +37,7 @@ target_include_directories(OmniERP
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ItemBrand>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Floor>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Area>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Table>
         $<INSTALL_INTERFACE:include/OmniSphere/OmniERP>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/Include
@@ -92,6 +95,7 @@ set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/ItemBrand/ItemBrand.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Floor/Floor.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Area/Area.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Table/Table.hpp
 )
 
 foreach(HDR ${PUBLIC_HEADERS})
@@ -119,6 +123,8 @@ set(
     Floor/DTOs
     Area/Models
     Area/DTOs
+    Table/Models
+    Table/DTOs
 )
 
 foreach(DIR ${HEADER_DIRS})
