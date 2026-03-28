@@ -8,5 +8,6 @@ namespace omnisphere::dtos {
         std::optional<std::string> Code;
         std::optional<std::string> Name;
         std::optional<int> AreaEntry;
+        std::optional<int> FloorEntry;
     };
 }

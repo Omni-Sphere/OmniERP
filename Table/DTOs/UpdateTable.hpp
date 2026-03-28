@@ -10,5 +10,6 @@ namespace omnisphere::dtos {
         std::optional<int> Capacity;
         std::optional<std::string> Type;
         std::optional<int> AreaEntry;
+        std::optional<int> FloorEntry;
     };
 }

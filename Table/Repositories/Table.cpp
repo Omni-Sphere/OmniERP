@@ -15,8 +15,8 @@ bool TableRepository::Create(const omnisphere::dtos::CreateTable &table) const
 {
   try 
   {
-    const std::string query = "INSERT INTO Tables (TablEntry, Code, Name, Capacity, Type, AreaEntry, "
-                              "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    const std::string query = "INSERT INTO Tables (TablEntry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, "
+                              "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     std::vector<omnisphere::types::SQLParam> parameters = 
     {
@@ -26,6 +26,7 @@ bool TableRepository::Create(const omnisphere::dtos::CreateTable &table) const
         omnisphere::types::MakeSQLParam(table.Capacity),
         omnisphere::types::MakeSQLParam(table.Type),
         omnisphere::types::MakeSQLParam(table.AreaEntry),
+        omnisphere::types::MakeSQLParam(table.FloorEntry),
         omnisphere::types::MakeSQLParam(table.CreatedBy),
         omnisphere::types::MakeSQLParam(table.CreateDate)
     };
@@ -68,6 +69,7 @@ bool TableRepository::Update(const omnisphere::dtos::UpdateTable &table) const
     addSetParam("Capacity", table.Capacity);
     addSetParam("Type", table.Type);
     addSetParam("AreaEntry", table.AreaEntry);
+    addSetParam("FloorEntry", table.FloorEntry);
 
     setClauses.push_back("LastUpdatedBy = ?");
     parameters.push_back(omnisphere::types::MakeSQLParam(table.LastUpdatedBy));
@@ -103,7 +105,7 @@ omnisphere::types::DataTable TableRepository::ReadAll() const
 {
   try 
   {
-    const std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables";
+    const std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables";
     return database->FetchResults(query);
   } 
   catch (const std::exception &e) 
@@ -116,7 +118,7 @@ omnisphere::types::DataTable TableRepository::Read(const omnisphere::dtos::GetTa
 {
   try 
   {
-    std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE ";
+    std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE ";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     auto extractFilter = [&](const char *field, const auto &value) 
@@ -132,8 +134,9 @@ omnisphere::types::DataTable TableRepository::Read(const omnisphere::dtos::GetTa
 
     if (!(extractFilter("TablEntry", getTable.Entry) ||
           extractFilter("Code", getTable.Code) ||
-          extractFilter("AreaEntry", getTable.AreaEntry))) {
-      throw std::runtime_error("GetTable: 'Entry', 'Code' or 'AreaEntry' is required for Read");
+          extractFilter("AreaEntry", getTable.AreaEntry) ||
+          extractFilter("FloorEntry", getTable.FloorEntry))) {
+      throw std::runtime_error("GetTable: 'Entry', 'Code', 'AreaEntry' or 'FloorEntry' is required for Read");
     }
 
     return database->FetchPrepared(query, parameters);

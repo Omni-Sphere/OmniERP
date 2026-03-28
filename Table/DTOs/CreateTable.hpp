@@ -8,5 +8,6 @@ namespace omnisphere::dtos {
         int Capacity;
         std::string Type;
         int AreaEntry;
+        int FloorEntry;
     };
 }
