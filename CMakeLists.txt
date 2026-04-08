@@ -28,6 +28,10 @@ add_library(OmniERP SHARED
     Area/Repositories/Area.cpp
     Table/Table.cpp
     Table/Repositories/Table.cpp
+    BusinessConfig/BusinessConfig.cpp
+    BusinessConfig/Repositories/BusinessConfig.cpp
+    StoreConfig/StoreConfig.cpp
+    StoreConfig/Repositories/StoreConfig.cpp
 )
 
 target_include_directories(OmniERP
@@ -38,6 +42,8 @@ target_include_directories(OmniERP
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Floor>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Area>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Table>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/BusinessConfig>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/StoreConfig>
         $<INSTALL_INTERFACE:include/OmniSphere/OmniERP>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/Include
@@ -96,6 +102,8 @@ set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Floor/Floor.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Area/Area.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Table/Table.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BusinessConfig/BusinessConfig.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/StoreConfig/StoreConfig.hpp
 )
 
 foreach(HDR ${PUBLIC_HEADERS})
@@ -125,6 +133,10 @@ set(
     Area/DTOs
     Table/Models
     Table/DTOs
+    BusinessConfig/Models
+    BusinessConfig/DTOs
+    StoreConfig/Models
+    StoreConfig/DTOs
 )
 
 foreach(DIR ${HEADER_DIRS})
