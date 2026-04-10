@@ -15,7 +15,7 @@ bool FloorRepository::Create(const omnisphere::dtos::CreateFloor &floor) const
 {
     try 
     {
-        const std::string query = "INSERT INTO Floors (FloorEntry, Code, Name, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?)";
+        const std::string query = "INSERT INTO Floors (FloorEntry, Code, Name, CreatedBy, CreateDate, IsActive) VALUES (?, ?, ?, ?, ?, 'Y')";
 
         std::vector<omnisphere::types::SQLParam> parameters = {
             omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -69,7 +69,7 @@ omnisphere::types::DataTable FloorRepository::ReadAll() const {
   try {
     const std::string query =
         "SELECT FloorEntry Entry, Code, Name, CreatedBy, CreateDate, LastUpdatedBy, "
-        "UpdateDate FROM Floors";
+        "UpdateDate FROM Floors WHERE IsActive = 'Y'";
 
     omnisphere::types::DataTable dataTable = database->FetchResults(query);
 
@@ -96,6 +96,8 @@ FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor) const {
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Code.value()));
     }
+
+    query += " AND IsActive = 'Y'";
 
     omnisphere::types::DataTable dataTable =
         database->FetchPrepared(query, parameters);
@@ -134,6 +136,25 @@ bool FloorRepository::UpdateFloorSequence() const {
   } catch (const std::exception &e) {
     throw(std::runtime_error(std::string("[UpdateFloorSequence Exception]") +
                              " " + e.what()));
+  }
+}
+
+bool FloorRepository::Delete(int entry) const {
+  try {
+    const std::string query = "UPDATE Floors SET IsActive = 'N' WHERE FloorEntry = ?";
+    std::vector<omnisphere::types::SQLParam> parameters = {
+        omnisphere::types::MakeSQLParam(entry)};
+
+    if (!database->RunPrepared(query, parameters))
+      throw std::runtime_error("[RunPrepared exception]");
+
+    database->CommitTransaction();
+
+    return true;
+  } catch (const std::exception &e) {
+    database->RollbackTransaction();
+    throw(std::runtime_error(std::string("[Delete Exception]") + " " +
+                             e.what()));
   }
 }
 } // namespace omnisphere::repositories

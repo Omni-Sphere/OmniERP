@@ -16,7 +16,7 @@ bool TableRepository::Create(const omnisphere::dtos::CreateTable &table) const
   try 
   {
     const std::string query = "INSERT INTO Tables (TablEntry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, "
-                              "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                              "CreatedBy, CreateDate, IsActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Y')";
 
     std::vector<omnisphere::types::SQLParam> parameters = 
     {
@@ -105,7 +105,7 @@ omnisphere::types::DataTable TableRepository::ReadAll() const
 {
   try 
   {
-    const std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables";
+    const std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE IsActive = 'Y'";
     return database->FetchResults(query);
   } 
   catch (const std::exception &e) 
@@ -138,6 +138,8 @@ omnisphere::types::DataTable TableRepository::Read(const omnisphere::dtos::GetTa
           extractFilter("FloorEntry", getTable.FloorEntry))) {
       throw std::runtime_error("GetTable: 'Entry', 'Code', 'AreaEntry' or 'FloorEntry' is required for Read");
     }
+
+    query += " AND IsActive = 'Y'";
 
     return database->FetchPrepared(query, parameters);
   } catch (const std::exception &e) {
@@ -172,6 +174,27 @@ bool TableRepository::UpdateTableSequence() const
     return true;
   } catch (const std::exception &e) {
     throw(std::runtime_error(std::string("[UpdateTableSequence Exception]") + " " + e.what()));
+  }
+}
+
+bool TableRepository::Delete(int entry) const 
+{
+  try 
+  {
+    const std::string query = "UPDATE Tables SET IsActive = 'N' WHERE TablEntry = ?";
+    std::vector<omnisphere::types::SQLParam> parameters = {
+        omnisphere::types::MakeSQLParam(entry)
+    };
+
+    if (!database->RunPrepared(query, parameters))
+      throw std::runtime_error("[RunPrepared exception]");
+
+    database->CommitTransaction();
+
+    return true;
+  } catch (const std::exception &e) {
+    database->RollbackTransaction();
+    throw(std::runtime_error(std::string("[Delete Exception]") + " " + e.what()));
   }
 }
 } // namespace omnisphere::repositories

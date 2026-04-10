@@ -21,5 +21,6 @@ public:
   omnisphere::models::Floor Modify(const omnisphere::dtos::UpdateFloor &floor) const;
   std::vector<omnisphere::models::Floor> GetAll() const;
   omnisphere::models::Floor Get(const omnisphere::dtos::GetFloor &getFloor) const;
+  bool Remove(int entry) const;
 };
 } // namespace omnisphere::floor

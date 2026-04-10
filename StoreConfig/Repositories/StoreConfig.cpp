@@ -56,7 +56,7 @@ namespace omnisphere::repositories
     {
         try 
         {
-            std::string sQuery = "INSERT INTO StoresConfig (Entry, Code, Name, Address) VALUES (?, ?, ?, ?)";
+            const std::string query = "INSERT INTO StoresConfig (Entry, Code, Name, Address, IsActive) VALUES (?, ?, ?, ?, 'Y')";
             std::vector<omnisphere::types::SQLParam> params = {
                 omnisphere::types::MakeSQLParam(GetCurrentSequence()),
                 omnisphere::types::MakeSQLParam(_storeConfig.Code),
@@ -64,7 +64,7 @@ namespace omnisphere::repositories
                 omnisphere::types::MakeSQLParam(_storeConfig.Address)
             };
 
-            if (!Database->RunPrepared(sQuery, params))
+            if (!Database->RunPrepared(query, params))
                 throw std::runtime_error("[RunPrepared exception]");
 
             if (!UpdateStoreSequence())
@@ -134,17 +134,13 @@ namespace omnisphere::repositories
 
             if (_storeConfig.Code.has_value())
             {
-                sQuery += " AND Code = ?";
-                params.push_back(omnisphere::types::MakeSQLParam(_storeConfig.Code.value()));
+                query += " AND Code = ?";
+                parameters.push_back(omnisphere::types::MakeSQLParam(_storeConfig.Code.value()));
             }
 
-            if (_storeConfig.Name.has_value())
-            {
-                sQuery += " AND Name = ?";
-                params.push_back(omnisphere::types::MakeSQLParam(_storeConfig.Name.value()));
-            }
+            query += " AND IsActive = 'Y'";
 
-            return Database->FetchPrepared(sQuery, params);
+            return Database->FetchPrepared(query, parameters);
         } 
         catch (const std::exception &e) 
         {
@@ -171,6 +167,8 @@ namespace omnisphere::repositories
                 params.push_back(omnisphere::types::MakeSQLParam("%" + _storeConfig.Name.value() + "%"));
             }
 
+            sQuery += " AND IsActive = 'Y'";
+
             return Database->FetchPrepared(sQuery, params);
         } 
         catch (const std::exception &e) 
@@ -183,7 +181,8 @@ namespace omnisphere::repositories
     {
         try 
         {
-            return Database->FetchResults("SELECT * FROM StoresConfig");
+            const std::string query = "SELECT Entry, Code, Name, Address FROM StoresConfig WHERE IsActive = 'Y'";
+            return Database->FetchResults(query);
         } 
         catch (const std::exception &e) 
         {

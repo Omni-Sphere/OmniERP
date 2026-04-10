@@ -22,5 +22,6 @@ public:
   std::vector<omnisphere::models::Area> GetAll() const;
   omnisphere::models::Area Get(const omnisphere::dtos::GetArea &getArea) const;
   std::vector<omnisphere::models::Area> Search(const omnisphere::dtos::GetArea &getArea) const;
+  bool Remove(int entry) const;
 };
 } // namespace omnisphere::area

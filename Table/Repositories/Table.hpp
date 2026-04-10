@@ -22,5 +22,6 @@ public:
   bool Update(const omnisphere::dtos::UpdateTable &table) const;
   omnisphere::types::DataTable ReadAll() const;
   omnisphere::types::DataTable Read(const omnisphere::dtos::GetTable &getTable) const;
+  bool Delete(int entry) const;
 };
 };

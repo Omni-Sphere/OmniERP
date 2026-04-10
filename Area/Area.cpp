@@ -1,6 +1,7 @@
 #include "Area.hpp"
 #include "DataTable.hpp"
 #include "Repositories/Area.hpp"
+#include "Repositories/Table.hpp"
 #include <stdexcept>
 #include <string>
 
@@ -11,9 +12,13 @@ Area::~Area() = default;
 
 struct Area::Impl {
   std::shared_ptr<omnisphere::repositories::AreaRepository> areaRepository;
+  std::shared_ptr<omnisphere::repositories::TableRepository> tableRepository;
   explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
       : areaRepository(
             std::make_shared<omnisphere::repositories::AreaRepository>(
+                database)),
+        tableRepository(
+            std::make_shared<omnisphere::repositories::TableRepository>(
                 database)) {}
 };
 
@@ -122,6 +127,23 @@ std::vector<omnisphere::models::Area> Area::Search(const omnisphere::dtos::GetAr
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[SearchAreas Exception] ") +
                              e.what());
+  }
+}
+
+bool Area::Remove(int entry) const {
+  try {
+    // Check for associated tables
+    omnisphere::dtos::GetTable getTable;
+    getTable.AreaEntry = entry;
+    
+    omnisphere::types::DataTable tables = pImpl->tableRepository->Read(getTable);
+    if (tables.RowsCount() > 0) {
+      throw std::runtime_error("Cannot delete Area because it has associated Tables");
+    }
+
+    return pImpl->areaRepository->Delete(entry);
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[RemoveArea Exception] ") + e.what());
   }
 }
 } // namespace omnisphere::area

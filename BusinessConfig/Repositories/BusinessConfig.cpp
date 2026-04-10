@@ -99,6 +99,18 @@ namespace omnisphere::repositories
 
             sQuery += ")";
 
+            // Add IsActive logic for "all tables" rule
+            if (sQuery.find("IsActive") == std::string::npos) {
+                size_t insertCloseParen = sQuery.find(")");
+                if (insertCloseParen != std::string::npos) {
+                    sQuery.insert(insertCloseParen, ", IsActive");
+                }
+                size_t valuesCloseParen = sQuery.find(")", insertCloseParen + 1);
+                if (valuesCloseParen != std::string::npos) {
+                  sQuery.insert(valuesCloseParen, ", 'Y'");
+                }
+            }
+
             if (!Database->RunPrepared(sQuery, params))
                 throw std::runtime_error("[RunPrepared exception]");
 
@@ -169,7 +181,7 @@ namespace omnisphere::repositories
     {
         try 
         {
-            std::string sQuery = "SELECT * FROM BusinessConfig WHERE 1 = 1";
+            std::string sQuery = "SELECT * FROM BusinessConfig WHERE 1 = 1 AND IsActive = 'Y'";
             std::vector<omnisphere::types::SQLParam> params;
 
             if (getBusinessConfig.Entry > 0)

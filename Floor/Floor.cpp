@@ -1,6 +1,7 @@
 #include "Floor.hpp"
 #include "DataTable.hpp"
 #include "Repositories/Floor.hpp"
+#include "Repositories/Area.hpp"
 #include <stdexcept>
 #include <string>
 
@@ -11,9 +12,13 @@ Floor::~Floor() = default;
 
 struct Floor::Impl {
   std::shared_ptr<omnisphere::repositories::FloorRepository> floorRepository;
+  std::shared_ptr<omnisphere::repositories::AreaRepository> areaRepository;
   explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
       : floorRepository(
             std::make_shared<omnisphere::repositories::FloorRepository>(
+                database)),
+        areaRepository(
+            std::make_shared<omnisphere::repositories::AreaRepository>(
                 database)) {}
 };
 
@@ -85,10 +90,25 @@ Floor::Get(const omnisphere::dtos::GetFloor &getFloor) const
                                     data[0]["CreateDate"],
                                     data[0]["LastUpdatedBy"].GetOptional<int>(), 
                                     data[0]["UpdateDate"].GetOptional<std::string>());
-  } 
-  catch (const std::exception &e) 
-  {
+  } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[GetFloor Exception] ") + e.what());
+  }
+}
+
+bool Floor::Remove(int entry) const {
+  try {
+    // Check for associated areas
+    omnisphere::dtos::GetArea getArea;
+    getArea.FloorEntry = entry;
+    
+    omnisphere::types::DataTable areas = pImpl->areaRepository->Read(getArea);
+    if (areas.RowsCount() > 0) {
+      throw std::runtime_error("Cannot delete Floor because it has associated Areas");
+    }
+
+    return pImpl->floorRepository->Delete(entry);
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[RemoveFloor Exception] ") + e.what());
   }
 }
 } // namespace omnisphere::floor

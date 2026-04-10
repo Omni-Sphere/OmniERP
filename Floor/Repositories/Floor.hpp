@@ -20,5 +20,6 @@ namespace omnisphere::repositories {
         bool Update(const omnisphere::dtos::UpdateFloor &floor) const;
         omnisphere::types::DataTable ReadAll() const;
         omnisphere::types::DataTable Read(const omnisphere::dtos::GetFloor &getFloor) const;
+        bool Delete(int entry) const;
     };
 };

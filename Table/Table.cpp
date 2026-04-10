@@ -123,4 +123,12 @@ std::vector<omnisphere::models::Table> Table::Search(const omnisphere::dtos::Get
                              e.what());
   }
 }
+
+bool Table::Remove(int entry) const {
+  try {
+    return pImpl->tableRepository->Delete(entry);
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[RemoveTable Exception] ") + e.what());
+  }
+}
 } // namespace omnisphere::table

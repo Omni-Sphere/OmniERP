@@ -22,5 +22,6 @@ public:
   std::vector<omnisphere::models::Table> GetAll() const;
   omnisphere::models::Table Get(const omnisphere::dtos::GetTable &getTable) const;
   std::vector<omnisphere::models::Table> Search(const omnisphere::dtos::GetTable &getTable) const;
+  bool Remove(int entry) const;
 };
 } // namespace omnisphere::table

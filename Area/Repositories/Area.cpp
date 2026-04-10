@@ -18,7 +18,7 @@ namespace omnisphere::repositories
     bool AreaRepository::Create(const omnisphere::dtos::CreateArea &area) const {
         try 
         {
-            const std::string query = "INSERT INTO Areas (AreaEntry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            const std::string query = "INSERT INTO Areas (AreaEntry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate, IsActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Y')";
 
             std::vector<omnisphere::types::SQLParam> parameters = {
                 omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -113,7 +113,7 @@ namespace omnisphere::repositories
     omnisphere::types::DataTable AreaRepository::ReadAll() const {
         try 
         {
-            const std::string query = "SELECT AreaEntry Entry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Areas";
+            const std::string query = "SELECT AreaEntry Entry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Areas WHERE IsActive = 'Y'";
 
             omnisphere::types::DataTable dataTable = database->FetchResults(query);
 
@@ -143,6 +143,8 @@ namespace omnisphere::repositories
             } else {
                 throw std::runtime_error("GetArea: 'Entry', 'Code' or 'FloorEntry' is required for Read");
             }
+
+            query += " AND IsActive = 'Y'";
 
             return database->FetchPrepared(query, parameters);
         } 
@@ -180,6 +182,28 @@ namespace omnisphere::repositories
         catch (const std::exception &e) 
         {
             throw(std::runtime_error(std::string("[UpdateAreaSequence Exception]") + " " + e.what()));
+        }
+    }
+
+    bool AreaRepository::Delete(int entry) const {
+        try 
+        {
+            const std::string query = "UPDATE Areas SET IsActive = 'N' WHERE AreaEntry = ?";
+            std::vector<omnisphere::types::SQLParam> parameters = {
+                omnisphere::types::MakeSQLParam(entry)
+            };
+
+            if (!database->RunPrepared(query, parameters))
+                throw std::runtime_error("[RunPrepared exception]");
+
+            database->CommitTransaction();
+
+            return true;
+        } 
+        catch (const std::exception &e) 
+        {
+            database->RollbackTransaction();
+            throw(std::runtime_error(std::string("[Delete Exception]") + " " + e.what()));
         }
     }
 }
