@@ -181,7 +181,7 @@ namespace omnisphere::repositories
     {
         try 
         {
-            std::string sQuery = "SELECT * FROM BusinessConfig WHERE 1 = 1 AND IsActive = 'Y'";
+            std::string sQuery = "SELECT * FROM BusinessConfig WHERE IsActive = 'Y'";
             std::vector<omnisphere::types::SQLParam> params;
 
             if (getBusinessConfig.Entry > 0)

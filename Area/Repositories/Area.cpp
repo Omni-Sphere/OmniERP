@@ -128,23 +128,21 @@ namespace omnisphere::repositories
     omnisphere::types::DataTable AreaRepository::Read(const omnisphere::dtos::GetArea &getArea) const {
         try 
         {
-            std::string query = "SELECT AreaEntry Entry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Areas WHERE ";
+            std::string query = "SELECT AreaEntry Entry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Areas WHERE IsActive = 'Y'";
             std::vector<omnisphere::types::SQLParam> parameters;
 
             if (getArea.Entry.has_value()) {
-                query += "AreaEntry = ?";
+                query += " AND AreaEntry = ?";
                 parameters.push_back(omnisphere::types::MakeSQLParam(getArea.Entry.value()));
             } else if (getArea.Code.has_value()) {
-                query += "Code = ?";
+                query += " AND Code = ?";
                 parameters.push_back(omnisphere::types::MakeSQLParam(getArea.Code.value()));
             } else if (getArea.FloorEntry.has_value()) {
-                query += "FloorEntry = ?";
+                query += " AND FloorEntry = ?";
                 parameters.push_back(omnisphere::types::MakeSQLParam(getArea.FloorEntry.value()));
             } else {
                 throw std::runtime_error("GetArea: 'Entry', 'Code' or 'FloorEntry' is required for Read");
             }
-
-            query += " AND IsActive = 'Y'";
 
             return database->FetchPrepared(query, parameters);
         } 

@@ -84,20 +84,18 @@ omnisphere::types::DataTable
 FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor) const {
   try {
     std::string query = "SELECT FloorEntry Entry, Code, Name, CreatedBy, CreateDate, "
-                        "LastUpdatedBy, UpdateDate FROM Floors WHERE ";
+                        "LastUpdatedBy, UpdateDate FROM Floors WHERE IsActive = 'Y'";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getFloor.Entry.has_value()) {
-      query += "Entry = ?";
+      query += " AND Entry = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Entry.value()));
     } else if (getFloor.Code.has_value()) {
-      query += "Code = ?";
+      query += " AND Code = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Code.value()));
     }
-
-    query += " AND IsActive = 'Y'";
 
     omnisphere::types::DataTable dataTable =
         database->FetchPrepared(query, parameters);

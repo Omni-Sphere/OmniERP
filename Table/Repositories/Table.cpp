@@ -118,14 +118,14 @@ omnisphere::types::DataTable TableRepository::Read(const omnisphere::dtos::GetTa
 {
   try 
   {
-    std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE ";
+    std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE IsActive = 'Y'";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     auto extractFilter = [&](const char *field, const auto &value) 
     {
       if (value.has_value()) 
       {
-        query += std::string(field) + " = ?";
+        query += " AND " + std::string(field) + " = ?";
         parameters.push_back(omnisphere::types::MakeSQLParam(value.value()));
         return true;
       }
@@ -138,8 +138,6 @@ omnisphere::types::DataTable TableRepository::Read(const omnisphere::dtos::GetTa
           extractFilter("FloorEntry", getTable.FloorEntry))) {
       throw std::runtime_error("GetTable: 'Entry', 'Code', 'AreaEntry' or 'FloorEntry' is required for Read");
     }
-
-    query += " AND IsActive = 'Y'";
 
     return database->FetchPrepared(query, parameters);
   } catch (const std::exception &e) {

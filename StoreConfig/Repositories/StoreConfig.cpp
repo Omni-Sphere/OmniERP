@@ -123,7 +123,7 @@ namespace omnisphere::repositories
     {
         try 
         {
-            std::string sQuery = "SELECT * FROM StoresConfig WHERE 1 = 1";
+            std::string sQuery = "SELECT * FROM StoresConfig WHERE IsActive = 'Y'";
             std::vector<omnisphere::types::SQLParam> params;
 
             if (_storeConfig.Entry.has_value())
@@ -134,13 +134,11 @@ namespace omnisphere::repositories
 
             if (_storeConfig.Code.has_value())
             {
-                query += " AND Code = ?";
-                parameters.push_back(omnisphere::types::MakeSQLParam(_storeConfig.Code.value()));
+                sQuery += " AND Code = ?";
+                params.push_back(omnisphere::types::MakeSQLParam(_storeConfig.Code.value()));
             }
 
-            query += " AND IsActive = 'Y'";
-
-            return Database->FetchPrepared(query, parameters);
+            return Database->FetchPrepared(sQuery, params);
         } 
         catch (const std::exception &e) 
         {
@@ -152,7 +150,7 @@ namespace omnisphere::repositories
     {
         try 
         {
-            std::string sQuery = "SELECT * FROM StoresConfig WHERE 1 = 1";
+            std::string sQuery = "SELECT * FROM StoresConfig WHERE IsActive = 'Y'";
             std::vector<omnisphere::types::SQLParam> params;
 
             if (_storeConfig.Code.has_value())
@@ -166,8 +164,6 @@ namespace omnisphere::repositories
                 sQuery += " AND Name LIKE ?";
                 params.push_back(omnisphere::types::MakeSQLParam("%" + _storeConfig.Name.value() + "%"));
             }
-
-            sQuery += " AND IsActive = 'Y'";
 
             return Database->FetchPrepared(sQuery, params);
         } 
