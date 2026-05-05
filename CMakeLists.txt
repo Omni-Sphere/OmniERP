@@ -153,26 +153,3 @@ foreach(DIR ${HEADER_DIRS})
     endforeach()
 endforeach()
 
-if(UNIX AND NOT APPLE)
-    
-    foreach(HDR ${PUBLIC_HEADERS})
-        file(RELATIVE_PATH REL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${HDR}")
-        get_filename_component(HDR_DIR "${REL_PATH}" DIRECTORY)
-        
-        if(HDR_DIR)
-    endforeach()
-    
-    foreach(DIR ${HEADER_DIRS})
-        file(GLOB_RECURSE HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/${DIR}/*.hpp")
-        foreach(HDR ${HEADERS})
-            file(RELATIVE_PATH REL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${HDR}")
-            get_filename_component(HDR_DIR "${REL_PATH}" DIRECTORY)
-            
-            if(HDR_DIR)
-        endforeach()
-    endforeach()
-    
-        execute_process(COMMAND ldconfig)
-        message(STATUS \"Configured ldconfig for OmniSphere libraries\")
-    ")
-endif()
