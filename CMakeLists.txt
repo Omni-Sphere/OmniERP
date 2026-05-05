@@ -154,21 +154,12 @@ foreach(DIR ${HEADER_DIRS})
 endforeach()
 
 if(UNIX AND NOT APPLE)
-    install(TARGETS OmniERP
-        LIBRARY DESTINATION lib/OmniSphere
-        ARCHIVE DESTINATION lib/OmniSphere
-        RUNTIME DESTINATION bin
-    )
     
     foreach(HDR ${PUBLIC_HEADERS})
         file(RELATIVE_PATH REL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${HDR}")
         get_filename_component(HDR_DIR "${REL_PATH}" DIRECTORY)
         
         if(HDR_DIR)
-            install(FILES "${HDR}" DESTINATION "include/OmniSphere/OmniERP/${HDR_DIR}")
-        else()
-            install(FILES "${HDR}" DESTINATION "include/OmniSphere/OmniERP")
-        endif()
     endforeach()
     
     foreach(DIR ${HEADER_DIRS})
@@ -178,15 +169,9 @@ if(UNIX AND NOT APPLE)
             get_filename_component(HDR_DIR "${REL_PATH}" DIRECTORY)
             
             if(HDR_DIR)
-                install(FILES "${HDR}" DESTINATION "include/OmniSphere/OmniERP/${HDR_DIR}")
-            else()
-                install(FILES "${HDR}" DESTINATION "include/OmniSphere/OmniERP")
-            endif()
         endforeach()
     endforeach()
     
-    install(CODE "
-        file(WRITE \"/etc/ld.so.conf.d/omnisphere.conf\" \"/usr/local/lib/OmniSphere\\n\")
         execute_process(COMMAND ldconfig)
         message(STATUS \"Configured ldconfig for OmniSphere libraries\")
     ")
