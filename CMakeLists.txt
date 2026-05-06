@@ -5,8 +5,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set(INCLUDE_DIR "${CMAKE_BINARY_DIR}/OmniERP/Include")
-set(LIBS_DIR "${CMAKE_BINARY_DIR}/OmniERP")
+if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/OmniCafeDesktop/OmniERP/Include")
+    set(LIBS_DIR "${CMAKE_SOURCE_DIR}/OmniCafeDesktop/OmniERP")
+else()
+    set(INCLUDE_DIR "${CMAKE_BINARY_DIR}/OmniERP/Include")
+    set(LIBS_DIR "${CMAKE_BINARY_DIR}/OmniERP")
+endif()
 
 if(WIN32)
     set(ARCHIVE_DIR "${CMAKE_BINARY_DIR}/OmniERP/Libs")
@@ -32,55 +37,37 @@ add_library(OmniERP SHARED
     BusinessConfig/Repositories/BusinessConfig.cpp
     StoreConfig/StoreConfig.cpp
     StoreConfig/Repositories/StoreConfig.cpp
+    Department/Department.cpp
+    Department/Repositories/Department.cpp
+    Employee/Employee.cpp
+    Employee/Repositories/Employee.cpp
+    Module/Module.cpp
+    Module/Repositories/Module.cpp
+    Permission/Permission.cpp
+    Permission/Repositories/Permission.cpp
+    Role/Role.cpp
+    Role/Repositories/Role.cpp
+    UserModule/UserModule.cpp
+    UserModule/Repositories/UserModule.cpp
+    RoleModule/RoleModule.cpp
+    RoleModule/Repositories/RoleModule.cpp
+    UserPermission/UserPermission.cpp
+    UserPermission/Repositories/UserPermission.cpp
+    RolePermission/RolePermission.cpp
+    RolePermission/Repositories/RolePermission.cpp
 )
 
 target_include_directories(OmniERP
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Item>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ItemGroup>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ItemBrand>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Floor>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Area>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Table>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/BusinessConfig>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/StoreConfig>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:include/OmniSphere/OmniERP>
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/Include
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/Include
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/Include
+        ${CMAKE_BINARY_DIR}/OmniCore/Include
+        ${CMAKE_SOURCE_DIR}/OmniUtils
+        ${CMAKE_SOURCE_DIR}/OmniData
 )
 
-if(WIN32)
-    target_link_libraries(OmniERP PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/Libs/libOmniUtils.dll.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/Libs/libOmniData.dll.a
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/Libs/libOmniCore.dll.a
-    )
-
-    add_custom_command(TARGET OmniERP POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${ARCHIVE_DIR}"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${INCLUDE_DIR}"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:OmniERP>" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.dll" "${CORE_RUNTIME_DIR}/"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.dll" "${CORE_RUNTIME_DIR}/"
-        COMMENT "Copying OmniLibs DLLs to OmniCore root..."
-    )
-
-elseif(APPLE)
-    target_link_libraries(OmniERP PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.dylib
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.dylib
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.dylib
-    )
-else()
-    target_link_libraries(OmniERP PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniUtils/libOmniUtils.so
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniData/libOmniData.so
-        ${CMAKE_CURRENT_SOURCE_DIR}/OmniCore/libOmniCore.so
-    )
-endif()
+target_link_libraries(OmniERP PUBLIC OmniUtils OmniData OmniCore)
 
 if(WIN32)
     set_target_properties(OmniERP PROPERTIES
@@ -104,6 +91,15 @@ set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Table/Table.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BusinessConfig/BusinessConfig.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/StoreConfig/StoreConfig.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Department/Department.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Employee/Employee.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Module/Module.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Permission/Permission.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Role/Role.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/UserModule/UserModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RoleModule/RoleModule.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/UserPermission/UserPermission.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RolePermission/RolePermission.hpp
 )
 
 foreach(HDR ${PUBLIC_HEADERS})
@@ -137,6 +133,24 @@ set(
     BusinessConfig/DTOs
     StoreConfig/Models
     StoreConfig/DTOs
+    Department/Models
+    Department/DTOs
+    Employee/Models
+    Employee/DTOs
+    Module/Models
+    Module/DTOs
+    Permission/Models
+    Permission/DTOs
+    Role/Models
+    Role/DTOs
+    UserModule/Models
+    UserModule/DTOs
+    RoleModule/Models
+    RoleModule/DTOs
+    UserPermission/Models
+    UserPermission/DTOs
+    RolePermission/Models
+    RolePermission/DTOs
 )
 
 foreach(DIR ${HEADER_DIRS})

@@ -1,4 +1,9 @@
-#include "ItemBrand.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <ItemBrand/Repositories/ItemBrand.hpp>
 
 namespace omnisphere::repositories {
 ItemBrand::ItemBrand(std::shared_ptr<omnisphere::services::Database> _database)

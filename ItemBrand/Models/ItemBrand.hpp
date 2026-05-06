@@ -1,5 +1,8 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 
+#include <optional>
 #include <string>
 
 namespace omnisphere::models {

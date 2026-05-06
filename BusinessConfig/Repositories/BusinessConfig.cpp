@@ -1,5 +1,10 @@
-#include "BusinessConfig.hpp"
-#include "SQLParams.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <BusinessConfig/Repositories/BusinessConfig.hpp>
+#include <SQLParams.hpp>
 
 namespace omnisphere::repositories 
 {

@@ -1,4 +1,9 @@
-#include "Item.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <Item/Repositories/Item.hpp>
 
 namespace omnisphere::repositories {
 Item::Item(std::shared_ptr<omnisphere::services::Database> database)

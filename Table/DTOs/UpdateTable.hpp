@@ -1,5 +1,7 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
-#include "Base/BaseUpdateDTO.hpp"
+#include <Base/BaseUpdateDTO.hpp>
 #include <optional>
 #include <string>
 

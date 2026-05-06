@@ -1,4 +1,9 @@
-#include "ItemGroup.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <ItemGroup/Repositories/ItemGroup.hpp>
 
 namespace omnisphere::repositories {
 ItemGroup::ItemGroup(std::shared_ptr<omnisphere::services::Database> Database)

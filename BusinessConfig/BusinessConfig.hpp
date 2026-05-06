@@ -1,13 +1,16 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 
 #include <memory>
+#include <Database.hpp>
 #include <vector>
 
-#include "Database.hpp"
-#include "DTOs/CreateBusinessConfig.hpp"
-#include "DTOs/GetBusinessConfig.hpp"
-#include "DTOs/UpdateBusinessConfig.hpp"
-#include "Models/BusinessConfig.hpp"
+#include <Database.hpp>
+#include <BusinessConfig/DTOs/CreateBusinessConfig.hpp>
+#include <BusinessConfig/DTOs/GetBusinessConfig.hpp>
+#include <BusinessConfig/DTOs/UpdateBusinessConfig.hpp>
+#include <BusinessConfig/Models/BusinessConfig.hpp>
 
 namespace omnisphere::services {
 

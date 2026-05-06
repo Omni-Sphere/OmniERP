@@ -1,13 +1,15 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 
 #include <memory>
+#include <Database.hpp>
 #include <vector>
 
-#include "DTOs/CreateItemGroup.hpp"
-#include "DTOs/GetItemGroup.hpp"
-#include "DTOs/UpdateItemGroup.hpp"
-#include "Database.hpp"
-#include "Models/ItemGroup.hpp"
+#include <ItemGroup/DTOs/CreateItemGroup.hpp>
+#include <ItemGroup/DTOs/GetItemGroup.hpp>
+#include <ItemGroup/DTOs/UpdateItemGroup.hpp>
+#include <ItemGroup/Models/ItemGroup.hpp>
 
 namespace omnisphere::services {
 

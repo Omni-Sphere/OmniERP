@@ -1,5 +1,10 @@
-#include "StoreConfig.hpp"
-#include "SQLParams.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <StoreConfig/Repositories/StoreConfig.hpp>
+#include <SQLParams.hpp>
 
 namespace omnisphere::repositories 
 {

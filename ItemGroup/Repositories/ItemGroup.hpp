@@ -1,9 +1,12 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
+#include <DataTable.hpp>
 
-#include "DTOs/CreateItemGroup.hpp"
-#include "DTOs/GetItemGroup.hpp"
-#include "DTOs/UpdateItemGroup.hpp"
-#include "Database.hpp"
+#include <ItemGroup/DTOs/CreateItemGroup.hpp>
+#include <ItemGroup/DTOs/GetItemGroup.hpp>
+#include <ItemGroup/DTOs/UpdateItemGroup.hpp>
+#include <Database.hpp>
 
 #include <stdexcept>
 #include <string>

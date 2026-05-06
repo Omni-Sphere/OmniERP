@@ -1,13 +1,16 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
+#pragma message("INCLUDING ITEMBRAND.HPP FROM SOURCE")
 
 #include <memory>
+#include <Database.hpp>
 #include <vector>
 
-#include "DTOs/CreateItemBrand.hpp"
-#include "DTOs/GetItemBrand.hpp"
-#include "DTOs/UpdateItemBrand.hpp"
-#include "Database.hpp"
-#include "Models/ItemBrand.hpp"
+#include <ItemBrand/DTOs/CreateItemBrand.hpp>
+#include <ItemBrand/DTOs/GetItemBrand.hpp>
+#include <ItemBrand/DTOs/UpdateItemBrand.hpp>
+#include <ItemBrand/Models/ItemBrand.hpp>
 
 namespace omnisphere::services {
 

@@ -1,12 +1,14 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 #include <vector>
 
-#include "DTOs/CreateFloor.hpp"
-#include "DTOs/GetFloor.hpp"
-#include "DTOs/UpdateFloor.hpp"
-#include "Models/Floor.hpp"
+#include <Floor/DTOs/CreateFloor.hpp>
+#include <Floor/DTOs/GetFloor.hpp>
+#include <Floor/DTOs/UpdateFloor.hpp>
+#include <Floor/Models/Floor.hpp>
 
-#include "Database.hpp"
+#include <Database.hpp>
 
 namespace omnisphere::floor {
 class Floor {

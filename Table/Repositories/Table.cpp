@@ -1,7 +1,11 @@
-#include "Repositories/Table.hpp"
-#include "DataTable.hpp"
-#include "Database.hpp"
-#include "SQLParams.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <Table/Repositories/Table.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <SQLParams.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>

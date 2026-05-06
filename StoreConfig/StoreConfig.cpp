@@ -1,6 +1,10 @@
-#include "StoreConfig.hpp"
-#include "Repositories/StoreConfig.hpp"
-#include "DataTable.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <StoreConfig/StoreConfig.hpp>
+#include <StoreConfig/Repositories/StoreConfig.hpp>
+#include <DataTable.hpp>
 
 namespace omnisphere::services {
 

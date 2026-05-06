@@ -1,6 +1,10 @@
-#include "Table.hpp"
-#include "DataTable.hpp"
-#include "Repositories/Table.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <Table/Table.hpp>
+#include <Table/Repositories/Table.hpp>
 #include <stdexcept>
 #include <string>
 

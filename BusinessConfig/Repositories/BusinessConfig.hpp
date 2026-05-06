@@ -1,14 +1,17 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once 
 
 #include <memory>
+#include <Database.hpp>
 #include <optional>
 #include <string>
 
-#include "Database.hpp"
-#include "DTOs/CreateBusinessConfig.hpp"
-#include "DTOs/UpdateBusinessConfig.hpp"
-#include "DTOs/GetBusinessConfig.hpp"
-#include "DataTable.hpp"
+#include <Database.hpp>
+#include <BusinessConfig/DTOs/CreateBusinessConfig.hpp>
+#include <BusinessConfig/DTOs/UpdateBusinessConfig.hpp>
+#include <BusinessConfig/DTOs/GetBusinessConfig.hpp>
+#include <DataTable.hpp>
 
 namespace omnisphere::repositories {
 class BusinessConfig {

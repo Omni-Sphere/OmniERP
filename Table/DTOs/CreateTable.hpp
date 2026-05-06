@@ -1,5 +1,7 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
-#include "Base/BaseCreateDTO.hpp"
+#include <Base/BaseCreateDTO.hpp>
 #include <string>
 
 namespace omnisphere::dtos {

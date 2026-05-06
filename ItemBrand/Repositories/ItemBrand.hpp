@@ -1,9 +1,12 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
+#include <DataTable.hpp>
 
-#include "DTOs/CreateItemBrand.hpp"
-#include "DTOs/GetItemBrand.hpp"
-#include "DTOs/UpdateItemBrand.hpp"
-#include "Database.hpp"
+#include <ItemBrand/DTOs/CreateItemBrand.hpp>
+#include <ItemBrand/DTOs/GetItemBrand.hpp>
+#include <ItemBrand/DTOs/UpdateItemBrand.hpp>
+#include <Database.hpp>
 
 namespace omnisphere::repositories {
 class ItemBrand {

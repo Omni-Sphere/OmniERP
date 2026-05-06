@@ -1,12 +1,14 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 #include <vector>
 
-#include "DTOs/CreateArea.hpp"
-#include "DTOs/GetArea.hpp"
-#include "DTOs/UpdateArea.hpp"
-#include "Models/Area.hpp"
+#include <Area/DTOs/CreateArea.hpp>
+#include <Area/DTOs/GetArea.hpp>
+#include <Area/DTOs/UpdateArea.hpp>
+#include <Area/Models/Area.hpp>
 
-#include "Database.hpp"
+#include <Database.hpp>
 
 namespace omnisphere::area {
 class Area {

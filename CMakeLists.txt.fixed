@@ -1,0 +1,24 @@
+target_include_directories(OmniERP
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<INSTALL_INTERFACE:include/OmniSphere/OmniERP>
+    PRIVATE
+        ${CMAKE_BINARY_DIR}/OmniCore/Include
+        ${CMAKE_SOURCE_DIR}/OmniUtils
+        ${CMAKE_SOURCE_DIR}/OmniData
+)
+
+target_link_libraries(OmniERP PUBLIC OmniUtils OmniData OmniCore)
+
+if(WIN32)
+    set_target_properties(OmniERP PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${LIBS_DIR}"
+        LIBRARY_OUTPUT_DIRECTORY "${LIBS_DIR}"
+        ARCHIVE_OUTPUT_DIRECTORY "${ARCHIVE_DIR}"
+    )
+else()
+    set_target_properties(OmniERP PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${LIBS_DIR}"
+        ARCHIVE_OUTPUT_DIRECTORY "${LIBS_DIR}"
+    )
+endif()

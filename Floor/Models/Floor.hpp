@@ -1,6 +1,8 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
-#include "../../Area/Models/Area.hpp"
-#include "Base/BaseModel.hpp"
+#include <Area/Models/Area.hpp>
+#include <Base/BaseModel.hpp>
 #include <optional>
 #include <vector>
 

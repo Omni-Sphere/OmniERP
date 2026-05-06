@@ -1,12 +1,15 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 #include <vector>
 #include <memory>
+#include <Database.hpp>
 
-#include "DTOs/CreateTable.hpp"
-#include "DTOs/GetTable.hpp"
-#include "DTOs/UpdateTable.hpp"
-#include "Models/Table.hpp"
-#include "Database.hpp"
+#include <Table/DTOs/CreateTable.hpp>
+#include <Table/DTOs/GetTable.hpp>
+#include <Table/DTOs/UpdateTable.hpp>
+#include <Table/Models/Table.hpp>
+#include <Database.hpp>
 
 namespace omnisphere::table {
 class Table {

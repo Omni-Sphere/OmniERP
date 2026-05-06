@@ -1,7 +1,11 @@
-#include "Area.hpp"
-#include "DataTable.hpp"
-#include "Repositories/Area.hpp"
-#include "Repositories/Table.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <Area/Area.hpp>
+#include <Area/Repositories/Area.hpp>
+#include <Table/Repositories/Table.hpp>
 #include <stdexcept>
 #include <string>
 

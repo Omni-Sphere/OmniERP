@@ -1,6 +1,8 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 
-#include "Base/BaseModel.hpp"
+#include <Base/BaseModel.hpp>
 
 namespace omnisphere::models {
 class ItemGroup : public omnisphere::models::BaseModel {

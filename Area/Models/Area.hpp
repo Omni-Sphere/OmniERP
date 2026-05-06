@@ -1,7 +1,9 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 #include <string>
 #include <optional>
-#include "Base/BaseModel.hpp"
+#include <Base/BaseModel.hpp>
 
 namespace omnisphere::models {
     class Area : public omnisphere::models::BaseModel {

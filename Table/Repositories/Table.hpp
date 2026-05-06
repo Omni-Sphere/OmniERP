@@ -1,11 +1,14 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
 
-#include "DTOs/CreateTable.hpp"
-#include "DTOs/GetTable.hpp"
-#include "DTOs/UpdateTable.hpp"
-#include "Database.hpp"
-#include "DataTable.hpp"
+#include <Table/DTOs/CreateTable.hpp>
+#include <Table/DTOs/GetTable.hpp>
+#include <Table/DTOs/UpdateTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
 #include <memory>
+#include <Database.hpp>
 #include <vector>
 
 namespace omnisphere::repositories {

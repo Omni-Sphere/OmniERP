@@ -1,11 +1,14 @@
-#include "ItemBrand.hpp"
-#include "DTOs/CreateItemBrand.hpp"
-#include "DTOs/GetItemBrand.hpp"
-#include "DTOs/UpdateItemBrand.hpp"
-#include "DataTable.hpp"
-#include "Database.hpp"
-#include "Models/ItemBrand.hpp"
-#include "Repositories/ItemBrand.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <ItemBrand/ItemBrand.hpp>
+#include <ItemBrand/DTOs/CreateItemBrand.hpp>
+#include <ItemBrand/DTOs/GetItemBrand.hpp>
+#include <ItemBrand/DTOs/UpdateItemBrand.hpp>
+#include <ItemBrand/Models/ItemBrand.hpp>
+#include <ItemBrand/Repositories/ItemBrand.hpp>
 
 namespace omnisphere::services {
 

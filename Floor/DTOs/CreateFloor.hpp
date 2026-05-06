@@ -1,5 +1,7 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once
-#include "Base/BaseCreateDTO.hpp"
+#include <Base/BaseCreateDTO.hpp>
 
 namespace omnisphere::dtos {
     struct CreateFloor : public omnisphere::dtos::BaseCreateDTO {

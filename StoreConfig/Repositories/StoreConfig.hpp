@@ -1,15 +1,18 @@
+#include <Database.hpp>
+#include <DataTable.hpp>
 #pragma once 
 
 #include <memory>
+#include <Database.hpp>
 #include <optional>
 #include <string>
 
-#include "Database.hpp"
-#include "DTOs/CreateStoreConfig.hpp"
-#include "DTOs/UpdateStoreConfig.hpp"
-#include "DTOs/GetStoreConfig.hpp"
-#include "DTOs/SearchStoreConfig.hpp"
-#include "DataTable.hpp"
+#include <Database.hpp>
+#include <StoreConfig/DTOs/CreateStoreConfig.hpp>
+#include <StoreConfig/DTOs/UpdateStoreConfig.hpp>
+#include <StoreConfig/DTOs/GetStoreConfig.hpp>
+#include <StoreConfig/DTOs/SearchStoreConfig.hpp>
+#include <DataTable.hpp>
 
 namespace omnisphere::repositories {
 class StoreConfig {

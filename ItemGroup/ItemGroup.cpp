@@ -1,8 +1,11 @@
-#include "ItemGroup.hpp"
-#include "DataTable.hpp"
-#include "Database.hpp"
-#include "Models/ItemGroup.hpp"
-#include "Repositories/ItemGroup.hpp"
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <ItemGroup/ItemGroup.hpp>
+#include <ItemGroup/Models/ItemGroup.hpp>
+#include <ItemGroup/Repositories/ItemGroup.hpp>
 
 namespace omnisphere::services {
 

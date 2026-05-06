@@ -1,10 +1,13 @@
-#include "Item.hpp" // Keep the original header for the service class
-#include "DTOs/CreateItem.hpp"
-#include "DTOs/GetItem.hpp"
-#include "DTOs/SearchItems.hpp"
-#include "DataTable.hpp"
-#include "Database.hpp"          // Add new include for database
-#include "Repositories/Item.hpp" // Add new include for repository
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <DataTable.hpp>
+#include <Database.hpp>
+#include <DataTable.hpp>
+#include <Item/Item.hpp>
+#include <Item/DTOs/CreateItem.hpp>
+#include <Item/DTOs/GetItem.hpp>
+#include <Item/DTOs/SearchItems.hpp>
+#include <Item/Repositories/Item.hpp>
 
 namespace omnisphere::services {
 // Define the Impl struct for Pimpl idiom
