@@ -1,7 +1,6 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
 #pragma once
-#pragma message("INCLUDING ITEMBRAND.HPP FROM SOURCE")
 
 #include <memory>
 #include <Database.hpp>
