@@ -56,10 +56,6 @@ target_include_directories(OmniERP
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:include/OmniSphere/OmniERP>
-    PRIVATE
-        ${CMAKE_BINARY_DIR}/OmniCore/Include
-        ${CMAKE_SOURCE_DIR}/OmniUtils
-        ${CMAKE_SOURCE_DIR}/OmniData
 )
 
 target_link_libraries(OmniERP PUBLIC OmniUtils OmniData OmniCore)
