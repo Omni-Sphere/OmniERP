@@ -15,7 +15,7 @@ int ItemGroup::GetCurrentSequence() const {
         "SELECT ISNULL(ItemGroupsSequence, 0) + 1 ItemGroupsSequence FROM "
         "Sequences WHERE SeqEntry = 1";
 
-    omnisphere::types::DataTable data = database->FetchResults(sQuery);
+    omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemGroup::GetCurrentSequence");
 
     if (data.RowsCount() == 1)
       return data[0]["ItemGroupsSequence"];
@@ -32,7 +32,7 @@ bool ItemGroup::UpdateItemGroupsSequence() const {
     const std::string sQuery = "UPDATE Sequences SET ItemGroupsSequence = "
                                "ISNULL(ItemGroupsSequence,0) + 1";
 
-    if (!database->RunStatement(sQuery))
+    if (!database->RunStatement(sQuery, "ItemGroup::UpdateItemGroupsSequence"))
       return false;
 
     return true;
@@ -52,7 +52,7 @@ bool ItemGroup::Create(
         GetCurrentSequence(), createItemGroup.Code, createItemGroup.Name,
         createItemGroup.CreatedBy, createItemGroup.CreateDate};
 
-    if (!database->RunPrepared(sQuery, params))
+    if (!database->RunPrepared(sQuery, params, "ItemGroup::Create"))
       throw std::runtime_error("[RunPrepared exception]");
 
     if (!UpdateItemGroupsSequence())
@@ -78,7 +78,7 @@ bool ItemGroup::Update(
         updateItemGroup.Name.value(), updateItemGroup.LastUpdatedBy,
         updateItemGroup.UpdateDate, updateItemGroup.Code};
 
-    if (!database->RunPrepared(sQuery, params))
+    if (!database->RunPrepared(sQuery, params, "ItemGroup::Update"))
       throw std::runtime_error("[RunPrepared exception]");
 
     database->CommitTransaction();
@@ -97,7 +97,7 @@ omnisphere::types::DataTable ItemGroup::ReadAll() const {
         "SELECT ItGEntry [Entry], Code, Name, CreatedBy, CreateDate, "
         "LastUpdatedBy, UpdateDate FROM ItemGroups";
 
-    omnisphere::types::DataTable data = database->FetchResults(sQuery);
+    omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemGroup::ReadAll");
 
     return {data};
   } catch (const std::exception &e) {
@@ -131,7 +131,7 @@ ItemGroup::Read(const omnisphere::dtos::GetItemGroup itemGroup) const {
           "At least one filter must be provided to read ItemGroup");
     }
 
-    omnisphere::types::DataTable data = database->FetchPrepared(sQuery, params);
+    omnisphere::types::DataTable data = database->FetchPrepared(sQuery, params, "ItemGroup::Read");
 
     return data;
   } catch (const std::exception &e) {

@@ -25,7 +25,7 @@ bool UserPermissionRepository::Create(const omnisphere::dtos::CreateUserPermissi
             omnisphere::types::MakeSQLParam(userPermission.PermissionEntry),
             omnisphere::types::MakeSQLParam(userPermission.IsAllowed ? "Y" : "N"),
             omnisphere::types::MakeSQLParam(userPermission.CreatedBy)};
-        if (!database->RunPrepared(query, parameters)) throw std::runtime_error("[RunPrepared exception]");
+        if (!database->RunPrepared(query, parameters, "UserPermissionRepository::Create")) throw std::runtime_error("[RunPrepared exception]");
         if (!UpdateSequence()) throw std::runtime_error("[UpdateSequence exception]");
         database->CommitTransaction();
         return true;
@@ -40,14 +40,14 @@ bool UserPermissionRepository::Update(const omnisphere::dtos::UpdateUserPermissi
         query += ", LastUpdatedBy = ? WHERE Entry = ?";
         parameters.push_back(omnisphere::types::MakeSQLParam(userPermission.UpdatedBy));
         parameters.push_back(omnisphere::types::MakeSQLParam(userPermission.Entry));
-        if (!database->RunPrepared(query, parameters)) throw std::runtime_error("[RunPrepared exception]");
+        if (!database->RunPrepared(query, parameters, "UserPermissionRepository::Update")) throw std::runtime_error("[RunPrepared exception]");
         database->CommitTransaction();
         return true;
     } catch (const std::exception& e) { database->RollbackTransaction(); throw(std::runtime_error(std::string("[UpdateUserPermission Exception] ") + e.what())); }
 }
 
 omnisphere::types::DataTable UserPermissionRepository::ReadAll() const {
-    try { return database->FetchResults("SELECT * FROM UserPermissions"); }
+    try { return database->FetchResults("SELECT * FROM UserPermissions", "UserPermissionRepository::ReadAll"); }
     catch (const std::exception& e) { throw(std::runtime_error(std::string("[ReadAllUserPermission Exception] ") + e.what())); }
 }
 
@@ -58,14 +58,14 @@ omnisphere::types::DataTable UserPermissionRepository::Read(const omnisphere::dt
         if (getUserPermission.Entry.has_value()) { query += " AND Entry = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(getUserPermission.Entry.value())); }
         if (getUserPermission.UserEntry.has_value()) { query += " AND UserEntry = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(getUserPermission.UserEntry.value())); }
         if (getUserPermission.PermissionEntry.has_value()) { query += " AND PermissionEntry = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(getUserPermission.PermissionEntry.value())); }
-        return database->FetchPrepared(query, parameters);
+        return database->FetchPrepared(query, parameters, "UserPermissionRepository::Read");
     } catch (const std::exception& e) { throw(std::runtime_error(std::string("[ReadUserPermission Exception] ") + e.what())); }
 }
 
 bool UserPermissionRepository::Delete(int entry) const {
     try {
         std::vector<omnisphere::types::SQLParam> parameters = {omnisphere::types::MakeSQLParam(entry)};
-        if (!database->RunPrepared("DELETE FROM UserPermissions WHERE Entry = ?", parameters)) throw std::runtime_error("[RunPrepared exception]");
+        if (!database->RunPrepared("DELETE FROM UserPermissions WHERE Entry = ?", parameters, "UserPermissionRepository::Delete")) throw std::runtime_error("[RunPrepared exception]");
         database->CommitTransaction();
         return true;
     } catch (const std::exception& e) { database->RollbackTransaction(); throw(std::runtime_error(std::string("[DeleteUserPermission Exception] ") + e.what())); }

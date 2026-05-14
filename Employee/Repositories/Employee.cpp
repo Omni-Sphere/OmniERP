@@ -35,7 +35,7 @@ bool EmployeeRepository::Create(const omnisphere::dtos::CreateEmployee& employee
             omnisphere::types::MakeSQLParam(employee.Comments),
             omnisphere::types::MakeSQLParam(employee.CreatedBy)};
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "EmployeeRepository::Create"))
             throw std::runtime_error("[RunPrepared exception]");
 
         if (!UpdateSequence())
@@ -70,7 +70,7 @@ bool EmployeeRepository::Update(const omnisphere::dtos::UpdateEmployee& employee
         parameters.push_back(omnisphere::types::MakeSQLParam(employee.UpdatedBy));
         parameters.push_back(omnisphere::types::MakeSQLParam(employee.Entry));
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "EmployeeRepository::Update"))
             throw std::runtime_error("[RunPrepared exception]");
 
         database->CommitTransaction();
@@ -84,7 +84,7 @@ bool EmployeeRepository::Update(const omnisphere::dtos::UpdateEmployee& employee
 omnisphere::types::DataTable EmployeeRepository::ReadAll() const {
     try {
         const std::string query = "SELECT * FROM Employees WHERE IsActive = 'Y'";
-        return database->FetchResults(query);
+        return database->FetchResults(query, "EmployeeRepository::ReadAll");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadAllEmployee Exception] ") + e.what()));
     }
@@ -104,7 +104,7 @@ omnisphere::types::DataTable EmployeeRepository::Read(const omnisphere::dtos::Ge
             parameters.push_back(omnisphere::types::MakeSQLParam(getEmployee.Code.value()));
         }
 
-        return database->FetchPrepared(query, parameters);
+        return database->FetchPrepared(query, parameters, "EmployeeRepository::Read");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadEmployee Exception] ") + e.what()));
     }
@@ -115,7 +115,7 @@ bool EmployeeRepository::Delete(int entry) const {
         const std::string query = "UPDATE Employees SET IsActive = 'N' WHERE Entry = ?";
         std::vector<omnisphere::types::SQLParam> parameters = {omnisphere::types::MakeSQLParam(entry)};
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "EmployeeRepository::Delete"))
             throw std::runtime_error("[RunPrepared exception]");
 
         database->CommitTransaction();
@@ -129,7 +129,7 @@ bool EmployeeRepository::Delete(int entry) const {
 int EmployeeRepository::GetCurrentSequence() const {
     try {
         const std::string query = "SELECT ISNULL(EmpSequence, 0) + 1 EmpSequence FROM Sequences WHERE SeqEntry = 1";
-        omnisphere::types::DataTable dataTable = database->FetchResults(query);
+        omnisphere::types::DataTable dataTable = database->FetchResults(query, "EmployeeRepository::GetCurrentSequence");
         return dataTable[0]["EmpSequence"];
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[GetCurrentSequence Exception] ") + e.what()));
@@ -139,7 +139,7 @@ int EmployeeRepository::GetCurrentSequence() const {
 bool EmployeeRepository::UpdateSequence() const {
     try {
         const std::string query = "UPDATE Sequences SET EmpSequence = ISNULL(EmpSequence, 0) + 1 WHERE SeqEntry = 1";
-        if (!database->RunStatement(query))
+        if (!database->RunStatement(query, "EmployeeRepository::UpdateSequence"))
             throw std::runtime_error("[RunStatement exception]");
         return true;
     } catch (const std::exception& e) {

@@ -19,7 +19,7 @@ ModuleRepository::~ModuleRepository() = default;
 omnisphere::types::DataTable ModuleRepository::ReadAll() const {
     try {
         const std::string query = "SELECT * FROM Modules";
-        return database->FetchResults(query);
+        return database->FetchResults(query, "ModuleRepository::ReadAll");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadAllModule Exception] ") + e.what()));
     }
@@ -39,7 +39,7 @@ omnisphere::types::DataTable ModuleRepository::Read(const omnisphere::dtos::GetM
             parameters.push_back(omnisphere::types::MakeSQLParam(getModule.Code.value()));
         }
 
-        return database->FetchPrepared(query, parameters);
+        return database->FetchPrepared(query, parameters, "ModuleRepository::Read");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadModule Exception] ") + e.what()));
     }

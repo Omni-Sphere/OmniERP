@@ -15,7 +15,7 @@ int ItemBrand::GetCurrentSequence() const {
         "SELECT ISNULL(ItemBrandsSequence, 0) + 1 ItemBrandsSequence FROM "
         "Sequences WHERE SeqEntry = 1";
 
-    omnisphere::types::DataTable data = database->FetchResults(sQuery);
+    omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemBrand::GetCurrentSequence");
 
     if (data.RowsCount() == 1)
       return data[0]["ItemBrandsSequence"];
@@ -32,7 +32,7 @@ bool ItemBrand::UpdateItemBrandsSequence() const {
     const std::string sQuery = "UPDATE Sequences SET ItemBrandsSequence = "
                                "ISNULL(ItemBrandsSequence,0) + 1";
 
-    if (!database->RunStatement(sQuery))
+    if (!database->RunStatement(sQuery, "ItemBrand::UpdateItemBrandsSequence"))
       return false;
 
     return true;
@@ -52,7 +52,7 @@ bool ItemBrand::Create(
         GetCurrentSequence(), createItemBrand.Code, createItemBrand.Name,
         createItemBrand.CreatedBy, createItemBrand.CreateDate};
 
-    if (!database->RunPrepared(sQuery, params))
+    if (!database->RunPrepared(sQuery, params, "ItemBrand::Create"))
       throw std::runtime_error("[RunPrepared exception]");
 
     if (!UpdateItemBrandsSequence())
@@ -78,7 +78,7 @@ bool ItemBrand::Update(
         updateItemBrand.Name.value(), updateItemBrand.LastUpdatedBy,
         updateItemBrand.UpdateDate, updateItemBrand.Code};
 
-    if (!database->RunPrepared(sQuery, params))
+    if (!database->RunPrepared(sQuery, params, "ItemBrand::Update"))
       throw std::runtime_error("[RunPrepared exception]");
 
     database->CommitTransaction();
@@ -103,7 +103,7 @@ omnisphere::types::DataTable ItemBrand::ReadAll() const {
                          "UpdateDate "
                          "FROM ItemBrands";
 
-    omnisphere::types::DataTable dataTable = database->FetchResults(sQuery);
+    omnisphere::types::DataTable dataTable = database->FetchResults(sQuery, "ItemBrand::ReadAll");
 
     return dataTable;
   } catch (const std::exception &e) {
@@ -146,7 +146,7 @@ ItemBrand::Read(const omnisphere::dtos::GetItemBrand itemBrand) const {
     }
 
     omnisphere::types::DataTable dataTable =
-        database->FetchPrepared(sQuery, parameters);
+        database->FetchPrepared(sQuery, parameters, "ItemBrand::ReadAll");
 
     return dataTable;
   } catch (const std::exception &e) {

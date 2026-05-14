@@ -26,7 +26,7 @@ bool DepartmentRepository::Create(const omnisphere::dtos::CreateDepartment& depa
             omnisphere::types::MakeSQLParam(department.Name),
             omnisphere::types::MakeSQLParam(department.CreatedBy)};
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "DepartmentRepository::Create"))
             throw std::runtime_error("[RunPrepared exception]");
 
         if (!UpdateSequence())
@@ -62,7 +62,7 @@ bool DepartmentRepository::Update(const omnisphere::dtos::UpdateDepartment& depa
         parameters.push_back(omnisphere::types::MakeSQLParam(department.UpdatedBy));
         parameters.push_back(omnisphere::types::MakeSQLParam(department.Entry));
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "DepartmentRepository::Update"))
             throw std::runtime_error("[RunPrepared exception]");
 
         database->CommitTransaction();
@@ -76,7 +76,7 @@ bool DepartmentRepository::Update(const omnisphere::dtos::UpdateDepartment& depa
 omnisphere::types::DataTable DepartmentRepository::ReadAll() const {
     try {
         const std::string query = "SELECT Entry, Code, Name, IsActive, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Departments WHERE IsActive = 'Y'";
-        return database->FetchResults(query);
+        return database->FetchResults(query, "DepartmentRepository::ReadAll");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadAllDepartment Exception] ") + e.what()));
     }
@@ -100,7 +100,7 @@ omnisphere::types::DataTable DepartmentRepository::Read(const omnisphere::dtos::
             parameters.push_back(omnisphere::types::MakeSQLParam(getDepartment.Name.value()));
         }
 
-        return database->FetchPrepared(query, parameters);
+        return database->FetchPrepared(query, parameters, "DepartmentRepository::Read");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadDepartment Exception] ") + e.what()));
     }
@@ -111,7 +111,7 @@ bool DepartmentRepository::Delete(int entry) const {
         const std::string query = "UPDATE Departments SET IsActive = 'N' WHERE Entry = ?";
         std::vector<omnisphere::types::SQLParam> parameters = {omnisphere::types::MakeSQLParam(entry)};
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "DepartmentRepository::Delete"))
             throw std::runtime_error("[RunPrepared exception]");
 
         database->CommitTransaction();
@@ -125,7 +125,7 @@ bool DepartmentRepository::Delete(int entry) const {
 int DepartmentRepository::GetCurrentSequence() const {
     try {
         const std::string query = "SELECT ISNULL(DeptSequence, 0) + 1 DeptSequence FROM Sequences WHERE SeqEntry = 1";
-        omnisphere::types::DataTable dataTable = database->FetchResults(query);
+        omnisphere::types::DataTable dataTable = database->FetchResults(query, "DepartmentRepository::GetCurrentSequence");
         return dataTable[0]["DeptSequence"];
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[GetCurrentSequence Exception] ") + e.what()));
@@ -135,7 +135,7 @@ int DepartmentRepository::GetCurrentSequence() const {
 bool DepartmentRepository::UpdateSequence() const {
     try {
         const std::string query = "UPDATE Sequences SET DeptSequence = ISNULL(DeptSequence, 0) + 1 WHERE SeqEntry = 1";
-        if (!database->RunStatement(query))
+        if (!database->RunStatement(query, "DepartmentRepository::UpdateSequence"))
             throw std::runtime_error("[RunStatement exception]");
         return true;
     } catch (const std::exception& e) {

@@ -23,7 +23,7 @@ bool RoleModuleRepository::Create(const omnisphere::dtos::CreateRoleModule& role
             omnisphere::types::MakeSQLParam(roleModule.ModuleEntry),
             omnisphere::types::MakeSQLParam(roleModule.IsAllowed ? "Y" : "N"),
             omnisphere::types::MakeSQLParam(roleModule.CreatedBy)};
-        if (!database->RunPrepared(query, parameters)) throw std::runtime_error("[RunPrepared exception]");
+        if (!database->RunPrepared(query, parameters, "RoleModuleRepository::Create")) throw std::runtime_error("[RunPrepared exception]");
         if (!UpdateSequence()) throw std::runtime_error("[UpdateSequence exception]");
         database->CommitTransaction();
         return true;
@@ -38,14 +38,14 @@ bool RoleModuleRepository::Update(const omnisphere::dtos::UpdateRoleModule& role
         query += ", LastUpdatedBy = ? WHERE Entry = ?";
         parameters.push_back(omnisphere::types::MakeSQLParam(roleModule.UpdatedBy));
         parameters.push_back(omnisphere::types::MakeSQLParam(roleModule.Entry));
-        if (!database->RunPrepared(query, parameters)) throw std::runtime_error("[RunPrepared exception]");
+        if (!database->RunPrepared(query, parameters, "RoleModuleRepository::Update")) throw std::runtime_error("[RunPrepared exception]");
         database->CommitTransaction();
         return true;
     } catch (const std::exception& e) { database->RollbackTransaction(); throw(std::runtime_error(std::string("[UpdateRoleModule Exception] ") + e.what())); }
 }
 
 omnisphere::types::DataTable RoleModuleRepository::ReadAll() const {
-    try { return database->FetchResults("SELECT * FROM RoleModules"); }
+    try { return database->FetchResults("SELECT * FROM RoleModules", "RoleModuleRepository::ReadAll"); }
     catch (const std::exception& e) { throw(std::runtime_error(std::string("[ReadAllRoleModule Exception] ") + e.what())); }
 }
 
@@ -56,14 +56,14 @@ omnisphere::types::DataTable RoleModuleRepository::Read(const omnisphere::dtos::
         if (getRoleModule.Entry.has_value()) { query += " AND Entry = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(getRoleModule.Entry.value())); }
         if (getRoleModule.RoleEntry.has_value()) { query += " AND RoleEntry = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(getRoleModule.RoleEntry.value())); }
         if (getRoleModule.ModuleEntry.has_value()) { query += " AND ModuleEntry = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(getRoleModule.ModuleEntry.value())); }
-        return database->FetchPrepared(query, parameters);
+        return database->FetchPrepared(query, parameters, "RoleModuleRepository::Read");
     } catch (const std::exception& e) { throw(std::runtime_error(std::string("[ReadRoleModule Exception] ") + e.what())); }
 }
 
 bool RoleModuleRepository::Delete(int entry) const {
     try {
         std::vector<omnisphere::types::SQLParam> parameters = {omnisphere::types::MakeSQLParam(entry)};
-        if (!database->RunPrepared("DELETE FROM RoleModules WHERE Entry = ?", parameters)) throw std::runtime_error("[RunPrepared exception]");
+        if (!database->RunPrepared("DELETE FROM RoleModules WHERE Entry = ?", parameters, "RoleModuleRepository::Delete")) throw std::runtime_error("[RunPrepared exception]");
         database->CommitTransaction();
         return true;
     } catch (const std::exception& e) { database->RollbackTransaction(); throw(std::runtime_error(std::string("[DeleteRoleModule Exception] ") + e.what())); }

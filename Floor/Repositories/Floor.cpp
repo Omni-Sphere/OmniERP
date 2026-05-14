@@ -29,7 +29,7 @@ bool FloorRepository::Create(const omnisphere::dtos::CreateFloor &floor) const
             omnisphere::types::MakeSQLParam(floor.CreatedBy),
             omnisphere::types::MakeSQLParam(floor.CreateDate)};
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "FloorRepository::Create"))
             throw std::runtime_error("[RunPrepared exception]");
 
         if (!UpdateFloorSequence())
@@ -57,7 +57,7 @@ bool FloorRepository::Update(const omnisphere::dtos::UpdateFloor &floor) const {
         omnisphere::types::MakeSQLParam(floor.UpdateDate),
         omnisphere::types::MakeSQLParam(floor.Code)};
 
-    if (!database->RunPrepared(query, parameters))
+    if (!database->RunPrepared(query, parameters, "FloorRepository::Update"))
       throw std::runtime_error("[RunPrepared exception]");
 
     database->CommitTransaction();
@@ -76,7 +76,7 @@ omnisphere::types::DataTable FloorRepository::ReadAll() const {
         "SELECT FloorEntry Entry, Code, Name, CreatedBy, CreateDate, LastUpdatedBy, "
         "UpdateDate FROM Floors WHERE IsActive = 'Y'";
 
-    omnisphere::types::DataTable dataTable = database->FetchResults(query);
+    omnisphere::types::DataTable dataTable = database->FetchResults(query, "FloorRepository::ReadAll");
 
     return dataTable;
   } catch (const std::exception &e) {
@@ -103,7 +103,7 @@ FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor) const {
     }
 
     omnisphere::types::DataTable dataTable =
-        database->FetchPrepared(query, parameters);
+        database->FetchPrepared(query, parameters, "FloorRepository::Read");
 
     return dataTable;
   } catch (const std::exception &e) {
@@ -118,7 +118,7 @@ int FloorRepository::GetCurrentSequence() const {
         "SELECT ISNULL(FloorSequence, 0) + 1 FloorSequence FROM Sequences "
         "WHERE SeqEntry = 1";
 
-    omnisphere::types::DataTable dataTable = database->FetchResults(query);
+    omnisphere::types::DataTable dataTable = database->FetchResults(query, "FloorRepository::GetCurrentSequence");
 
     return dataTable[0]["FloorSequence"];
   } catch (const std::exception &e) {
@@ -132,7 +132,7 @@ bool FloorRepository::UpdateFloorSequence() const {
     const std::string query =
         "UPDATE Sequences SET FloorSequence = ISNULL(FloorSequence, 0) + 1";
 
-    if (!database->RunStatement(query))
+    if (!database->RunStatement(query, "FloorRepository::UpdateFloorSequence"))
       throw std::runtime_error("[RunStatement exception]");
 
     return true;
@@ -148,7 +148,7 @@ bool FloorRepository::Delete(int entry) const {
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(entry)};
 
-    if (!database->RunPrepared(query, parameters))
+    if (!database->RunPrepared(query, parameters, "FloorRepository::Delete"))
       throw std::runtime_error("[RunPrepared exception]");
 
     database->CommitTransaction();

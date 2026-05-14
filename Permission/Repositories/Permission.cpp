@@ -19,7 +19,7 @@ PermissionRepository::~PermissionRepository() = default;
 omnisphere::types::DataTable PermissionRepository::ReadAll() const {
     try {
         const std::string query = "SELECT * FROM Permissions";
-        return database->FetchResults(query);
+        return database->FetchResults(query, "PermissionRepository::ReadAll");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadAllPermission Exception] ") + e.what()));
     }
@@ -43,7 +43,7 @@ omnisphere::types::DataTable PermissionRepository::Read(const omnisphere::dtos::
             parameters.push_back(omnisphere::types::MakeSQLParam(getPermission.ModuleEntry.value()));
         }
 
-        return database->FetchPrepared(query, parameters);
+        return database->FetchPrepared(query, parameters, "PermissionRepository::Read");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadPermission Exception] ") + e.what()));
     }

@@ -58,7 +58,7 @@ bool Item::Create(const omnisphere::dtos::CreateItem &item) const {
         omnisphere::types::MakeSQLParam(item.CreatedBy),
         omnisphere::types::MakeSQLParam(item.CreateDate)};
 
-    if (!Database->RunPrepared(sQuery, params))
+    if (!Database->RunPrepared(sQuery, params, "Item::Create"))
       throw std::runtime_error("Error creating item");
 
     UpdateUserSequence();
@@ -126,7 +126,7 @@ bool Item::Update(const omnisphere::dtos::UpdateItem &item) const {
 
     sQuery += "WHERE ItemEntry = ?";
 
-    if (!Database->RunPrepared(sQuery, params))
+    if (!Database->RunPrepared(sQuery, params, "Item::Update"))
       throw std::runtime_error("Error updating item");
 
     return true;
@@ -251,12 +251,12 @@ Item::Read(const omnisphere::dtos::GetItem &filter) const {
 
     if (filter.Code.has_value()) {
       sQuery += "[Code] = ?";
-      datatable = Database->FetchPrepared(sQuery, filter.Code.value());
+      datatable = Database->FetchPrepared(sQuery, filter.Code.value(), "Item::Read");
     }
 
     if (filter.Name.has_value()) {
       sQuery += "[Name] = ?";
-      datatable = Database->FetchPrepared(sQuery, filter.Name.value());
+      datatable = Database->FetchPrepared(sQuery, filter.Name.value(), "Item::Read");
     }
 
     return datatable;
@@ -296,7 +296,7 @@ omnisphere::types::DataTable Item::Read() const {
                          "LastUpdatedBy, "
                          "UpdateDate "
                          "FROM Items";
-    datatable = Database->FetchResults(sQuery);
+    datatable = Database->FetchResults(sQuery, "Item::Read");
 
     return datatable;
   } catch (const std::exception &e) {
@@ -309,7 +309,7 @@ int Item::GetCurrentSequence() const {
     const std::string sQuery = "SELECT ISNULL(ItemSequence, 0) + 1 "
                                "ItemSequence FROM Sequences WHERE SeqEntry = 1";
 
-    omnisphere::types::DataTable data = Database->FetchResults(sQuery);
+    omnisphere::types::DataTable data = Database->FetchResults(sQuery, "Item::GetCurrentSequence");
 
     if (data.RowsCount() == 1)
       return data[0]["ItemSequence"];
@@ -326,7 +326,7 @@ bool Item::UpdateUserSequence() const {
     const std::string sQuery =
         "UPDATE Sequences SET ItemSequence = ISNULL(ItemSequence,0) + 1";
 
-    if (!Database->RunStatement(sQuery))
+    if (!Database->RunStatement(sQuery, "Item::UpdateUserSequence"))
       return false;
 
     return true;

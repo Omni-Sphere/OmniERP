@@ -27,7 +27,7 @@ bool UserModuleRepository::Create(const omnisphere::dtos::CreateUserModule& user
             omnisphere::types::MakeSQLParam(userModule.IsAllowed ? "Y" : "N"),
             omnisphere::types::MakeSQLParam(userModule.CreatedBy)};
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "UserModuleRepository::Create"))
             throw std::runtime_error("[RunPrepared exception]");
 
         if (!UpdateSequence())
@@ -55,7 +55,7 @@ bool UserModuleRepository::Update(const omnisphere::dtos::UpdateUserModule& user
         parameters.push_back(omnisphere::types::MakeSQLParam(userModule.UpdatedBy));
         parameters.push_back(omnisphere::types::MakeSQLParam(userModule.Entry));
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "UserModuleRepository::Update"))
             throw std::runtime_error("[RunPrepared exception]");
 
         database->CommitTransaction();
@@ -69,7 +69,7 @@ bool UserModuleRepository::Update(const omnisphere::dtos::UpdateUserModule& user
 omnisphere::types::DataTable UserModuleRepository::ReadAll() const {
     try {
         const std::string query = "SELECT * FROM UserModules";
-        return database->FetchResults(query);
+        return database->FetchResults(query, "UserModuleRepository::ReadAll");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadAllUserModule Exception] ") + e.what()));
     }
@@ -93,7 +93,7 @@ omnisphere::types::DataTable UserModuleRepository::Read(const omnisphere::dtos::
             parameters.push_back(omnisphere::types::MakeSQLParam(getUserModule.ModuleEntry.value()));
         }
 
-        return database->FetchPrepared(query, parameters);
+        return database->FetchPrepared(query, parameters, "UserModuleRepository::Read");
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[ReadUserModule Exception] ") + e.what()));
     }
@@ -104,7 +104,7 @@ bool UserModuleRepository::Delete(int entry) const {
         const std::string query = "DELETE FROM UserModules WHERE Entry = ?";
         std::vector<omnisphere::types::SQLParam> parameters = {omnisphere::types::MakeSQLParam(entry)};
 
-        if (!database->RunPrepared(query, parameters))
+        if (!database->RunPrepared(query, parameters, "UserModuleRepository::Delete"))
             throw std::runtime_error("[RunPrepared exception]");
 
         database->CommitTransaction();
@@ -118,7 +118,7 @@ bool UserModuleRepository::Delete(int entry) const {
 int UserModuleRepository::GetCurrentSequence() const {
     try {
         const std::string query = "SELECT ISNULL(UserModSequence, 0) + 1 UserModSequence FROM Sequences WHERE SeqEntry = 1";
-        omnisphere::types::DataTable dataTable = database->FetchResults(query);
+        omnisphere::types::DataTable dataTable = database->FetchResults(query, "UserModuleRepository::GetCurrentSequence");
         return dataTable[0]["UserModSequence"];
     } catch (const std::exception& e) {
         throw(std::runtime_error(std::string("[GetCurrentSequence Exception] ") + e.what()));
@@ -128,7 +128,7 @@ int UserModuleRepository::GetCurrentSequence() const {
 bool UserModuleRepository::UpdateSequence() const {
     try {
         const std::string query = "UPDATE Sequences SET UserModSequence = ISNULL(UserModSequence, 0) + 1 WHERE SeqEntry = 1";
-        if (!database->RunStatement(query))
+        if (!database->RunStatement(query, "UserModuleRepository::UpdateSequence"))
             throw std::runtime_error("[RunStatement exception]");
         return true;
     } catch (const std::exception& e) {

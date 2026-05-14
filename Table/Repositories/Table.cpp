@@ -35,7 +35,7 @@ bool TableRepository::Create(const omnisphere::dtos::CreateTable &table) const
         omnisphere::types::MakeSQLParam(table.CreateDate)
     };
 
-    if (!database->RunPrepared(query, parameters))
+    if (!database->RunPrepared(query, parameters, "TableRepository::Create"))
       throw std::runtime_error("[RunPrepared exception]");
 
     if (!UpdateTableSequence())
@@ -91,7 +91,7 @@ bool TableRepository::Update(const omnisphere::dtos::UpdateTable &table) const
     query += " WHERE TablEntry = ?";
     parameters.push_back(omnisphere::types::MakeSQLParam(table.Entry));
 
-    if (!database->RunPrepared(query, parameters))
+    if (!database->RunPrepared(query, parameters, "TableRepository::Update"))
       throw std::runtime_error("[RunPrepared exception]");
 
     database->CommitTransaction();
@@ -110,7 +110,7 @@ omnisphere::types::DataTable TableRepository::ReadAll() const
   try 
   {
     const std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE IsActive = 'Y'";
-    return database->FetchResults(query);
+    return database->FetchResults(query, "TableRepository::ReadAll");
   } 
   catch (const std::exception &e) 
   {
@@ -143,7 +143,7 @@ omnisphere::types::DataTable TableRepository::Read(const omnisphere::dtos::GetTa
       throw std::runtime_error("GetTable: 'Entry', 'Code', 'AreaEntry' or 'FloorEntry' is required for Read");
     }
 
-    return database->FetchPrepared(query, parameters);
+    return database->FetchPrepared(query, parameters, "TableRepository::Read");
   } catch (const std::exception &e) {
     throw(std::runtime_error(std::string("[Read Exception]") + " " + e.what()));
   }
@@ -154,7 +154,7 @@ int TableRepository::GetCurrentSequence() const
   try 
   {
     const std::string query = "SELECT ISNULL(TableSequence, 0) + 1 TableSequence FROM Sequences WHERE SeqEntry = 1";
-    omnisphere::types::DataTable dataTable = database->FetchResults(query);
+    omnisphere::types::DataTable dataTable = database->FetchResults(query, "TableRepository::GetCurrentSequence");
 
     return dataTable[0]["TableSequence"];
   } 
@@ -170,7 +170,7 @@ bool TableRepository::UpdateTableSequence() const
   {
     const std::string query = "UPDATE Sequences SET TableSequence = ISNULL(TableSequence, 0) + 1";
     
-    if (!database->RunStatement(query))
+    if (!database->RunStatement(query, "TableRepository::UpdateTableSequence"))
       throw std::runtime_error("[RunStatement exception]");
 
     return true;
@@ -188,7 +188,7 @@ bool TableRepository::Delete(int entry) const
         omnisphere::types::MakeSQLParam(entry)
     };
 
-    if (!database->RunPrepared(query, parameters))
+    if (!database->RunPrepared(query, parameters, "TableRepository::Delete"))
       throw std::runtime_error("[RunPrepared exception]");
 
     database->CommitTransaction();

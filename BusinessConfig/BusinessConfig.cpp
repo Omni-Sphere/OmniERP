@@ -47,6 +47,7 @@ omnisphere::models::BusinessConfig BusinessConfig::Get(const omnisphere::dtos::G
       dataTable[0]["XProfile"].GetOptional<std::string>(),
       dataTable[0]["LogoFile"].GetOptional<std::string>(),
       dataTable[0]["AttachmentsPath"].GetOptional<std::string>(),
+      dataTable[0]["ImagePath"].GetOptional<std::string>(),
       1, // Placeholder for CreatedBy
       "2024-01-01", // Placeholder for CreateDate
       std::nullopt,

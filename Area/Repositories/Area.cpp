@@ -36,7 +36,7 @@ namespace omnisphere::repositories
                 omnisphere::types::MakeSQLParam(area.CreateDate)
             };
 
-            if (!database->RunPrepared(query, parameters))
+            if (!database->RunPrepared(query, parameters, "AreaRepository::Create"))
                 throw std::runtime_error("[RunPrepared exception]");
 
             if (!UpdateAreaSequence())
@@ -100,7 +100,7 @@ namespace omnisphere::repositories
                 throw std::runtime_error("UpdateArea: 'Entry' is required for UPDATE");
             }
 
-            if (!database->RunPrepared(query, parameters))
+            if (!database->RunPrepared(query, parameters, "AreaRepository::Update"))
                 throw std::runtime_error("[RunPrepared exception]");
 
             database->CommitTransaction();
@@ -119,7 +119,7 @@ namespace omnisphere::repositories
         {
             const std::string query = "SELECT AreaEntry Entry, Code, Name, Color, Icon, Capacity, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Areas WHERE IsActive = 'Y'";
 
-            omnisphere::types::DataTable dataTable = database->FetchResults(query);
+            omnisphere::types::DataTable dataTable = database->FetchResults(query, "AreaRepository::ReadAll");
 
             return dataTable;
         } 
@@ -148,7 +148,7 @@ namespace omnisphere::repositories
                 throw std::runtime_error("GetArea: 'Entry', 'Code' or 'FloorEntry' is required for Read");
             }
 
-            return database->FetchPrepared(query, parameters);
+            return database->FetchPrepared(query, parameters, "AreaRepository::Read");
         } 
         catch (const std::exception &e) 
         {
@@ -161,7 +161,7 @@ namespace omnisphere::repositories
         {
             const std::string query = "SELECT ISNULL(AreaSequence, 0) + 1 AreaSequence FROM Sequences WHERE SeqEntry = 1";
 
-            omnisphere::types::DataTable dataTable = database->FetchResults(query);
+            omnisphere::types::DataTable dataTable = database->FetchResults(query, "AreaRepository::GetCurrentSequence");
 
             return dataTable[0]["AreaSequence"];
         } 
@@ -176,7 +176,7 @@ namespace omnisphere::repositories
         {
             const std::string query = "UPDATE Sequences SET AreaSequence = ISNULL(AreaSequence, 0) + 1";
 
-            if (!database->RunStatement(query))
+            if (!database->RunStatement(query, "AreaRepository::UpdateAreaSequence"))
                 throw std::runtime_error("[RunStatement exception]");
 
             return true;
@@ -195,7 +195,7 @@ namespace omnisphere::repositories
                 omnisphere::types::MakeSQLParam(entry)
             };
 
-            if (!database->RunPrepared(query, parameters))
+            if (!database->RunPrepared(query, parameters, "AreaRepository::Delete"))
                 throw std::runtime_error("[RunPrepared exception]");
 
             database->CommitTransaction();
