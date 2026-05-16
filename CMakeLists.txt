@@ -30,8 +30,8 @@ add_library(OmniERP SHARED
     Table/Repositories/Table.cpp
     BusinessConfig/BusinessConfig.cpp
     BusinessConfig/Repositories/BusinessConfig.cpp
-    StoreConfig/StoreConfig.cpp
-    StoreConfig/Repositories/StoreConfig.cpp
+    Store/Store.cpp
+    Store/Repositories/Store.cpp
     Department/Department.cpp
     Department/Repositories/Department.cpp
     Employee/Employee.cpp
@@ -81,7 +81,7 @@ set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Area/Area.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Table/Table.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BusinessConfig/BusinessConfig.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/StoreConfig/StoreConfig.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Store/Store.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Department/Department.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Employee/Employee.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Module/Module.hpp
@@ -122,8 +122,8 @@ set(
     Table/DTOs
     BusinessConfig/Models
     BusinessConfig/DTOs
-    StoreConfig/Models
-    StoreConfig/DTOs
+    Store/Models
+    Store/DTOs
     Department/Models
     Department/DTOs
     Employee/Models
