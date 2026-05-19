@@ -75,6 +75,11 @@ namespace omnisphere::repositories
             AddInsertParam("Phone1", _store.Phone1, fields, params);
             AddInsertParam("Phone2", _store.Phone2, fields, params);
             AddInsertParam("Email", _store.Email, fields, params);
+            AddInsertParam("Website", _store.Website, fields, params);
+            AddInsertParam("Facebook", _store.Facebook, fields, params);
+            AddInsertParam("Instagram", _store.Instagram, fields, params);
+            AddInsertParam("X", _store.X, fields, params);
+            AddInsertParam("Whatsapp", _store.Whatsapp, fields, params);
             AddInsertParam("IsActive", std::string("Y"), fields, params);
             AddInsertParam("CreatedBy", _store.CreatedBy, fields, params);
             AddInsertParam("CreateDate", _store.CreateDate, fields, params);
@@ -130,6 +135,11 @@ namespace omnisphere::repositories
             AddSetParam("Phone1", _store.Phone1, setClauses, params);
             AddSetParam("Phone2", _store.Phone2, setClauses, params);
             AddSetParam("Email", _store.Email, setClauses, params);
+            AddSetParam("Website", _store.Website, setClauses, params);
+            AddSetParam("Facebook", _store.Facebook, setClauses, params);
+            AddSetParam("Instagram", _store.Instagram, setClauses, params);
+            AddSetParam("X", _store.X, setClauses, params);
+            AddSetParam("Whatsapp", _store.Whatsapp, setClauses, params);
             AddSetParam("IsActive", _store.IsActive, setClauses, params);
             AddSetParam("LastUpdatedBy", _store.LastUpdatedBy, setClauses, params);
             AddSetParam("UpdateDate", _store.UpdateDate, setClauses, params);

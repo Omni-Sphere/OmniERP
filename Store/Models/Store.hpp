@@ -23,6 +23,11 @@ namespace omnisphere::models {
             std::optional<std::string> _Phone1,
             std::optional<std::string> _Phone2,
             std::optional<std::string> _Email,
+            std::optional<std::string> _Website,
+            std::optional<std::string> _Facebook,
+            std::optional<std::string> _Instagram,
+            std::optional<std::string> _X,
+            std::optional<std::string> _Whatsapp,
             std::string _IsActive,
             int _CreatedBy,
             std::string _CreateDate, 
@@ -46,6 +51,11 @@ namespace omnisphere::models {
               Phone1(std::move(_Phone1)),
               Phone2(std::move(_Phone2)),
               Email(std::move(_Email)),
+              Website(std::move(_Website)),
+              Facebook(std::move(_Facebook)),
+              Instagram(std::move(_Instagram)),
+              X(std::move(_X)),
+              Whatsapp(std::move(_Whatsapp)),
               IsActive(std::move(_IsActive)) {}
 
         const int GuestCustomer;
@@ -59,6 +69,11 @@ namespace omnisphere::models {
         const std::optional<std::string> Phone1;
         const std::optional<std::string> Phone2;
         const std::optional<std::string> Email;
+        const std::optional<std::string> Website;
+        const std::optional<std::string> Facebook;
+        const std::optional<std::string> Instagram;
+        const std::optional<std::string> X;
+        const std::optional<std::string> Whatsapp;
         const std::string IsActive;
     };
 }
