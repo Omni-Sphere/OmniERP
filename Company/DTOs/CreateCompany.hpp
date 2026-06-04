@@ -7,9 +7,9 @@
 #include <string>
 
 namespace omnisphere::dtos {
-    class UpdateBusinessConfig : public omnisphere::models::BaseModel {
+    class CreateCompany : public omnisphere::models::BaseModel {
     public:
-        UpdateBusinessConfig(int _Entry, 
+        CreateCompany(int _Entry, 
             std::string _Code, 
             std::string _Name, 
             std::optional<std::string> _Address,
@@ -31,16 +31,14 @@ namespace omnisphere::dtos {
             std::optional<std::string> _AttachmentsPath,
             std::optional<std::string> _ImagePath,
             int _CreatedBy,
-            std::string _CreateDate, 
-            std::optional<int> _LastUpdatedBy,
-            std::optional<std::string> _UpdateDate)
+            std::string _CreateDate)
             : omnisphere::models::BaseModel(_Entry, 
                 std::move(_Code), 
                 std::move(_Name),
                 _CreatedBy, 
                 std::move(_CreateDate),
-                _LastUpdatedBy, 
-                std::move(_UpdateDate)),
+                std::nullopt, 
+                std::nullopt),
               Address(std::move(_Address)), 
               Address2(std::move(_Address2)),
               City(_City), 

@@ -2,31 +2,31 @@
 #include <DataTable.hpp>
 #include <DataTable.hpp>
 #include <Database.hpp>
-#include <BusinessConfig/BusinessConfig.hpp>
-#include <BusinessConfig/Repositories/BusinessConfig.hpp>
+#include <Company/Company.hpp>
+#include <Company/Repositories/Company.hpp>
 #include <DataTable.hpp>
 
 namespace omnisphere::services {
 
-struct BusinessConfig::Impl {
+struct Company::Impl {
   explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
       : repository(database) {}
 
-  omnisphere::repositories::BusinessConfig repository;
+  omnisphere::repositories::Company repository;
 };
 
-BusinessConfig::BusinessConfig(std::shared_ptr<omnisphere::services::Database> database)
+Company::Company(std::shared_ptr<omnisphere::services::Database> database)
     : pimpl(std::make_unique<Impl>(database)) {}
 
-BusinessConfig::~BusinessConfig() = default;
+Company::~Company() = default;
 
-omnisphere::models::BusinessConfig BusinessConfig::Get(const omnisphere::dtos::GetBusinessConfig &_businessConfig) const {
-  omnisphere::types::DataTable dataTable = pimpl->repository.Read(_businessConfig);
+omnisphere::models::Company Company::Get(const omnisphere::dtos::GetCompany &_company) const {
+  omnisphere::types::DataTable dataTable = pimpl->repository.Read(_company);
   if (dataTable.IsEmpty()) {
     throw std::runtime_error("Business Configuration not found.");
   }
 
-  return omnisphere::models::BusinessConfig(
+  return omnisphere::models::Company(
       dataTable[0]["Entry"], 
       dataTable[0]["Code"], 
       dataTable[0]["Name"],
@@ -55,12 +55,12 @@ omnisphere::models::BusinessConfig BusinessConfig::Get(const omnisphere::dtos::G
   );
 }
 
-bool BusinessConfig::Add(const omnisphere::dtos::CreateBusinessConfig &_businessConfig) const {
-  return pimpl->repository.Create(_businessConfig);
+bool Company::Add(const omnisphere::dtos::CreateCompany &_company) const {
+  return pimpl->repository.Create(_company);
 }
 
-bool BusinessConfig::Modify(const omnisphere::dtos::UpdateBusinessConfig &_businessConfig) const {
-  return pimpl->repository.Update(_businessConfig);
+bool Company::Modify(const omnisphere::dtos::UpdateCompany &_company) const {
+  return pimpl->repository.Update(_company);
 }
 
 } // namespace omnisphere::services

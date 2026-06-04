@@ -8,20 +8,20 @@
 #include <string>
 
 #include <Database.hpp>
-#include <BusinessConfig/DTOs/CreateBusinessConfig.hpp>
-#include <BusinessConfig/DTOs/UpdateBusinessConfig.hpp>
-#include <BusinessConfig/DTOs/GetBusinessConfig.hpp>
+#include <Company/DTOs/CreateCompany.hpp>
+#include <Company/DTOs/UpdateCompany.hpp>
+#include <Company/DTOs/GetCompany.hpp>
 #include <DataTable.hpp>
 
 namespace omnisphere::repositories {
-class BusinessConfig {
+class Company {
 public:
-  explicit BusinessConfig(std::shared_ptr<omnisphere::services::Database> database);
-  ~BusinessConfig();
+  explicit Company(std::shared_ptr<omnisphere::services::Database> database);
+  ~Company();
 
-  bool Create(const omnisphere::dtos::CreateBusinessConfig &_businessConfig) const;
-  bool Update(const omnisphere::dtos::UpdateBusinessConfig &_businessConfig) const;
-  omnisphere::types::DataTable Read(const omnisphere::dtos::GetBusinessConfig &_businessConfig) const;
+  bool Create(const omnisphere::dtos::CreateCompany &_company) const;
+  bool Update(const omnisphere::dtos::UpdateCompany &_company) const;
+  omnisphere::types::DataTable Read(const omnisphere::dtos::GetCompany &_company) const;
 
 private:
   std::shared_ptr<omnisphere::services::Database> Database;

@@ -3,13 +3,13 @@
 #pragma once
 
 #include <Base/BaseModel.hpp>
-#include <string>
 #include <optional>
+#include <string>
 
-namespace omnisphere::models {
-    class BusinessConfig : public omnisphere::models::BaseModel {
+namespace omnisphere::dtos {
+    class UpdateCompany : public omnisphere::models::BaseModel {
     public:
-        BusinessConfig(int _Entry, 
+        UpdateCompany(int _Entry, 
             std::string _Code, 
             std::string _Name, 
             std::optional<std::string> _Address,

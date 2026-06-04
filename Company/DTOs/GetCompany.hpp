@@ -5,7 +5,7 @@
 #include <string>
 
 namespace omnisphere::dtos {
-    struct GetBusinessConfig {
+    struct GetCompany {
         int Entry = 0;
         std::string Code = "";
         std::string Name = "";
