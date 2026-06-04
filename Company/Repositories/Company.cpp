@@ -151,6 +151,8 @@ bool Company::Update(
                 params);
     AddSetParam("ImagePath", _company.ImagePath, setClauses,
                 params);
+    AddSetParam("IsActive", _company.IsActive, setClauses,
+                params);
 
     for (size_t i = 0; i < setClauses.size(); ++i) {
       sQuery += setClauses[i];
@@ -179,7 +181,7 @@ omnisphere::types::DataTable Company::Read(
   try {
     std::string sQuery = "SELECT [Entry], [Code], [Name], TaxName, Address, "
                          "Address2, City, State, ZipCode, Country, TaxID, Currency, Phone1, Phone2, Email, WebSite, "
-                         "FacebookProfile, InstagramProfile, XProfile, LogoFile, AttachmentsPath, ImagePath "
+                         "FacebookProfile, InstagramProfile, XProfile, LogoFile, AttachmentsPath, ImagePath, [IsActive] "
                          "FROM Company ";
 
     return Database->FetchResults(sQuery, "Company::Read");

@@ -30,6 +30,7 @@ namespace omnisphere::dtos {
             std::optional<std::string> _LogoFile, 
             std::optional<std::string> _AttachmentsPath,
             std::optional<std::string> _ImagePath,
+            std::optional<std::string> _IsActive,
             int _CreatedBy,
             std::string _CreateDate, 
             std::optional<int> _LastUpdatedBy,
@@ -58,7 +59,8 @@ namespace omnisphere::dtos {
               XProfile(std::move(_XProfile)),
               LogoFile(std::move(_LogoFile)),
               AttachmentsPath(std::move(_AttachmentsPath)),
-              ImagePath(std::move(_ImagePath)) {}
+              ImagePath(std::move(_ImagePath)),
+              IsActive(std::move(_IsActive)) {}
 
         const std::optional<std::string> Address;
         const std::optional<std::string> Address2;
@@ -78,5 +80,6 @@ namespace omnisphere::dtos {
         const std::optional<std::string> LogoFile;
         const std::optional<std::string> AttachmentsPath;
         const std::optional<std::string> ImagePath;
+        const std::optional<std::string> IsActive;
     };
 }
