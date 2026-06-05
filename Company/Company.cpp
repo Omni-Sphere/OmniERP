@@ -30,6 +30,7 @@ omnisphere::models::Company Company::Get(const omnisphere::dtos::GetCompany &_co
       dataTable[0]["Entry"], 
       dataTable[0]["Code"], 
       dataTable[0]["Name"],
+      dataTable[0]["CommercialName"].GetOptional<std::string>(),
       dataTable[0]["Address"].GetOptional<std::string>(),
       dataTable[0]["Address2"].GetOptional<std::string>(),
       dataTable[0]["City"].GetOptional<int>(),

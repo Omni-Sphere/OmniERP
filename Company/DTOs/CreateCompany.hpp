@@ -11,7 +11,8 @@ namespace omnisphere::dtos {
     public:
         CreateCompany(int _Entry, 
             std::string _Code, 
-            std::string _Name, 
+            std::string _Name,
+            std::optional<std::string> _CommercialName,
             std::optional<std::string> _Address,
             std::optional<std::string> _Address2,
             std::optional<int> _City, 
@@ -56,7 +57,8 @@ namespace omnisphere::dtos {
               XProfile(std::move(_XProfile)),
               LogoFile(std::move(_LogoFile)),
               AttachmentsPath(std::move(_AttachmentsPath)),
-              ImagePath(std::move(_ImagePath)) {}
+              ImagePath(std::move(_ImagePath)),
+              CommercialName(std::move(_CommercialName)) {}
 
         const std::optional<std::string> Address;
         const std::optional<std::string> Address2;
@@ -76,5 +78,6 @@ namespace omnisphere::dtos {
         const std::optional<std::string> LogoFile;
         const std::optional<std::string> AttachmentsPath;
         const std::optional<std::string> ImagePath;
+        const std::optional<std::string> CommercialName;
     };
 }

@@ -56,6 +56,7 @@ bool Company::Create(
     AddInsertParam("Entry", _company.Entry, insertClauses, params);
     AddInsertParam("Code", _company.Code, insertClauses, params);
     AddInsertParam("Name", _company.Name, insertClauses, params);
+    AddInsertParam("CommercialName", _company.CommercialName, insertClauses, params);
     AddInsertParam("Address", _company.Address, insertClauses, params);
     AddInsertParam("Address2", _company.Address2, insertClauses, params);
     AddInsertParam("City", _company.City, insertClauses, params);
@@ -129,6 +130,7 @@ bool Company::Update(
 
     AddSetParam("Code", _company.Code, setClauses, params);
     AddSetParam("Name", _company.Name, setClauses, params);
+    AddSetParam("CommercialName", _company.CommercialName, setClauses, params);
     AddSetParam("Address", _company.Address, setClauses, params);
     AddSetParam("Address2", _company.Address2, setClauses, params);
     AddSetParam("City", _company.City, setClauses, params);
@@ -179,7 +181,7 @@ bool Company::Update(
 omnisphere::types::DataTable Company::Read(
     const omnisphere::dtos::GetCompany &getCompany) const {
   try {
-    std::string sQuery = "SELECT [Entry], [Code], [Name], TaxName, Address, "
+    std::string sQuery = "SELECT [Entry], [Code], [Name], CommercialName, TaxName, Address, "
                          "Address2, City, State, ZipCode, Country, TaxID, Currency, Phone1, Phone2, Email, WebSite, "
                          "FacebookProfile, InstagramProfile, XProfile, LogoFile, AttachmentsPath, ImagePath, [IsActive] "
                          "FROM Company ";

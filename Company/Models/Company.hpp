@@ -11,7 +11,8 @@ namespace omnisphere::models {
     public:
         Company(int _Entry, 
             std::string _Code, 
-            std::string _Name, 
+            std::string _Name,
+            std::optional<std::string> _CommercialName,
             std::optional<std::string> _Address,
             std::optional<std::string> _Address2,
             std::optional<int> _City, 
@@ -60,6 +61,7 @@ namespace omnisphere::models {
               LogoFile(std::move(_LogoFile)),
               AttachmentsPath(std::move(_AttachmentsPath)),
               ImagePath(std::move(_ImagePath)),
+              CommercialName(std::move(_CommercialName)),
               IsActive(std::move(_IsActive)) {}
 
         const std::optional<std::string> Address;
@@ -80,6 +82,7 @@ namespace omnisphere::models {
         const std::optional<std::string> LogoFile;
         const std::optional<std::string> AttachmentsPath;
         const std::optional<std::string> ImagePath;
+        const std::optional<std::string> CommercialName;
         const std::string IsActive;
     };
 }
