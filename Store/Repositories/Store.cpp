@@ -3,17 +3,16 @@
 #include <Store/Repositories/Store.hpp>
 #include <SQLParams.hpp>
 
-namespace omnisphere::repositories 
+namespace omnisphere::repositories
 {
-    Store::Store(std::shared_ptr<omnisphere::services::Database> database) : Database(database)
-    {}
+    Store::Store(std::shared_ptr<omnisphere::services::Database> database) : Database(database) {}
 
     Store::~Store() = default;
 
     template <typename T>
-    void Store::AddInsertParam(const std::string &field, const T &value, 
-                                     std::vector<std::string> &insertClauses, 
-                                     std::vector<omnisphere::types::SQLParam> &params) const
+    void Store::AddInsertParam(const std::string &field, const T &value,
+                                   std::vector<std::string> &insertClauses,
+                                   std::vector<omnisphere::types::SQLParam> &params) const
     {
         using U = std::decay_t<T>;
 
@@ -33,9 +32,9 @@ namespace omnisphere::repositories
     }
 
     template <typename T>
-    void Store::AddSetParam(const std::string &field, const T &value, 
-                                  std::vector<std::string> &setClauses, 
-                                  std::vector<omnisphere::types::SQLParam> &params) const
+    void Store::AddSetParam(const std::string &field, const T &value,
+                                std::vector<std::string> &setClauses,
+                                std::vector<omnisphere::types::SQLParam> &params) const
     {
         using U = std::decay_t<T>;
 
@@ -54,13 +53,13 @@ namespace omnisphere::repositories
         }
     }
 
-    bool Store::Create(const omnisphere::dtos::CreateStore &_store) const 
+    bool Store::Create(const omnisphere::dtos::CreateStore &_store) const
     {
-        try 
+        try
         {
             std::vector<std::string> fields;
             std::vector<omnisphere::types::SQLParam> params;
-            
+
             AddInsertParam("Entry", GetCurrentSequence(), fields, params);
             AddInsertParam("Code", _store.Code, fields, params);
             AddInsertParam("Name", _store.Name, fields, params);
@@ -86,11 +85,14 @@ namespace omnisphere::repositories
 
             std::string query = "INSERT INTO Stores (";
             std::string values = " VALUES (";
-            
-            for (size_t i = 0; i < fields.size(); ++i) {
+
+            for (size_t i = 0; i < fields.size(); ++i)
+            {
                 query += fields[i];
                 values += "?";
-                if (i < fields.size() - 1) {
+
+                if (i < fields.size() - 1)
+                {
                     query += ", ";
                     values += ", ";
                 }
@@ -106,17 +108,17 @@ namespace omnisphere::repositories
             Database->CommitTransaction();
 
             return true;
-        } 
-        catch (const std::exception &e) 
+        }
+        catch (const std::exception &e)
         {
             Database->RollbackTransaction();
             throw std::runtime_error(std::string("[CreateStore Exception] ") + e.what());
         }
     }
 
-    bool Store::Update(const omnisphere::dtos::UpdateStore &_store) const 
+    bool Store::Update(const omnisphere::dtos::UpdateStore &_store) const
     {
-        try 
+        try
         {
             std::string sQuery = "UPDATE Stores SET ";
             std::vector<omnisphere::types::SQLParam> params;
@@ -146,9 +148,10 @@ namespace omnisphere::repositories
 
             if (setClauses.empty()) return true;
 
-            for (size_t i = 0; i < setClauses.size(); ++i) 
+            for (size_t i = 0; i < setClauses.size(); ++i)
             {
                 sQuery += setClauses[i];
+
                 if (i < setClauses.size() - 1)
                     sQuery += ", ";
             }
@@ -162,67 +165,71 @@ namespace omnisphere::repositories
             Database->CommitTransaction();
 
             return true;
-        } 
-        catch (const std::exception &e) 
+        }
+        catch (const std::exception &e)
         {
             Database->RollbackTransaction();
             throw std::runtime_error(std::string("[UpdateStore Exception] ") + e.what());
         }
     }
 
-    omnisphere::types::DataTable Store::Read(int entry) const 
+    omnisphere::types::DataTable Store::Read(int entry) const
     {
-        try 
+        try
         {
             std::string sQuery = "SELECT * FROM Stores WHERE Entry = ?";
             std::vector<omnisphere::types::SQLParam> params;
             params.push_back(omnisphere::types::MakeSQLParam(entry));
 
             return Database->FetchPrepared(sQuery, params);
-        } 
-        catch (const std::exception &e) 
+        }
+        catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadStore Exception] ") + e.what());
         }
     }
 
-    omnisphere::types::DataTable Store::ReadAll() const 
+    omnisphere::types::DataTable Store::ReadAll() const
     {
-        try 
+        try
         {
             const std::string query = "SELECT * FROM Stores WHERE IsActive = 'Y'";
+
             return Database->FetchResults(query);
-        } 
-        catch (const std::exception &e) 
+        }
+        catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadAllStore Exception] ") + e.what());
         }
     }
 
-    int Store::GetCurrentSequence() const 
+    int Store::GetCurrentSequence() const
     {
-        try 
+        try
         {
             const std::string query = "SELECT ISNULL(StoreSequence, 0) + 1 StoreSequence FROM Sequences WHERE SeqEntry = 1";
             omnisphere::types::DataTable dataTable = Database->FetchResults(query);
+
             return dataTable[0]["StoreSequence"];
-        } 
-        catch (const std::exception &e) 
+        }
+        catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetCurrentSequence Exception] ") + e.what());
         }
     }
 
-    bool Store::UpdateStoreSequence() const 
+    bool Store::UpdateStoreSequence() const
     {
-        try 
+        try
         {
             const std::string query = "UPDATE Sequences SET StoreSequence = ISNULL(StoreSequence, 0) + 1";
+
             if (!Database->RunStatement(query))
                 throw std::runtime_error("[RunStatement exception]");
+
             return true;
-        } 
-        catch (const std::exception &e) 
+        }
+        catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[UpdateStoreSequence Exception] ") + e.what());
         }
