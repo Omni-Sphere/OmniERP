@@ -16,12 +16,12 @@ namespace omnisphere::services
     {
         std::shared_ptr<omnisphere::repositories::Item> item;
         explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
-        : item(std::make_shared<omnisphere::repositories::Item>(database)) {}
+            : item(std::make_shared<omnisphere::repositories::Item>(database)) {}
     };
 
     // Update constructor to initialize pimpl
     Item::Item(std::shared_ptr<omnisphere::services::Database> database)
-    : pimpl(std::make_unique<Impl>(database)) {}
+        : pimpl(std::make_unique<Impl>(database)) {}
 
     // Define destructor
     Item::~Item() = default;
@@ -74,23 +74,23 @@ namespace omnisphere::services
             for (int i = 0; i < data.RowsCount(); i++)
             {
                 items.emplace_back(data[i]["ItemEntry"], data[i]["Code"], data[i]["Name"],
-                                         data[i]["Description"].GetOptional<std::string>(),
-                                         data[i]["Image"].GetOptional<std::string>(),
-                                         data[i]["IsActive"], data[i]["PurchaseItem"],
-                                         data[i]["SellItem"], data[i]["InventoryItem"],
-                                         data[i]["Price"], data[i]["Brand"].GetOptional<int>(),
-                                         data[i]["Group"].GetOptional<int>(), data[i]["OnHand"],
-                                         data[i]["OnOrder"].GetOptional<double>(),
-                                         data[i]["OnRequest"].GetOptional<double>(),
-                                         data[i]["MinStock"].GetOptional<double>(),
-                                         data[i]["MaxStock"].GetOptional<double>(),
-                                         data[i]["MinOrder"].GetOptional<double>(),
-                                         data[i]["MaxOrder"].GetOptional<double>(),
-                                         data[i]["MinRequest"].GetOptional<double>(),
-                                         data[i]["MaxRequest"].GetOptional<double>(),
-                                         data[i]["CreatedBy"], data[i]["CreateDate"],
-                                         data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                         data[i]["UpdateDate"].GetOptional<std::string>());
+                                   data[i]["Description"].GetOptional<std::string>(),
+                                   data[i]["Image"].GetOptional<std::string>(),
+                                   data[i]["IsActive"], data[i]["PurchaseItem"],
+                                   data[i]["SellItem"], data[i]["InventoryItem"],
+                                   data[i]["Price"], data[i]["Brand"].GetOptional<int>(),
+                                   data[i]["Group"].GetOptional<int>(), data[i]["OnHand"],
+                                   data[i]["OnOrder"].GetOptional<double>(),
+                                   data[i]["OnRequest"].GetOptional<double>(),
+                                   data[i]["MinStock"].GetOptional<double>(),
+                                   data[i]["MaxStock"].GetOptional<double>(),
+                                   data[i]["MinOrder"].GetOptional<double>(),
+                                   data[i]["MaxOrder"].GetOptional<double>(),
+                                   data[i]["MinRequest"].GetOptional<double>(),
+                                   data[i]["MaxRequest"].GetOptional<double>(),
+                                   data[i]["CreatedBy"], data[i]["CreateDate"],
+                                   data[i]["LastUpdatedBy"].GetOptional<int>(),
+                                   data[i]["UpdateDate"].GetOptional<std::string>());
             }
 
             return items;
@@ -98,7 +98,7 @@ namespace omnisphere::services
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetAllItems Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -114,23 +114,23 @@ namespace omnisphere::services
             for (int i = 0; i < data.RowsCount(); i++)
             {
                 items.emplace_back(data[i]["ItemEntry"], data[i]["Code"], data[i]["Name"],
-                                         data[i]["Description"].GetOptional<std::string>(),
-                                         data[i]["Image"].GetOptional<std::string>(),
-                                         data[i]["IsActive"], data[i]["PurchaseItem"],
-                                         data[i]["SellItem"], data[i]["InventoryItem"],
-                                         data[i]["Price"], data[i]["Brand"].GetOptional<int>(),
-                                         data[i]["Group"].GetOptional<int>(), data[i]["OnHand"],
-                                         data[i]["OnOrder"].GetOptional<double>(),
-                                         data[i]["OnRequest"].GetOptional<double>(),
-                                         data[i]["MinStock"].GetOptional<double>(),
-                                         data[i]["MaxStock"].GetOptional<double>(),
-                                         data[i]["MinOrder"].GetOptional<double>(),
-                                         data[i]["MaxOrder"].GetOptional<double>(),
-                                         data[i]["MinRequest"].GetOptional<double>(),
-                                         data[i]["MaxRequest"].GetOptional<double>(),
-                                         data[i]["CreatedBy"], data[i]["CreateDate"],
-                                         data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                         data[i]["UpdateDate"].GetOptional<std::string>());
+                                   data[i]["Description"].GetOptional<std::string>(),
+                                   data[i]["Image"].GetOptional<std::string>(),
+                                   data[i]["IsActive"], data[i]["PurchaseItem"],
+                                   data[i]["SellItem"], data[i]["InventoryItem"],
+                                   data[i]["Price"], data[i]["Brand"].GetOptional<int>(),
+                                   data[i]["Group"].GetOptional<int>(), data[i]["OnHand"],
+                                   data[i]["OnOrder"].GetOptional<double>(),
+                                   data[i]["OnRequest"].GetOptional<double>(),
+                                   data[i]["MinStock"].GetOptional<double>(),
+                                   data[i]["MaxStock"].GetOptional<double>(),
+                                   data[i]["MinOrder"].GetOptional<double>(),
+                                   data[i]["MaxOrder"].GetOptional<double>(),
+                                   data[i]["MinRequest"].GetOptional<double>(),
+                                   data[i]["MaxRequest"].GetOptional<double>(),
+                                   data[i]["CreatedBy"], data[i]["CreateDate"],
+                                   data[i]["LastUpdatedBy"].GetOptional<int>(),
+                                   data[i]["UpdateDate"].GetOptional<std::string>());
             }
 
             return items;
@@ -138,7 +138,7 @@ namespace omnisphere::services
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[SearchItems Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -181,7 +181,7 @@ namespace omnisphere::services
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[Item::Modify Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     };
 } // namespace omnisphere::services

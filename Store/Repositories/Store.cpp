@@ -11,8 +11,8 @@ namespace omnisphere::repositories
 
     template <typename T>
     void Store::AddInsertParam(const std::string &field, const T &value,
-                                   std::vector<std::string> &insertClauses,
-                                   std::vector<omnisphere::types::SQLParam> &params) const
+                               std::vector<std::string> &insertClauses,
+                               std::vector<omnisphere::types::SQLParam> &params) const
     {
         using U = std::decay_t<T>;
 
@@ -33,8 +33,8 @@ namespace omnisphere::repositories
 
     template <typename T>
     void Store::AddSetParam(const std::string &field, const T &value,
-                                std::vector<std::string> &setClauses,
-                                std::vector<omnisphere::types::SQLParam> &params) const
+                            std::vector<std::string> &setClauses,
+                            std::vector<omnisphere::types::SQLParam> &params) const
     {
         using U = std::decay_t<T>;
 

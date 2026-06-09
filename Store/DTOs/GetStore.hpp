@@ -5,8 +5,10 @@
 #include <string>
 #include <optional>
 
-namespace omnisphere::dtos {
-    struct GetStore {
+namespace omnisphere::dtos
+{
+    struct GetStore
+    {
         int Entry;
         std::string Code;
         std::string Name;

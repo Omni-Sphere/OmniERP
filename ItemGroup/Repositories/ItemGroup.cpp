@@ -8,7 +8,7 @@
 namespace omnisphere::repositories
 {
     ItemGroup::ItemGroup(std::shared_ptr<omnisphere::services::Database> Database)
-    : database(std::move(Database)) {}
+        : database(std::move(Database)) {}
 
     int ItemGroup::GetCurrentSequence() const
     {
@@ -28,7 +28,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetCurrentSequence Exception] ") +
-                                         " " + e.what());
+                                     " " + e.what());
         }
     }
 
@@ -47,7 +47,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ItemGroupsSequence Exception] ") +
-                                         " " + e.what());
+                                     " " + e.what());
         }
     }
 
@@ -77,7 +77,7 @@ namespace omnisphere::repositories
         {
             database->RollbackTransaction();
             throw(std::runtime_error(std::string("[CreateItemGroup Exception]") +
-                                         e.what()));
+                                     e.what()));
         }
     }
 
@@ -104,7 +104,7 @@ namespace omnisphere::repositories
         {
             database->RollbackTransaction();
             throw(std::runtime_error(std::string("[UpdateItemGroup Exception]") +
-                                         e.what()));
+                                     e.what()));
         }
     }
 
@@ -119,12 +119,13 @@ namespace omnisphere::repositories
             omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemGroup::ReadAll");
 
             return
+
             {data};
         }
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadAllItemGroups Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -169,7 +170,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadItemGroup Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 } // namespace omnisphere::repositories

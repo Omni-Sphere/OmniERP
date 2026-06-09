@@ -14,11 +14,11 @@ namespace omnisphere::usermodule
     {
         std::shared_ptr<omnisphere::repositories::UserModuleRepository> repository;
         explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
-        : repository(std::make_shared<omnisphere::repositories::UserModuleRepository>(database)) {}
+            : repository(std::make_shared<omnisphere::repositories::UserModuleRepository>(database)) {}
     };
 
     UserModule::UserModule(std::shared_ptr<omnisphere::services::Database> database)
-    : pImpl(std::make_unique<Impl>(database)) {}
+        : pImpl(std::make_unique<Impl>(database)) {}
     UserModule::~UserModule() = default;
 
     omnisphere::models::UserModule UserModule::Add(const omnisphere::dtos::CreateUserModule& userModule) const
@@ -36,6 +36,7 @@ namespace omnisphere::usermodule
             throw std::runtime_error("Error adding user module");
         }
         catch (const std::exception& e)
+
         { throw std::runtime_error(std::string("[AddUserModule Exception] ") + e.what()); }
     }
 
@@ -53,6 +54,7 @@ namespace omnisphere::usermodule
             throw std::runtime_error("Error updating user module");
         }
         catch (const std::exception& e)
+
         { throw std::runtime_error(std::string("[ModifyUserModule Exception] ") + e.what()); }
     }
 
@@ -66,6 +68,7 @@ namespace omnisphere::usermodule
             for (int i = 0; i < data.RowsCount(); i++)
             {
                 list.push_back(
+
                 {data[i]["Entry"], data[i]["UserEntry"], data[i]["ModuleEntry"],
                     data[i]["IsAllowed"],
                     data[i]["CreatedBy"], data[i]["CreateDate"],
@@ -76,6 +79,7 @@ namespace omnisphere::usermodule
             return list;
         }
         catch (const std::exception& e)
+
         { throw std::runtime_error(std::string("[GetAllUserModules Exception] ") + e.what()); }
     }
 
@@ -87,6 +91,7 @@ namespace omnisphere::usermodule
 
             if (data.RowsCount() == 0) throw std::runtime_error("UserModule doesn't exist");
             return
+
             {data[0]["Entry"], data[0]["UserEntry"], data[0]["ModuleEntry"],
                 data[0]["IsAllowed"],
                 data[0]["CreatedBy"], data[0]["CreateDate"],
@@ -94,14 +99,17 @@ namespace omnisphere::usermodule
                 data[0]["UpdateDate"].GetOptional<std::string>()};
         }
         catch (const std::exception& e)
+
         { throw std::runtime_error(std::string("[GetUserModule Exception] ") + e.what()); }
     }
 
     bool UserModule::Remove(int entry) const
     {
         try
+
         { return pImpl->repository->Delete(entry); }
         catch (const std::exception& e)
+
         { throw std::runtime_error(std::string("[RemoveUserModule Exception] ") + e.what()); }
     }
 } // namespace omnisphere::usermodule

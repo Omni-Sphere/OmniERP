@@ -13,7 +13,7 @@
 namespace omnisphere::repositories
 {
     ModuleRepository::ModuleRepository(std::shared_ptr<omnisphere::services::Database> Database)
-    : database(Database) {}
+        : database(Database) {}
 
     ModuleRepository::~ModuleRepository() = default;
 

@@ -7,7 +7,7 @@ namespace omnisphere::repositories
 {
     Company::Company(
         std::shared_ptr<omnisphere::services::Database> database)
-    : Database(database) {}
+        : Database(database) {}
 
     Company::~Company() = default;
 
@@ -83,15 +83,15 @@ namespace omnisphere::repositories
             AddInsertParam("Email", _company.Email, insertClauses, params);
             AddInsertParam("WebSite", _company.WebSite, insertClauses, params);
             AddInsertParam("FacebookProfile", _company.FacebookProfile,
-                               insertClauses, params);
+                           insertClauses, params);
             AddInsertParam("InstagramProfile", _company.InstagramProfile,
-                               insertClauses, params);
+                           insertClauses, params);
             AddInsertParam("XProfile", _company.XProfile, insertClauses, params);
             AddInsertParam("LogoFile", _company.LogoFile, insertClauses, params);
             AddInsertParam("AttachmentsPath", _company.AttachmentsPath,
-                               insertClauses, params);
+                           insertClauses, params);
             AddInsertParam("ImagePath", _company.ImagePath,
-                               insertClauses, params);
+                           insertClauses, params);
 
             for (size_t i = 0; i < insertClauses.size(); ++i)
             {
@@ -142,7 +142,7 @@ namespace omnisphere::repositories
         {
             Database->RollbackTransaction();
             throw std::runtime_error(std::string("[CreateCompany Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -171,17 +171,17 @@ namespace omnisphere::repositories
             AddSetParam("Email", _company.Email, setClauses, params);
             AddSetParam("WebSite", _company.WebSite, setClauses, params);
             AddSetParam("FacebookProfile", _company.FacebookProfile, setClauses,
-                            params);
+                        params);
             AddSetParam("InstagramProfile", _company.InstagramProfile,
-                            setClauses, params);
+                        setClauses, params);
             AddSetParam("XProfile", _company.XProfile, setClauses, params);
             AddSetParam("LogoFile", _company.LogoFile, setClauses, params);
             AddSetParam("AttachmentsPath", _company.AttachmentsPath, setClauses,
-                            params);
+                        params);
             AddSetParam("ImagePath", _company.ImagePath, setClauses,
-                            params);
+                        params);
             AddSetParam("IsActive", _company.IsActive, setClauses,
-                            params);
+                        params);
 
             for (size_t i = 0; i < setClauses.size(); ++i)
             {
@@ -205,7 +205,7 @@ namespace omnisphere::repositories
         {
             Database->RollbackTransaction();
             throw std::runtime_error(std::string("[UpdateCompany Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -224,7 +224,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadCompany Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 } // namespace omnisphere::repositories

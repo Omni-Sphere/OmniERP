@@ -8,7 +8,7 @@
 namespace omnisphere::repositories
 {
     ItemBrand::ItemBrand(std::shared_ptr<omnisphere::services::Database> _database)
-    : database(std::move(_database)) {}
+        : database(std::move(_database)) {}
 
     int ItemBrand::GetCurrentSequence() const
     {
@@ -28,7 +28,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetCurrentSequence Exception] ") +
-                                         " " + e.what());
+                                     " " + e.what());
         }
     }
 
@@ -47,7 +47,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ItemBrandsSequence Exception] ") +
-                                         " " + e.what());
+                                     " " + e.what());
         }
     }
 
@@ -77,7 +77,7 @@ namespace omnisphere::repositories
         {
             database->RollbackTransaction();
             throw(std::runtime_error(std::string("[CreateItemBrand Exception]") +
-                                         e.what()));
+                                     e.what()));
         }
     }
 
@@ -104,7 +104,7 @@ namespace omnisphere::repositories
         {
             database->RollbackTransaction();
             throw(std::runtime_error(std::string("[UpdateItemBrand Exception]") +
-                                         e.what()));
+                                     e.what()));
         }
     }
 
@@ -129,7 +129,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadAllItemBrands Exception] ") +
-                                         " " + e.what());
+                                     " " + e.what());
         }
     }
 
@@ -179,7 +179,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadItemBrand Exception] ") + " " +
-                                         e.what());
+                                     e.what());
         }
     }
 } // namespace omnisphere::repositories

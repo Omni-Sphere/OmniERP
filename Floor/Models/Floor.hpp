@@ -6,10 +6,12 @@
 #include <optional>
 #include <vector>
 
-namespace omnisphere::models {
-class Floor : public omnisphere::models::BaseModel {
-public:
-  using omnisphere::models::BaseModel::BaseModel;
-  std::vector<Area> Areas;
-};
+namespace omnisphere::models
+{
+    class Floor : public omnisphere::models::BaseModel
+    {
+        public:
+        using omnisphere::models::BaseModel::BaseModel;
+        std::vector<Area> Areas;
+    };
 } // namespace omnisphere::models

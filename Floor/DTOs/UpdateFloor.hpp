@@ -4,9 +4,10 @@
 #include <Base/BaseUpdateDTO.hpp>
 #include <string>
 
-namespace omnisphere::dtos 
+namespace omnisphere::dtos
 {
-    struct UpdateFloor : public omnisphere::dtos::BaseUpdateDTO {
-        using omnisphere::dtos::BaseUpdateDTO::BaseUpdateDTO;     
+    struct UpdateFloor : public omnisphere::dtos::BaseUpdateDTO
+    {
+        using omnisphere::dtos::BaseUpdateDTO::BaseUpdateDTO;
     };
 };

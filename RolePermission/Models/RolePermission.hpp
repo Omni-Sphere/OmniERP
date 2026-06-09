@@ -4,15 +4,17 @@
 #include <string>
 #include <optional>
 
-namespace omnisphere::models {
-struct RolePermission {
-    int Entry;
-    int RoleEntry;
-    int PermissionEntry;
-    bool IsAllowed;
-    int CreatedBy;
-    std::string CreateDate;
-    std::optional<int> LastUpdatedBy;
-    std::optional<std::string> UpdateDate;
-};
+namespace omnisphere::models
+{
+    struct RolePermission
+    {
+        int Entry;
+        int RoleEntry;
+        int PermissionEntry;
+        bool IsAllowed;
+        int CreatedBy;
+        std::string CreateDate;
+        std::optional<int> LastUpdatedBy;
+        std::optional<std::string> UpdateDate;
+    };
 } // namespace omnisphere::models

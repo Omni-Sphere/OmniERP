@@ -4,7 +4,7 @@
 #include <optional>
 #include <string>
 
-namespace omnisphere::dtos 
+namespace omnisphere::dtos
 {
     struct GetArea
     {

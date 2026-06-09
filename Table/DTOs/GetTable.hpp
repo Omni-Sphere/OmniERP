@@ -4,8 +4,10 @@
 #include <optional>
 #include <string>
 
-namespace omnisphere::dtos {
-    struct GetTable {
+namespace omnisphere::dtos
+{
+    struct GetTable
+    {
         std::optional<int> Entry;
         std::optional<std::string> Code;
         std::optional<std::string> Name;

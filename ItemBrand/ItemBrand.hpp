@@ -11,27 +11,28 @@
 #include <ItemBrand/DTOs/UpdateItemBrand.hpp>
 #include <ItemBrand/Models/ItemBrand.hpp>
 
-namespace omnisphere::services {
+namespace omnisphere::services
+{
+    class ItemBrand
+    {
+        private:
+        struct Impl;
+        std::unique_ptr<Impl> pimpl;
 
-class ItemBrand {
-private:
-  struct Impl;
-  std::unique_ptr<Impl> pimpl;
+        public:
+        explicit ItemBrand(std::shared_ptr<omnisphere::services::Database> db);
 
-public:
-  explicit ItemBrand(std::shared_ptr<omnisphere::services::Database> db);
+        ~ItemBrand();
 
-  ~ItemBrand();
+        omnisphere::models::ItemBrand
+        Add(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
 
-  omnisphere::models::ItemBrand
-  Add(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
+        omnisphere::models::ItemBrand
+        Modify(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
 
-  omnisphere::models::ItemBrand
-  Modify(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
+        std::vector<omnisphere::models::ItemBrand> GetAll() const;
 
-  std::vector<omnisphere::models::ItemBrand> GetAll() const;
-
-  omnisphere::models::ItemBrand
-  Get(const omnisphere::dtos::GetItemBrand &getItemBrand) const;
-};
+        omnisphere::models::ItemBrand
+        Get(const omnisphere::dtos::GetItemBrand &getItemBrand) const;
+    };
 } // namespace omnisphere::services

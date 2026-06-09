@@ -13,7 +13,7 @@
 namespace omnisphere::repositories
 {
     RoleRepository::RoleRepository(std::shared_ptr<omnisphere::services::Database> Database)
-    : database(Database) {}
+        : database(Database) {}
 
     RoleRepository::~RoleRepository() = default;
 

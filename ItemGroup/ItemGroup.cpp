@@ -13,12 +13,12 @@ namespace omnisphere::services
     {
         std::shared_ptr<omnisphere::repositories::ItemGroup> itemGroupRepository;
         explicit Impl(std::shared_ptr<omnisphere::services::Database> db)
-        : itemGroupRepository(
-            std::make_shared<omnisphere::repositories::ItemGroup>(db)) {}
+            : itemGroupRepository(
+                std::make_shared<omnisphere::repositories::ItemGroup>(db)) {}
     };
 
     ItemGroup::ItemGroup(std::shared_ptr<omnisphere::services::Database> db)
-    : pimpl(std::make_unique<Impl>(db)) {}
+        : pimpl(std::make_unique<Impl>(db)) {}
 
     ItemGroup::~ItemGroup() = default;
 
@@ -42,7 +42,7 @@ namespace omnisphere::services
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[AddItemGroup Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -66,7 +66,7 @@ namespace omnisphere::services
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ModifyItemGroup Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -81,17 +81,17 @@ namespace omnisphere::services
             for (int i = 0; i < dataTable.RowsCount(); i++)
                 itemGroups.emplace_back(omnisphere::models::ItemGroup
             {
-                                              dataTable[i]["Entry"], dataTable[i]["Code"], dataTable[i]["Name"],
-                                              dataTable[i]["CreatedBy"], dataTable[i]["CreateDate"],
-                                              dataTable[i]["LastUpdatedBy"].GetOptional<int>(),
-                                              dataTable[i]["UpdateDate"].GetOptional<std::string>()});
+                                        dataTable[i]["Entry"], dataTable[i]["Code"], dataTable[i]["Name"],
+                                        dataTable[i]["CreatedBy"], dataTable[i]["CreateDate"],
+                                        dataTable[i]["LastUpdatedBy"].GetOptional<int>(),
+                                        dataTable[i]["UpdateDate"].GetOptional<std::string>()});
 
             return itemGroups;
         }
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetAllItemGroups Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -121,7 +121,7 @@ namespace omnisphere::services
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetItemGroup Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 } // namespace omnisphere::services

@@ -11,13 +11,15 @@
 #include <Floor/DTOs/GetFloor.hpp>
 #include <Database.hpp>
 
-namespace omnisphere::repositories {
-    class FloorRepository {
-    private:
+namespace omnisphere::repositories
+{
+    class FloorRepository
+    {
+        private:
         std::shared_ptr<omnisphere::services::Database> database;
         int GetCurrentSequence() const;
         bool UpdateFloorSequence() const;
-    public:
+        public:
         explicit FloorRepository(std::shared_ptr<omnisphere::services::Database> Database);
         ~FloorRepository();
         bool Create(const omnisphere::dtos::CreateFloor &floor) const;

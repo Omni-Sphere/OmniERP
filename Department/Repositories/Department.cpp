@@ -13,7 +13,7 @@
 namespace omnisphere::repositories
 {
     DepartmentRepository::DepartmentRepository(std::shared_ptr<omnisphere::services::Database> Database)
-    : database(Database) {}
+        : database(Database) {}
 
     DepartmentRepository::~DepartmentRepository() = default;
 

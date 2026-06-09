@@ -13,7 +13,7 @@
 namespace omnisphere::repositories
 {
     UserPermissionRepository::UserPermissionRepository(std::shared_ptr<omnisphere::services::Database> Database)
-    : database(Database) {}
+        : database(Database) {}
 
     UserPermissionRepository::~UserPermissionRepository() = default;
 
@@ -37,6 +37,7 @@ namespace omnisphere::repositories
             return true;
         }
         catch (const std::exception& e)
+
         { database->RollbackTransaction(); throw(std::runtime_error(std::string("[CreateUserPermission Exception] ") + e.what())); }
     }
 
@@ -60,14 +61,17 @@ namespace omnisphere::repositories
             return true;
         }
         catch (const std::exception& e)
+
         { database->RollbackTransaction(); throw(std::runtime_error(std::string("[UpdateUserPermission Exception] ") + e.what())); }
     }
 
     omnisphere::types::DataTable UserPermissionRepository::ReadAll() const
     {
         try
+
         { return database->FetchResults("SELECT * FROM UserPermissions", "UserPermissionRepository::ReadAll"); }
         catch (const std::exception& e)
+
         { throw(std::runtime_error(std::string("[ReadAllUserPermission Exception] ") + e.what())); }
     }
 
@@ -90,6 +94,7 @@ namespace omnisphere::repositories
             return database->FetchPrepared(query, parameters, "UserPermissionRepository::Read");
         }
         catch (const std::exception& e)
+
         { throw(std::runtime_error(std::string("[ReadUserPermission Exception] ") + e.what())); }
     }
 
@@ -106,6 +111,7 @@ namespace omnisphere::repositories
             return true;
         }
         catch (const std::exception& e)
+
         { database->RollbackTransaction(); throw(std::runtime_error(std::string("[DeleteUserPermission Exception] ") + e.what())); }
     }
 
@@ -118,6 +124,7 @@ namespace omnisphere::repositories
             return dataTable[0]["UserPermSequence"];
         }
         catch (const std::exception& e)
+
         { throw(std::runtime_error(std::string("[GetCurrentSequence Exception] ") + e.what())); }
     }
 
@@ -130,6 +137,7 @@ namespace omnisphere::repositories
             return true;
         }
         catch (const std::exception& e)
+
         { throw(std::runtime_error(std::string("[UpdateSequence Exception] ") + e.what())); }
     }
 } // namespace omnisphere::repositories

@@ -13,7 +13,7 @@
 namespace omnisphere::repositories
 {
     PermissionRepository::PermissionRepository(std::shared_ptr<omnisphere::services::Database> Database)
-    : database(Database) {}
+        : database(Database) {}
 
     PermissionRepository::~PermissionRepository() = default;
 

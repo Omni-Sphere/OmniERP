@@ -8,13 +8,13 @@ namespace omnisphere::services
     struct Customer::Impl
     {
         explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
-        : repository(database) {}
+            : repository(database) {}
 
         omnisphere::repositories::Customer repository;
     };
 
     Customer::Customer(std::shared_ptr<omnisphere::services::Database> database)
-    : pimpl(std::make_unique<Impl>(database)) {}
+        : pimpl(std::make_unique<Impl>(database)) {}
 
     Customer::~Customer() = default;
 

@@ -11,16 +11,16 @@
 namespace omnisphere::table
 {
     Table::Table(std::shared_ptr<omnisphere::services::Database> database)
-    : pImpl(std::make_unique<Impl>(database)) {}
+        : pImpl(std::make_unique<Impl>(database)) {}
     Table::~Table() = default;
 
     struct Table::Impl
     {
         std::shared_ptr<omnisphere::repositories::TableRepository> tableRepository;
         explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
-        : tableRepository(
-            std::make_shared<omnisphere::repositories::TableRepository>(
-                database)) {}
+            : tableRepository(
+                std::make_shared<omnisphere::repositories::TableRepository>(
+                    database)) {}
     };
 
     omnisphere::models::Table
@@ -66,7 +66,7 @@ namespace omnisphere::table
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ModifyTable Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -80,16 +80,16 @@ namespace omnisphere::table
             for (int i = 0; i < data.RowsCount(); i++)
             {
                 tables.emplace_back(data[i]["Entry"],
-                                            data[i]["Code"],
-                                            data[i]["Name"],
-                                            data[i]["Capacity"],
-                                            data[i]["Type"],
-                                            data[i]["AreaEntry"],
-                                            data[i]["FloorEntry"],
-                                            data[i]["CreatedBy"],
-                                            data[i]["CreateDate"],
-                                            data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                            data[i]["UpdateDate"].GetOptional<std::string>());
+                                    data[i]["Code"],
+                                    data[i]["Name"],
+                                    data[i]["Capacity"],
+                                    data[i]["Type"],
+                                    data[i]["AreaEntry"],
+                                    data[i]["FloorEntry"],
+                                    data[i]["CreatedBy"],
+                                    data[i]["CreateDate"],
+                                    data[i]["LastUpdatedBy"].GetOptional<int>(),
+                                    data[i]["UpdateDate"].GetOptional<std::string>());
             }
 
             return tables;
@@ -97,7 +97,7 @@ namespace omnisphere::table
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetAllTables Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -112,16 +112,16 @@ namespace omnisphere::table
                 throw std::runtime_error("Table doesn't exists");
 
             return omnisphere::models::Table(data[0]["Entry"],
-                                                 data[0]["Code"],
-                                                 data[0]["Name"],
-                                                 data[0]["Capacity"],
-                                                 data[0]["Type"],
-                                                 data[0]["AreaEntry"],
-                                                 data[0]["FloorEntry"],
-                                                 data[0]["CreatedBy"],
-                                                 data[0]["CreateDate"],
-                                                 data[0]["LastUpdatedBy"].GetOptional<int>(),
-                                                 data[0]["UpdateDate"].GetOptional<std::string>());
+                                             data[0]["Code"],
+                                             data[0]["Name"],
+                                             data[0]["Capacity"],
+                                             data[0]["Type"],
+                                             data[0]["AreaEntry"],
+                                             data[0]["FloorEntry"],
+                                             data[0]["CreatedBy"],
+                                             data[0]["CreateDate"],
+                                             data[0]["LastUpdatedBy"].GetOptional<int>(),
+                                             data[0]["UpdateDate"].GetOptional<std::string>());
         }
         catch (const std::exception &e)
         {
@@ -139,16 +139,16 @@ namespace omnisphere::table
             for (int i = 0; i < data.RowsCount(); i++)
             {
                 tables.emplace_back(data[i]["Entry"],
-                                            data[i]["Code"],
-                                            data[i]["Name"],
-                                            data[i]["Capacity"],
-                                            data[i]["Type"],
-                                            data[i]["AreaEntry"],
-                                            data[i]["FloorEntry"],
-                                            data[i]["CreatedBy"],
-                                            data[i]["CreateDate"],
-                                            data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                            data[i]["UpdateDate"].GetOptional<std::string>());
+                                    data[i]["Code"],
+                                    data[i]["Name"],
+                                    data[i]["Capacity"],
+                                    data[i]["Type"],
+                                    data[i]["AreaEntry"],
+                                    data[i]["FloorEntry"],
+                                    data[i]["CreatedBy"],
+                                    data[i]["CreateDate"],
+                                    data[i]["LastUpdatedBy"].GetOptional<int>(),
+                                    data[i]["UpdateDate"].GetOptional<std::string>());
             }
 
             return tables;
@@ -156,7 +156,7 @@ namespace omnisphere::table
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[SearchTables Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 

@@ -12,7 +12,7 @@
 namespace omnisphere::floor
 {
     Floor::Floor(std::shared_ptr<omnisphere::services::Database> database)
-    : pImpl(std::make_unique<Impl>(database)) {}
+        : pImpl(std::make_unique<Impl>(database)) {}
     Floor::~Floor() = default;
 
     struct Floor::Impl
@@ -20,12 +20,12 @@ namespace omnisphere::floor
         std::shared_ptr<omnisphere::repositories::FloorRepository> floorRepository;
         std::shared_ptr<omnisphere::repositories::AreaRepository> areaRepository;
         explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
-        : floorRepository(
-            std::make_shared<omnisphere::repositories::FloorRepository>(
-                database)),
-        areaRepository(
-            std::make_shared<omnisphere::repositories::AreaRepository>(
-                database)) {}
+            : floorRepository(
+                std::make_shared<omnisphere::repositories::FloorRepository>(
+                    database)),
+            areaRepository(
+                std::make_shared<omnisphere::repositories::AreaRepository>(
+                    database)) {}
     };
 
     omnisphere::models::Floor
@@ -70,7 +70,7 @@ namespace omnisphere::floor
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ModifyFloor Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
 
@@ -84,12 +84,12 @@ namespace omnisphere::floor
             for (int i = 0; i < data.RowsCount(); i++)
             {
                 floors.emplace_back(data[i]["Entry"],
-                                          data[i]["Code"],
-                                          data[i]["Name"],
-                                          data[i]["CreatedBy"],
-                                          data[i]["CreateDate"],
-                                          data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                          data[i]["UpdateDate"].GetOptional<std::string>());
+                                    data[i]["Code"],
+                                    data[i]["Name"],
+                                    data[i]["CreatedBy"],
+                                    data[i]["CreateDate"],
+                                    data[i]["LastUpdatedBy"].GetOptional<int>(),
+                                    data[i]["UpdateDate"].GetOptional<std::string>());
             }
 
             return floors;
@@ -97,7 +97,7 @@ namespace omnisphere::floor
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetAllFloors Exception] ") +
-                                         e.what());
+                                     e.what());
         }
     }
     omnisphere::models::Floor
@@ -111,12 +111,12 @@ namespace omnisphere::floor
                 throw std::runtime_error("Floor doesn't exists");
 
             return omnisphere::models::Floor(data[0]["Entry"],
-                                                 data[0]["Code"],
-                                                 data[0]["Name"],
-                                                 data[0]["CreatedBy"],
-                                                 data[0]["CreateDate"],
-                                                 data[0]["LastUpdatedBy"].GetOptional<int>(),
-                                                 data[0]["UpdateDate"].GetOptional<std::string>());
+                                             data[0]["Code"],
+                                             data[0]["Name"],
+                                             data[0]["CreatedBy"],
+                                             data[0]["CreateDate"],
+                                             data[0]["LastUpdatedBy"].GetOptional<int>(),
+                                             data[0]["UpdateDate"].GetOptional<std::string>());
         }
         catch (const std::exception &e)
         {

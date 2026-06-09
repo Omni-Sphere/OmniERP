@@ -142,9 +142,9 @@ namespace omnisphere::repositories
             };
 
             if (!(extractFilter("TablEntry", getTable.Entry) ||
-                      extractFilter("Code", getTable.Code) ||
-                      extractFilter("AreaEntry", getTable.AreaEntry) ||
-                      extractFilter("FloorEntry", getTable.FloorEntry)))
+                  extractFilter("Code", getTable.Code) ||
+                  extractFilter("AreaEntry", getTable.AreaEntry) ||
+                  extractFilter("FloorEntry", getTable.FloorEntry)))
             {
                 throw std::runtime_error("GetTable: 'Entry', 'Code', 'AreaEntry' or 'FloorEntry' is required for Read");
             }

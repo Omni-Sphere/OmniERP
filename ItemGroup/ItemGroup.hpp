@@ -11,27 +11,28 @@
 #include <ItemGroup/DTOs/UpdateItemGroup.hpp>
 #include <ItemGroup/Models/ItemGroup.hpp>
 
-namespace omnisphere::services {
+namespace omnisphere::services
+{
+    class ItemGroup
+    {
+        private:
+        struct Impl;
+        std::unique_ptr<Impl> pimpl;
 
-class ItemGroup {
-private:
-  struct Impl;
-  std::unique_ptr<Impl> pimpl;
+        public:
+        explicit ItemGroup(std::shared_ptr<omnisphere::services::Database> db);
 
-public:
-  explicit ItemGroup(std::shared_ptr<omnisphere::services::Database> db);
+        ~ItemGroup();
 
-  ~ItemGroup();
+        omnisphere::models::ItemGroup
+        Add(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
 
-  omnisphere::models::ItemGroup
-  Add(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
+        omnisphere::models::ItemGroup
+        Modify(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
 
-  omnisphere::models::ItemGroup
-  Modify(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
+        std::vector<omnisphere::models::ItemGroup> GetAll() const;
 
-  std::vector<omnisphere::models::ItemGroup> GetAll() const;
-
-  omnisphere::models::ItemGroup
-  Get(const omnisphere::dtos::GetItemGroup &getItemGroup) const;
-};
+        omnisphere::models::ItemGroup
+        Get(const omnisphere::dtos::GetItemGroup &getItemGroup) const;
+    };
 } // namespace omnisphere::services

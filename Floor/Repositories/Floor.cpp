@@ -13,7 +13,7 @@ namespace omnisphere::repositories
 {
     FloorRepository::FloorRepository(
         std::shared_ptr<omnisphere::services::Database> Database)
-    : database(Database) {}
+        : database(Database) {}
 
     FloorRepository::~FloorRepository() = default;
 
@@ -71,7 +71,7 @@ namespace omnisphere::repositories
         {
             database->RollbackTransaction();
             throw(std::runtime_error(std::string("[UpdateFloor Exception]") + " " +
-                                         e.what()));
+                                     e.what()));
         }
     }
 
@@ -90,7 +90,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw(std::runtime_error(std::string("[ReadAllFloor Exception]") + " " +
-                                         e.what()));
+                                     e.what()));
         }
     }
 
@@ -124,7 +124,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw(std::runtime_error(std::string("[ReadFloor Exception]") + " " +
-                                         e.what()));
+                                     e.what()));
         }
     }
 
@@ -143,7 +143,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw(std::runtime_error(std::string("[GetCurrentSequence Exception]") +
-                                         " " + e.what()));
+                                     " " + e.what()));
         }
     }
 
@@ -162,7 +162,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw(std::runtime_error(std::string("[UpdateFloorSequence Exception]") +
-                                         " " + e.what()));
+                                     " " + e.what()));
         }
     }
 
@@ -185,7 +185,7 @@ namespace omnisphere::repositories
         {
             database->RollbackTransaction();
             throw(std::runtime_error(std::string("[Delete Exception]") + " " +
-                                         e.what()));
+                                     e.what()));
         }
     }
 } // namespace omnisphere::repositories

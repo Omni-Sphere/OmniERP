@@ -8,7 +8,7 @@
 namespace omnisphere::repositories
 {
     Item::Item(std::shared_ptr<omnisphere::services::Database> database)
-    : Database(std::move(database)) {}
+        : Database(std::move(database)) {}
 
     Item::~Item() = default;
 
@@ -353,7 +353,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[GetCurrentSequence Exception] ") +
-                                         " " + e.what());
+                                     " " + e.what());
         }
     };
 
@@ -372,7 +372,7 @@ namespace omnisphere::repositories
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[UpdateUserSequence Exception] ") +
-                                         " " + e.what());
+                                     " " + e.what());
         }
     };
 }; // namespace omnisphere::repositories
