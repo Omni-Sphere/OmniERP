@@ -58,7 +58,7 @@ namespace omnisphere::services
             "2024-01-01", // Placeholder for CreateDate
             std::nullopt,
             std::nullopt
-            );
+        );
     }
 
     bool Company::Add(const omnisphere::dtos::CreateCompany &_company) const

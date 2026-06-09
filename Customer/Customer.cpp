@@ -39,7 +39,7 @@ namespace omnisphere::services
             row["CreateDate"],
             row["LastUpdatedBy"].GetOptional<int>(),
             row["UpdateDate"].GetOptional<std::string>()
-            );
+        );
     }
 
     std::optional<omnisphere::models::Customer> Customer::Get(int entry) const
