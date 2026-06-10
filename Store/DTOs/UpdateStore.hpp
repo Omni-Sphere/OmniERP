@@ -22,16 +22,17 @@ namespace omnisphere::dtos
             std::optional<int> _State,
             std::optional<int> _ZipCode,
             std::optional<int> _Country,
+            std::optional<std::string> _TaxID,
             int _Currency,
             std::optional<std::string> _Phone1,
             std::optional<std::string> _Phone2,
             std::optional<std::string> _Email,
-            std::optional<std::string> _Website,
-            std::optional<std::string> _Facebook,
-            std::optional<std::string> _Instagram,
-            std::optional<std::string> _X,
-            std::optional<std::string> _Whatsapp,
-            std::string _IsActive,
+            std::optional<std::string> _WebSite,
+            std::optional<std::string> _FacebookProfile,
+            std::optional<std::string> _InstagramProfile,
+            std::optional<std::string> _XProfile,
+            std::optional<std::string> _LogoFile,
+            bool _IsActive,
             int _LastUpdatedBy,
             std::string _UpdateDate
         )
@@ -51,16 +52,17 @@ namespace omnisphere::dtos
             State(_State),
             ZipCode(_ZipCode),
             Country(_Country),
+            TaxID(std::move(_TaxID)),
             Currency(_Currency),
             Phone1(std::move(_Phone1)),
             Phone2(std::move(_Phone2)),
             Email(std::move(_Email)),
-            Website(std::move(_Website)),
-            Facebook(std::move(_Facebook)),
-            Instagram(std::move(_Instagram)),
-            X(std::move(_X)),
-            Whatsapp(std::move(_Whatsapp)),
-            IsActive(std::move(_IsActive)) {}
+            WebSite(std::move(_WebSite)),
+            FacebookProfile(std::move(_FacebookProfile)),
+            InstagramProfile(std::move(_InstagramProfile)),
+            XProfile(std::move(_XProfile)),
+            LogoFile(std::move(_LogoFile)),
+            IsActive(_IsActive) {}
 
         const int GuestCustomer;
         const std::optional<std::string> Address;
@@ -69,15 +71,16 @@ namespace omnisphere::dtos
         const std::optional<int> State;
         const std::optional<int> ZipCode;
         const std::optional<int> Country;
+        const std::optional<std::string> TaxID;
         const int Currency;
         const std::optional<std::string> Phone1;
         const std::optional<std::string> Phone2;
         const std::optional<std::string> Email;
-        const std::optional<std::string> Website;
-        const std::optional<std::string> Facebook;
-        const std::optional<std::string> Instagram;
-        const std::optional<std::string> X;
-        const std::optional<std::string> Whatsapp;
-        const std::string IsActive;
+        const std::optional<std::string> WebSite;
+        const std::optional<std::string> FacebookProfile;
+        const std::optional<std::string> InstagramProfile;
+        const std::optional<std::string> XProfile;
+        const std::optional<std::string> LogoFile;
+        const bool IsActive;
     };
 }

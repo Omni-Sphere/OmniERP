@@ -88,10 +88,6 @@ namespace omnisphere::repositories
                            insertClauses, params);
             AddInsertParam("XProfile", _company.XProfile, insertClauses, params);
             AddInsertParam("LogoFile", _company.LogoFile, insertClauses, params);
-            AddInsertParam("AttachmentsPath", _company.AttachmentsPath,
-                           insertClauses, params);
-            AddInsertParam("ImagePath", _company.ImagePath,
-                           insertClauses, params);
 
             for (size_t i = 0; i < insertClauses.size(); ++i)
             {
@@ -176,10 +172,6 @@ namespace omnisphere::repositories
                         setClauses, params);
             AddSetParam("XProfile", _company.XProfile, setClauses, params);
             AddSetParam("LogoFile", _company.LogoFile, setClauses, params);
-            AddSetParam("AttachmentsPath", _company.AttachmentsPath, setClauses,
-                        params);
-            AddSetParam("ImagePath", _company.ImagePath, setClauses,
-                        params);
             AddSetParam("IsActive", _company.IsActive, setClauses,
                         params);
 
@@ -214,9 +206,9 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "SELECT [Entry], [Code], [Name], CommercialName, TaxName, Address, "
+            std::string sQuery = "SELECT [Entry], [Code], [Name], CommercialName, Address, "
             "Address2, City, State, ZipCode, Country, TaxID, Currency, Phone1, Phone2, Email, WebSite, "
-            "FacebookProfile, InstagramProfile, XProfile, LogoFile, AttachmentsPath, ImagePath, [IsActive] "
+            "FacebookProfile, InstagramProfile, XProfile, LogoFile, [IsActive] "
             "FROM Company ";
 
             return Database->FetchResults(sQuery, "Company::Read");

@@ -32,9 +32,7 @@ namespace omnisphere::dtos
             std::optional<std::string> _InstagramProfile,
             std::optional<std::string> _XProfile,
             std::optional<std::string> _LogoFile,
-            std::optional<std::string> _AttachmentsPath,
-            std::optional<std::string> _ImagePath,
-            std::optional<std::string> _IsActive,
+            std::optional<bool> _IsActive,
             int _CreatedBy,
             std::string _CreateDate,
             std::optional<int> _LastUpdatedBy,
@@ -65,10 +63,8 @@ namespace omnisphere::dtos
             InstagramProfile(std::move(_InstagramProfile)),
             XProfile(std::move(_XProfile)),
             LogoFile(std::move(_LogoFile)),
-            AttachmentsPath(std::move(_AttachmentsPath)),
-            ImagePath(std::move(_ImagePath)),
             CommercialName(std::move(_CommercialName)),
-            IsActive(std::move(_IsActive)) {}
+            IsActive(_IsActive) {}
 
         const std::optional<std::string> Address;
         const std::optional<std::string> Address2;
@@ -86,9 +82,7 @@ namespace omnisphere::dtos
         const std::optional<std::string> InstagramProfile;
         const std::optional<std::string> XProfile;
         const std::optional<std::string> LogoFile;
-        const std::optional<std::string> AttachmentsPath;
-        const std::optional<std::string> ImagePath;
         const std::optional<std::string> CommercialName;
-        const std::optional<std::string> IsActive;
+        const std::optional<bool> IsActive;
     };
 }

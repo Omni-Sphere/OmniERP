@@ -51,9 +51,7 @@ namespace omnisphere::services
             dataTable[0]["InstagramProfile"].GetOptional<std::string>(),
             dataTable[0]["XProfile"].GetOptional<std::string>(),
             dataTable[0]["LogoFile"].GetOptional<std::string>(),
-            dataTable[0]["AttachmentsPath"].GetOptional<std::string>(),
-            dataTable[0]["ImagePath"].GetOptional<std::string>(),
-            dataTable[0]["IsActive"].IsNull() ? "Y" : std::string(dataTable[0]["IsActive"]),
+            dataTable[0]["IsActive"],
             1, // Placeholder for CreatedBy
             "2024-01-01", // Placeholder for CreateDate
             std::nullopt,
