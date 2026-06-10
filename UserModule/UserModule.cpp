@@ -70,7 +70,7 @@ namespace omnisphere::usermodule
                 list.push_back(
 
                 {data[i]["Entry"], data[i]["UserEntry"], data[i]["ModuleEntry"],
-                    data[i]["IsAllowed"],
+                    data[i]["IsActive"],
                     data[i]["CreatedBy"], data[i]["CreateDate"],
                     data[i]["LastUpdatedBy"].GetOptional<int>(),
                     data[i]["UpdateDate"].GetOptional<std::string>()});
@@ -93,7 +93,7 @@ namespace omnisphere::usermodule
             return
 
             {data[0]["Entry"], data[0]["UserEntry"], data[0]["ModuleEntry"],
-                data[0]["IsAllowed"],
+                data[0]["IsActive"],
                 data[0]["CreatedBy"], data[0]["CreateDate"],
                 data[0]["LastUpdatedBy"].GetOptional<int>(),
                 data[0]["UpdateDate"].GetOptional<std::string>()};

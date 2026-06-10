@@ -11,7 +11,7 @@ namespace omnisphere::models
         int Entry;
         int RoleEntry;
         int ModuleEntry;
-        bool IsAllowed;
+        bool IsActive;
         int CreatedBy;
         std::string CreateDate;
         std::optional<int> LastUpdatedBy;

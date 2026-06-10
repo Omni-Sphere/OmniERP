@@ -21,13 +21,13 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "INSERT INTO UserModules (Entry, UserEntry, ModuleEntry, IsAllowed, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, GETDATE())";
+            const std::string query = "INSERT INTO UserModules (Entry, UserEntry, ModuleEntry, IsActive, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, GETDATE())";
 
             std::vector<omnisphere::types::SQLParam> parameters = {
                 omnisphere::types::MakeSQLParam(GetCurrentSequence()),
                 omnisphere::types::MakeSQLParam(userModule.UserEntry),
                 omnisphere::types::MakeSQLParam(userModule.ModuleEntry),
-                omnisphere::types::MakeSQLParam(userModule.IsAllowed ? "Y" : "N"),
+                omnisphere::types::MakeSQLParam(userModule.IsActive ? "Y" : "N"),
                 omnisphere::types::MakeSQLParam(userModule.CreatedBy)};
 
             if (!database->RunPrepared(query, parameters, "UserModuleRepository::Create"))
@@ -54,10 +54,10 @@ namespace omnisphere::repositories
             std::string query = "UPDATE UserModules SET UpdateDate = GETDATE()";
             std::vector<omnisphere::types::SQLParam> parameters;
 
-            if (userModule.IsAllowed.has_value())
+            if (userModule.IsActive.has_value())
             {
-                query += ", IsAllowed = ?";
-                parameters.push_back(omnisphere::types::MakeSQLParam(userModule.IsAllowed.value() ? "Y" : "N"));
+                query += ", IsActive = ?";
+                parameters.push_back(omnisphere::types::MakeSQLParam(userModule.IsActive.value() ? "Y" : "N"));
             }
 
             query += ", LastUpdatedBy = ? WHERE Entry = ?";

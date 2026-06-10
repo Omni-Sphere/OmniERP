@@ -21,12 +21,12 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "INSERT INTO RolePermissions (Entry, RoleEntry, PermissionEntry, IsAllowed, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, GETDATE())";
+            const std::string query = "INSERT INTO RolePermissions (Entry, RoleEntry, PermissionEntry, IsActive, CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?, GETDATE())";
             std::vector<omnisphere::types::SQLParam> parameters = {
                 omnisphere::types::MakeSQLParam(GetCurrentSequence()),
                 omnisphere::types::MakeSQLParam(rolePermission.RoleEntry),
                 omnisphere::types::MakeSQLParam(rolePermission.PermissionEntry),
-                omnisphere::types::MakeSQLParam(rolePermission.IsAllowed ? "Y" : "N"),
+                omnisphere::types::MakeSQLParam(rolePermission.IsActive ? "Y" : "N"),
                 omnisphere::types::MakeSQLParam(rolePermission.CreatedBy)};
 
             if (!database->RunPrepared(query, parameters, "RolePermissionRepository::Create")) throw std::runtime_error("[RunPrepared exception]");
@@ -48,8 +48,8 @@ namespace omnisphere::repositories
             std::string query = "UPDATE RolePermissions SET UpdateDate = GETDATE()";
             std::vector<omnisphere::types::SQLParam> parameters;
 
-            if (rolePermission.IsAllowed.has_value())
-            { query += ", IsAllowed = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(rolePermission.IsAllowed.value() ? "Y" : "N")); }
+            if (rolePermission.IsActive.has_value())
+            { query += ", IsActive = ?"; parameters.push_back(omnisphere::types::MakeSQLParam(rolePermission.IsActive.value() ? "Y" : "N")); }
             query += ", LastUpdatedBy = ? WHERE Entry = ?";
             parameters.push_back(omnisphere::types::MakeSQLParam(rolePermission.UpdatedBy));
             parameters.push_back(omnisphere::types::MakeSQLParam(rolePermission.Entry));

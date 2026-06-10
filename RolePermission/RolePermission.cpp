@@ -34,7 +34,7 @@ namespace omnisphere::rolepermission
 
         for (int i = 0; i < data.RowsCount(); i++) list.push_back(
 
-        {data[i]["Entry"], data[i]["RoleEntry"], data[i]["PermissionEntry"], data[i]["IsAllowed"], data[i]["CreatedBy"], data[i]["CreateDate"], data[i]["LastUpdatedBy"].GetOptional<int>(), data[i]["UpdateDate"].GetOptional<std::string>()});
+        {data[i]["Entry"], data[i]["RoleEntry"], data[i]["PermissionEntry"], data[i]["IsActive"], data[i]["CreatedBy"], data[i]["CreateDate"], data[i]["LastUpdatedBy"].GetOptional<int>(), data[i]["UpdateDate"].GetOptional<std::string>()});
 
         return list;
     }
@@ -45,7 +45,7 @@ namespace omnisphere::rolepermission
         if (data.RowsCount() == 0) throw std::runtime_error("RolePermission doesn't exist");
         return
 
-        {data[0]["Entry"], data[0]["RoleEntry"], data[0]["PermissionEntry"], data[0]["IsAllowed"], data[0]["CreatedBy"], data[0]["CreateDate"], data[0]["LastUpdatedBy"].GetOptional<int>(), data[0]["UpdateDate"].GetOptional<std::string>()};
+        {data[0]["Entry"], data[0]["RoleEntry"], data[0]["PermissionEntry"], data[0]["IsActive"], data[0]["CreatedBy"], data[0]["CreateDate"], data[0]["LastUpdatedBy"].GetOptional<int>(), data[0]["UpdateDate"].GetOptional<std::string>()};
     }
     bool RolePermission::Remove(int entry) const
 

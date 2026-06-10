@@ -10,14 +10,14 @@ namespace omnisphere::dtos
     {
         int RoleEntry;
         int ModuleEntry;
-        bool IsAllowed;
+        bool IsActive;
         int CreatedBy;
     };
 
     struct UpdateRoleModule
     {
         int Entry;
-        std::optional<bool> IsAllowed;
+        std::optional<bool> IsActive;
         int UpdatedBy;
     };
 
