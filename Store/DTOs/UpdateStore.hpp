@@ -40,8 +40,8 @@ namespace omnisphere::dtos
                 std::move(_Code),
                 std::move(_Name),
                 0,
-        // CreatedBy not needed for update "",
-        // CreateDate not needed for update _LastUpdatedBy,
+                "",
+                _LastUpdatedBy,
                 std::move(_UpdateDate)
             ),
             GuestCustomer(_GuestCustomer),

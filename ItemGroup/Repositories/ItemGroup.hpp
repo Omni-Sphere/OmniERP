@@ -23,11 +23,11 @@ namespace omnisphere::repositories
 
         public:
         explicit ItemGroup(std::shared_ptr<omnisphere::services::Database> Database);
-        ~ItemGroup( {};
+        ~ItemGroup() {};
 
-                   bool Create(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
-                   bool Update(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
-                   omnisphere::types::DataTable ReadAll() const;
-                   omnisphere::types::DataTable Read(const omnisphere::dtos::GetItemGroup) const;
+        bool Create(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
+        bool Update(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
+        omnisphere::types::DataTable ReadAll() const;
+        omnisphere::types::DataTable Read(const omnisphere::dtos::GetItemGroup) const;
     };
 } // namespace omnisphere::repositories

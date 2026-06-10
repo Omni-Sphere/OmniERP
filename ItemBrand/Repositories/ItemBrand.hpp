@@ -19,10 +19,10 @@ namespace omnisphere::repositories
 
         public:
         explicit ItemBrand(std::shared_ptr<omnisphere::services::Database> Database);
-        ~ItemBrand( {};
-                   bool Create(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
-                   bool Update(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
-                   omnisphere::types::DataTable ReadAll() const;
-                   omnisphere::types::DataTable Read(const omnisphere::dtos::GetItemBrand) const;
+        ~ItemBrand() {};
+        bool Create(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
+        bool Update(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
+        omnisphere::types::DataTable ReadAll() const;
+        omnisphere::types::DataTable Read(const omnisphere::dtos::GetItemBrand) const;
     };
 } // namespace omnisphere::repositories
