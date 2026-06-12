@@ -21,7 +21,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "INSERT INTO Floors (FloorEntry, Code, Name, CreatedBy, CreateDate, IsActive) VALUES (?, ?, ?, ?, ?, 'Y')";
+            const std::string query = "INSERT INTO Floors (Entry, Code, Name, CreatedBy, CreateDate, IsActive) VALUES (?, ?, ?, ?, ?, 'Y')";
 
             std::vector<omnisphere::types::SQLParam> parameters = {
                 omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -80,7 +80,7 @@ namespace omnisphere::repositories
         try
         {
             const std::string query =
-            "SELECT FloorEntry Entry, Code, Name, CreatedBy, CreateDate, LastUpdatedBy, "
+            "SELECT Entry, Code, Name, CreatedBy, CreateDate, LastUpdatedBy, "
             "UpdateDate FROM Floors WHERE IsActive = 'Y'";
 
             omnisphere::types::DataTable dataTable = database->FetchResults(query, "FloorRepository::ReadAll");
@@ -99,7 +99,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string query = "SELECT FloorEntry Entry, Code, Name, CreatedBy, CreateDate, "
+            std::string query = "SELECT Entry, Code, Name, CreatedBy, CreateDate, "
             "LastUpdatedBy, UpdateDate FROM Floors WHERE IsActive = 'Y'";
             std::vector<omnisphere::types::SQLParam> parameters;
 
@@ -134,9 +134,17 @@ namespace omnisphere::repositories
         {
             const std::string query =
             "SELECT ISNULL(FloorSequence, 0) + 1 FloorSequence FROM Sequences "
-            "WHERE SeqEntry = 1";
+            "WHERE Entry = 1";
 
             omnisphere::types::DataTable dataTable = database->FetchResults(query, "FloorRepository::GetCurrentSequence");
+
+            if (dataTable.IsEmpty())
+            {
+                // Initialize Sequences table with default row
+                database->RunStatement("INSERT INTO Sequences (Entry, Code, Name, UserSequence, CreatedBy, CreateDate, StoreSequence, CustomerSequence, AreaSequence, FloorSequence, DeparmentSequence) VALUES (1, 'SEQ001', 'Sequence Manager', 1, 1, GETDATE(), NULL, NULL, NULL, NULL, NULL)", "FloorRepository::InitializeSequences");
+                dataTable = database->FetchResults(query, "FloorRepository::GetCurrentSequence-Retry");
+                if (dataTable.IsEmpty()) return 1;
+            }
 
             return dataTable[0]["FloorSequence"];
         }
@@ -170,7 +178,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "UPDATE Floors SET IsActive = 'N' WHERE FloorEntry = ?";
+            const std::string query = "UPDATE Floors SET IsActive = 'N' WHERE Entry = ?";
             std::vector<omnisphere::types::SQLParam> parameters = {
                 omnisphere::types::MakeSQLParam(entry)};
 

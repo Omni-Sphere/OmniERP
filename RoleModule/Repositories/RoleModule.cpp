@@ -145,7 +145,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            omnisphere::types::DataTable dataTable = database->FetchResults("SELECT ISNULL(RoleModSequence, 0) + 1 RoleModSequence FROM Sequences WHERE SeqEntry = 1");
+            omnisphere::types::DataTable dataTable = database->FetchResults("SELECT ISNULL(RoleModSequence, 0) + 1 RoleModSequence FROM Sequences WHERE Entry = 1");
             return dataTable[0]["RoleModSequence"];
         }
         catch (const std::exception& e)
@@ -158,7 +158,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            if (!database->RunStatement("UPDATE Sequences SET RoleModSequence = ISNULL(RoleModSequence, 0) + 1 WHERE SeqEntry = 1"))
+            if (!database->RunStatement("UPDATE Sequences SET RoleModSequence = ISNULL(RoleModSequence, 0) + 1 WHERE Entry = 1"))
                 throw std::runtime_error("[RunStatement exception]");
 
             return true;

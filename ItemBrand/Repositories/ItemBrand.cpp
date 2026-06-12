@@ -16,7 +16,7 @@ namespace omnisphere::repositories
         {
             const std::string sQuery =
             "SELECT ISNULL(ItemBrandsSequence, 0) + 1 ItemBrandsSequence FROM "
-            "Sequences WHERE SeqEntry = 1";
+            "Sequences WHERE Entry = 1";
 
             omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemBrand::GetCurrentSequence");
 

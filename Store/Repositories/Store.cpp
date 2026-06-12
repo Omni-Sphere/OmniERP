@@ -209,7 +209,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(StoreSequence, 0) + 1 StoreSequence FROM Sequences WHERE SeqEntry = 1";
+            const std::string query = "SELECT ISNULL(StoreSequence, 0) + 1 StoreSequence FROM Sequences WHERE Entry = 1";
             omnisphere::types::DataTable dataTable = Database->FetchResults(query);
 
             return dataTable[0]["StoreSequence"];

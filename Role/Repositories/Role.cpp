@@ -147,7 +147,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(RoleSequence, 0) + 1 RoleSequence FROM Sequences WHERE SeqEntry = 1";
+            const std::string query = "SELECT ISNULL(RoleSequence, 0) + 1 RoleSequence FROM Sequences WHERE Entry = 1";
             omnisphere::types::DataTable dataTable = database->FetchResults(query, "RoleRepository::GetCurrentSequence");
 
             return dataTable[0]["RoleSequence"];
@@ -162,7 +162,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "UPDATE Sequences SET RoleSequence = ISNULL(RoleSequence, 0) + 1 WHERE SeqEntry = 1";
+            const std::string query = "UPDATE Sequences SET RoleSequence = ISNULL(RoleSequence, 0) + 1 WHERE Entry = 1";
 
             if (!database->RunStatement(query, "RoleRepository::UpdateSequence"))
                 throw std::runtime_error("[RunStatement exception]");

@@ -186,7 +186,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(AreaSequence, 0) + 1 AreaSequence FROM Sequences WHERE SeqEntry = 1";
+            const std::string query = "SELECT ISNULL(AreaSequence, 0) + 1 AreaSequence FROM Sequences WHERE Entry = 1";
 
             omnisphere::types::DataTable dataTable = database->FetchResults(query, "AreaRepository::GetCurrentSequence");
 
