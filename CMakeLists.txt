@@ -52,6 +52,8 @@ add_library(OmniERP SHARED
     RolePermission/Repositories/RolePermission.cpp
     Customer/Customer.cpp
     Customer/Repositories/Customer.cpp
+    Node/Node.cpp
+    Node/Repositories/Node.cpp
 )
 
 target_include_directories(OmniERP
@@ -94,6 +96,7 @@ set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/UserPermission/UserPermission.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/RolePermission/RolePermission.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Customer/Customer.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Node/Node.hpp
 )
 
 foreach(HDR ${PUBLIC_HEADERS})
@@ -147,6 +150,9 @@ set(
     RolePermission/DTOs
     Customer/Models
     Customer/DTOs
+    Node/Models
+    Node/DTOs
+    Node/Enums
 )
 
 foreach(DIR ${HEADER_DIRS})

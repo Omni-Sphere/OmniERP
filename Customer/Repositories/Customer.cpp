@@ -57,10 +57,14 @@ namespace omnisphere::repositories
     {
         try
         {
+            int entryId = GetCurrentSequence();
+
+            Database->BeginTransaction();
+
             std::vector<std::string> fields;
             std::vector<omnisphere::types::SQLParam> params;
 
-            AddInsertParam("Entry", GetCurrentSequence(), fields, params);
+            AddInsertParam("Entry", entryId, fields, params);
             AddInsertParam("Code", _customer.Code, fields, params);
             AddInsertParam("Name", _customer.Name, fields, params);
             AddInsertParam("FirstName", _customer.FirstName, fields, params);
@@ -194,45 +198,22 @@ namespace omnisphere::repositories
 
     int Customer::GetCurrentSequence() const
     {
-        try
-        {
-            const std::string query = "SELECT ISNULL(CustSequence, 0) + 1 CustSequence FROM Sequences WHERE Entry = 1";
-            omnisphere::types::DataTable dataTable = Database->FetchResults(query);
+        const std::string query = "SELECT ISNULL(CustomerSequence, 0) + 1 CustomerSequence FROM Sequences WHERE Entry = 1";
+        omnisphere::types::DataTable dataTable = Database->FetchResults(query);
 
-            if (dataTable.IsEmpty())
-                return 1;
-            return dataTable[0]["CustSequence"];
-        }
-        catch (...)
-        {
-            // fallback if column doesn't exist yet, we will fallback to max entry + 1
-            try
-            {
-                omnisphere::types::DataTable dataTable = Database->FetchResults("SELECT ISNULL(MAX(Entry), 0) + 1 CustSequence FROM Customers");
+        if (dataTable.IsEmpty())
+            throw std::runtime_error("[GetCurrentSequence] No sequence found");
 
-                return dataTable[0]["CustSequence"];
-            }
-            catch (...)
-            {
-                return 1;
-            }
-        }
+        return dataTable[0]["CustomerSequence"];
     }
 
     bool Customer::UpdateCustomerSequence() const
     {
-        try
-        {
-            const std::string query = "UPDATE Sequences SET CustSequence = ISNULL(CustSequence, 0) + 1 WHERE Entry = 1";
+        const std::string query = "UPDATE Sequences SET CustomerSequence = ISNULL(CustomerSequence, 0) + 1 WHERE Entry = 1";
 
-            if (!Database->RunStatement(query))
-                throw std::runtime_error("[RunStatement exception]");
+        if (!Database->RunStatement(query))
+            throw std::runtime_error("[RunStatement exception]");
 
-            return true;
-        }
-        catch (...)
-        {
-            return true; // ignore sequence errors if we are falling back
-        }
+        return true;
     }
 }

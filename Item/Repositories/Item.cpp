@@ -16,9 +16,11 @@ namespace omnisphere::repositories
     {
         try
         {
+            Database->BeginTransaction();
+
             std::string sQuery =
             "INSERT INTO Items ("
-            "[ItemEntry], "
+            "[Entry], "
             "[Code], "
             "[Name], "
             "Description, "
@@ -65,6 +67,8 @@ namespace omnisphere::repositories
                 throw std::runtime_error("Error creating item");
 
             UpdateUserSequence();
+
+            Database->CommitTransaction();
 
             return true;
         }
@@ -140,7 +144,7 @@ namespace omnisphere::repositories
                 params.emplace_back(omnisphere::types::MakeSQLParam(item.Group.value()));
             }
 
-            sQuery += "WHERE ItemEntry = ?";
+            sQuery += "WHERE Entry = ?";
 
             if (!Database->RunPrepared(sQuery, params, "Item::Update"))
                 throw std::runtime_error("Error updating item");
@@ -162,7 +166,7 @@ namespace omnisphere::repositories
             omnisphere::types::DataTable datatable;
 
             std::string sQuery = "SELECT "
-            "[ItemEntry], "
+            "[Entry] AS ItemEntry, "
             "[Code], "
             "[Name], "
             "Description, "
@@ -245,7 +249,7 @@ namespace omnisphere::repositories
             omnisphere::types::DataTable datatable;
 
             std::string sQuery = "SELECT "
-            "[ItemEntry], "
+            "[Entry] AS ItemEntry, "
             "[Code], "
             "[Name], "
             "Description, "
@@ -300,7 +304,7 @@ namespace omnisphere::repositories
             omnisphere::types::DataTable datatable;
 
             std::string sQuery = "SELECT "
-            "[ItemEntry], "
+            "[Entry] AS ItemEntry, "
             "[Code], "
             "[Name], "
             "Description, "

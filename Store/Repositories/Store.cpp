@@ -191,6 +191,22 @@ namespace omnisphere::repositories
         }
     }
 
+    omnisphere::types::DataTable Store::ReadByCode(const std::string& code) const
+    {
+        try
+        {
+            std::string sQuery = "SELECT * FROM Stores WHERE Code = ?";
+            std::vector<omnisphere::types::SQLParam> params;
+            params.push_back(omnisphere::types::MakeSQLParam(code));
+
+            return Database->FetchPrepared(sQuery, params);
+        }
+        catch (const std::exception &e)
+        {
+            throw std::runtime_error(std::string("[ReadStoreByCode Exception] ") + e.what());
+        }
+    }
+
     omnisphere::types::DataTable Store::ReadAll() const
     {
         try

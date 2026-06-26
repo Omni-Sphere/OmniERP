@@ -22,6 +22,7 @@ namespace omnisphere::repositories
         bool Create(const omnisphere::dtos::CreateStore &_store) const;
         bool Update(const omnisphere::dtos::UpdateStore &_store) const;
         omnisphere::types::DataTable Read(int entry) const;
+        omnisphere::types::DataTable ReadByCode(const std::string& code) const;
         omnisphere::types::DataTable ReadAll() const;
 
         private:

@@ -79,14 +79,6 @@ namespace omnisphere::dtos
                     throw std::runtime_error("'Description' contains invalid characters.");
             }
 
-            if (Image.has_value())
-            {
-                const std::string &img = Image.value();
-
-                if (img.empty())
-                    throw std::runtime_error("Empty or invalid image file");
-            }
-
             ValidateBrandAndGroup(Brand, "Brand");
             ValidateBrandAndGroup(Group, "Group");
         }

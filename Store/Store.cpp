@@ -61,6 +61,18 @@ namespace omnisphere::services
         return MapToModel(dataTable[0]);
     }
 
+    std::optional<omnisphere::models::Store> Store::GetByCode(const std::string& code) const
+    {
+        omnisphere::types::DataTable dataTable = pimpl->repository.ReadByCode(code);
+
+        if (dataTable.IsEmpty())
+        {
+            return std::nullopt;
+        }
+
+        return MapToModel(dataTable[0]);
+    }
+
     std::vector<omnisphere::models::Store> Store::GetAll() const
     {
         omnisphere::types::DataTable dataTable = pimpl->repository.ReadAll();

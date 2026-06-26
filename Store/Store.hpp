@@ -19,6 +19,7 @@ namespace omnisphere::services
         ~Store();
 
         std::optional<omnisphere::models::Store> Get(int entry) const;
+        std::optional<omnisphere::models::Store> GetByCode(const std::string& code) const;
         std::vector<omnisphere::models::Store> GetAll() const;
         bool Add(const omnisphere::dtos::CreateStore &_store) const;
         bool Modify(const omnisphere::dtos::UpdateStore &_store) const;

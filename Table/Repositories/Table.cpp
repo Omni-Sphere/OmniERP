@@ -20,7 +20,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "INSERT INTO Tables (TablEntry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, "
+            const std::string query = "INSERT INTO Tables (Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, "
             "CreatedBy, CreateDate, IsActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Y')";
 
             std::vector<omnisphere::types::SQLParam> parameters =
@@ -90,7 +90,7 @@ namespace omnisphere::repositories
                     query += ", ";
             }
 
-            query += " WHERE TablEntry = ?";
+            query += " WHERE Entry = ?";
             parameters.push_back(omnisphere::types::MakeSQLParam(table.Entry));
 
             if (!database->RunPrepared(query, parameters, "TableRepository::Update"))
@@ -111,7 +111,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE IsActive = 'Y'";
+            const std::string query = "SELECT Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE IsActive = 'Y'";
 
             return database->FetchResults(query, "TableRepository::ReadAll");
         }
@@ -125,7 +125,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string query = "SELECT TablEntry Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE IsActive = 'Y'";
+            std::string query = "SELECT Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE IsActive = 'Y'";
             std::vector<omnisphere::types::SQLParam> parameters;
 
             auto extractFilter = [&](const char *field, const auto &value)
