@@ -8,6 +8,7 @@
 #include <Item/DTOs/GetItem.hpp>
 #include <Item/DTOs/SearchItems.hpp>
 #include <Item/Repositories/Item.hpp>
+#include <DataMapper.hpp>
 
 namespace omnisphere::services
 {
@@ -27,44 +28,14 @@ namespace omnisphere::services
     Item::~Item() = default;
 
     omnisphere::models::Item
-    Item::Get(const omnisphere::dtos::GetItem &_item) const
+    Item::Get(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &_item) const
     {
         try
         {
-            // Use pimpl to access the repository
-            omnisphere::types::DataTable data = pimpl->item->Read(_item);
-
-            if (data.RowsCount() == 0)
+            std::vector<omnisphere::models::Item> items = Search(fields, _item);
+            if (items.empty())
                 throw std::runtime_error("Item doesn't exists");
-
-            omnisphere::models::Item item(
-                data[0]["ItemEntry"], 
-                data[0]["Code"], 
-                data[0]["Name"],
-                data[0]["Description"].GetOptional<std::string>(),
-                data[0]["Image"].GetOptional<std::string>(), 
-                data[0]["IsActive"],
-                data[0]["PurchaseItem"], 
-                data[0]["SellItem"], 
-                data[0]["InventoryItem"],
-                data[0]["Price"], 
-                data[0]["Brand"].GetOptional<int>(),
-                data[0]["Group"].GetOptional<int>(), 
-                data[0]["OnHand"].IsNull() ? 0.0 : data[0]["OnHand"],
-                data[0]["OnOrder"].GetOptional<double>(),
-                data[0]["OnRequest"].GetOptional<double>(),
-                data[0]["MinStock"].GetOptional<double>(),
-                data[0]["MaxStock"].GetOptional<double>(),
-                data[0]["MinOrder"].GetOptional<double>(),
-                data[0]["MaxOrder"].GetOptional<double>(),
-                data[0]["MinRequest"].GetOptional<double>(),
-                data[0]["MaxRequest"].GetOptional<double>(), 
-                data[0]["CreatedBy"],
-                data[0]["CreateDate"], 
-                data[0]["LastUpdatedBy"].GetOptional<int>(),
-                data[0]["UpdateDate"].GetOptional<std::string>());
-
-            return item;
+            return items.front();
         }
         catch (const std::exception &e)
         {
@@ -72,90 +43,45 @@ namespace omnisphere::services
         }
     };
 
-    std::vector<omnisphere::models::Item> Item::GetAll() const
+    std::vector<omnisphere::models::Item> Item::GetAll(const std::vector<std::string>& fields) const
     {
         try
         {
-            std::vector<omnisphere::models::Item> items;
-            // Use pimpl to access the repository and call Read (alias for ReadAll)
-            omnisphere::types::DataTable data = pimpl->item->Read();
-
-            for (int i = 0; i < data.RowsCount(); i++)
-            {
-                items.emplace_back(
-                                   data[i]["ItemEntry"], 
-                                   data[i]["Code"], 
-                                   data[i]["Name"],
-                                   data[i]["Description"].GetOptional<std::string>(),
-                                   data[i]["Image"].GetOptional<std::string>(),
-                                   data[i]["IsActive"], 
-                                   data[i]["PurchaseItem"],
-                                   data[i]["SellItem"], 
-                                   data[i]["InventoryItem"],
-                                   data[i]["Price"], 
-                                   data[i]["Brand"].GetOptional<int>(),
-                                   data[i]["Group"].GetOptional<int>(), 
-                                   data[i]["OnHand"].IsNull() ? 0.0 : data[i]["OnHand"],
-                                   data[i]["OnOrder"].GetOptional<double>(),
-                                   data[i]["OnRequest"].GetOptional<double>(),
-                                   data[i]["MinStock"].GetOptional<double>(),
-                                   data[i]["MaxStock"].GetOptional<double>(),
-                                   data[i]["MinOrder"].GetOptional<double>(),
-                                   data[i]["MaxOrder"].GetOptional<double>(),
-                                   data[i]["MinRequest"].GetOptional<double>(),
-                                   data[i]["MaxRequest"].GetOptional<double>(),
-                                   data[i]["CreatedBy"], 
-                                   data[i]["CreateDate"],
-                                   data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                   data[i]["UpdateDate"].GetOptional<std::string>());
-            }
-
-            return items;
+            return Search(fields, omnisphere::dtos::ItemFilter());
         }
         catch (const std::exception &e)
         {
-            throw std::runtime_error(std::string("[GetAllItems Exception] ") +
-                                     e.what());
+            throw std::runtime_error(std::string("[GetAllItems Exception] ") + e.what());
         }
     }
 
     std::vector<omnisphere::models::Item>
-    Item::Search(omnisphere::dtos::SearchItems &_item) const
+    Item::Search(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &_item) const
     {
         try
         {
             std::vector<omnisphere::models::Item> items;
-            // Use pimpl to access the repository
-            omnisphere::types::DataTable data = pimpl->item->Read(_item);
+            omnisphere::types::DataTable data = pimpl->item->Read(fields, _item);
 
             for (int i = 0; i < data.RowsCount(); i++)
             {
-                items.emplace_back(
-                                   data[i]["ItemEntry"], 
-                                   data[i]["Code"], 
-                                   data[i]["Name"],
-                                   data[i]["Description"].GetOptional<std::string>(),
-                                   data[i]["Image"].GetOptional<std::string>(),
-                                   data[i]["IsActive"], 
-                                   data[i]["PurchaseItem"],
-                                   data[i]["SellItem"], 
-                                   data[i]["InventoryItem"],
-                                   data[i]["Price"], 
-                                   data[i]["Brand"].GetOptional<int>(),
-                                   data[i]["Group"].GetOptional<int>(), 
-                                   data[i]["OnHand"].IsNull() ? 0.0 : data[i]["OnHand"],
-                                   data[i]["OnOrder"].GetOptional<double>(),
-                                   data[i]["OnRequest"].GetOptional<double>(),
-                                   data[i]["MinStock"].GetOptional<double>(),
-                                   data[i]["MaxStock"].GetOptional<double>(),
-                                   data[i]["MinOrder"].GetOptional<double>(),
-                                   data[i]["MaxOrder"].GetOptional<double>(),
-                                   data[i]["MinRequest"].GetOptional<double>(),
-                                   data[i]["MaxRequest"].GetOptional<double>(),
-                                   data[i]["CreatedBy"], 
-                                   data[i]["CreateDate"],
-                                   data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                   data[i]["UpdateDate"].GetOptional<std::string>());
+                omnisphere::models::Item item = omnisphere::data::MapFromRow<omnisphere::models::Item>(data[i]);
+
+                if (data[i].HasColumn("Brand_Entry")) {
+                    item.BrandObj = std::make_shared<omnisphere::models::ItemBrand>(
+                        omnisphere::data::MapFromRow<omnisphere::models::ItemBrand>(data[i], "Brand_")
+                    );
+                    item.BrandObj->IsActive = true;
+                }
+
+                if (data[i].HasColumn("Group_Entry")) {
+                    item.GroupObj = std::make_shared<omnisphere::models::ItemGroup>(
+                        omnisphere::data::MapFromRow<omnisphere::models::ItemGroup>(data[i], "Group_")
+                    );
+                    item.GroupObj->IsActive = true;
+                }
+
+                items.push_back(item);
             }
 
             return items;
@@ -168,16 +94,17 @@ namespace omnisphere::services
     }
 
     omnisphere::models::Item
-    Item::Add(const omnisphere::dtos::CreateItem &_item) const
+    Item::Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateItem &_item) const
     {
         try
         {
             if (pimpl->item->Create(_item))
             {
-                omnisphere::dtos::GetItem getItem;
-                getItem.Code = _item.Code;
+                omnisphere::dtos::ItemFilter filter;
+                filter.Code = omnisphere::dtos::StringFilter();
+                filter.Code->eq = _item.Code;
 
-                return Get(getItem);
+                return Get(fields, filter);
             }
             else
                 throw std::runtime_error("Error creating item ");
@@ -189,16 +116,17 @@ namespace omnisphere::services
     };
 
     omnisphere::models::Item
-    Item::Modify(const omnisphere::dtos::UpdateItem &_item) const
+    Item::Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateItem &_item) const
     {
         try
         {
             if (pimpl->item->Update(_item))
             {
-                omnisphere::dtos::GetItem getItem;
-                getItem.Code = _item.Code;
+                omnisphere::dtos::ItemFilter filter;
+                filter.Code = omnisphere::dtos::StringFilter();
+                filter.Code->eq = _item.Code;
 
-                return Get(getItem);
+                return Get(fields, filter);
             }
             else
                 throw std::runtime_error("Error updating item ");

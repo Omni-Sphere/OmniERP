@@ -84,7 +84,7 @@ namespace omnisphere::services
             for (int i = 0; i < dataTable.RowsCount(); i++)
                 itemBrands.emplace_back(omnisphere::models::ItemBrand
             {
-                                        dataTable[i]["Entry"], dataTable[i]["Name"], dataTable[i]["Code"],
+                                        dataTable[i]["Entry"], dataTable[i]["Code"], dataTable[i]["Name"], true,
                                         dataTable[i]["CreatedBy"], dataTable[i]["CreateDate"],
                                         dataTable[i]["LastUpdatedBy"].GetOptional<int>(),
                                         dataTable[i]["UpdateDate"].GetOptional<std::string>()});
@@ -114,6 +114,7 @@ namespace omnisphere::services
                 dataTable[0]["Entry"],
                 dataTable[0]["Code"],
                 dataTable[0]["Name"],
+                true,
                 dataTable[0]["CreatedBy"],
                 dataTable[0]["CreateDate"],
                 dataTable[0]["LastUpdatedBy"].GetOptional<int>(),

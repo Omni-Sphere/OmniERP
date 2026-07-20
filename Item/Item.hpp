@@ -9,10 +9,12 @@
 #include <Database.hpp>
 
 #include <Item/DTOs/CreateItem.hpp>
-#include <Item/DTOs/GetItem.hpp>
-#include <Item/DTOs/SearchItems.hpp>
 #include <Item/DTOs/UpdateItem.hpp>
+#include <Item/DTOs/ItemFilter.hpp>
 #include <Item/Models/Item.hpp>
+#include <DataTable.hpp>
+#include <string>
+#include <vector>
 
 namespace omnisphere::services
 {
@@ -23,17 +25,15 @@ namespace omnisphere::services
 
         ~Item();
 
-        omnisphere::models::Item Get(const omnisphere::dtos::GetItem &_item) const;
-
-        std::vector<omnisphere::models::Item> GetAll() const;
-
+        omnisphere::models::Item Get(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &_item) const;
+        std::vector<omnisphere::models::Item> GetAll(const std::vector<std::string>& fields) const;
         std::vector<omnisphere::models::Item>
-        Search(omnisphere::dtos::SearchItems &_item) const;
+        Search(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &_item) const;
 
-        omnisphere::models::Item Add(const omnisphere::dtos::CreateItem &_item) const;
+        omnisphere::models::Item Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateItem &_item) const;
 
         omnisphere::models::Item
-        Modify(const omnisphere::dtos::UpdateItem &_item) const;
+        Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateItem &_item) const;
 
         private:
         struct Impl;

@@ -7,10 +7,12 @@
 #include <string>
 
 #include <Item/DTOs/CreateItem.hpp>
-#include <Item/DTOs/GetItem.hpp>
-#include <Item/DTOs/SearchItems.hpp>
+#include <Item/DTOs/UpdateItem.hpp>
+#include <Item/DTOs/ItemFilter.hpp>
 #include <Item/DTOs/UpdateItem.hpp>
 #include <Database.hpp>
+#include <string>
+#include <vector>
 
 namespace omnisphere::repositories
 {
@@ -23,11 +25,9 @@ namespace omnisphere::repositories
         bool Create(const omnisphere::dtos::CreateItem &_item) const;
         bool Update(const omnisphere::dtos::UpdateItem &_item) const;
         omnisphere::types::DataTable
-        Read(const omnisphere::dtos::SearchItems &_item) const;
-        omnisphere::types::DataTable
-        Read(const omnisphere::dtos::GetItem &_item) const;
-        omnisphere::types::DataTable Read() const;
-
+        Read(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &_item) const;
+        // Full read without field filtering (SELECT *)
+        
         private:
         std::shared_ptr<omnisphere::services::Database> Database;
 

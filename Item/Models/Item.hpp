@@ -1,15 +1,21 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
-#include <Base/BaseModel.hpp>
 #include <optional>
 #include <string>
+#include <regex>
+#include <stdexcept>
+#include <memory>
+#include <boost/describe.hpp>
+#include "User/Models/User.hpp"
+#include "ItemBrand/Models/ItemBrand.hpp"
+#include "ItemGroup/Models/ItemGroup.hpp"
 
 namespace omnisphere::models
 {
-    class Item : public omnisphere::models::BaseModel
+    class Item
     {
         public:
+        Item() = default;
+
         Item(
             int _Entry,
             std::string _Code,
@@ -37,58 +43,94 @@ namespace omnisphere::models
             std::optional<int> _LastUpdatedBy,
             std::optional<std::string> _LastUpdateDate
         )
-            : omnisphere::models::BaseModel(
-                _Entry,
-                std::move(_Code),
-                std::move(_Name),
-                _CreatedBy,
-                std::move(_CreateDate),
-                _LastUpdatedBy,
-                std::move(_LastUpdateDate)
-            ),
-            Description(std::move(_Description)),
-            Image(std::move(_Image)),
-            IsActive(_IsActive),
-            PurchaseItem(_PurchaseItem),
-            SellItem(_SellItem),
-            InventoryItem(_InventoryItem),
-            Price(_Price),
-            Brand(_Brand),
-            Group(_Group),
-            OnHand(_OnHand),
-            OnOrder(_OnOrder),
-            OnRequest(_OnRequest),
-            MinStock(_MinStock),
-            MaxStock(_MaxStock),
-            MinOrder(_MinOrder),
-            MaxOrder(_MaxOrder),
-            MinRequest(_MinRequest),
-            MaxRequest(_MaxRequest)
+            : Entry(_Entry),
+              Code(std::move(_Code)),
+              Name(std::move(_Name)),
+              Description(std::move(_Description)),
+              Image(std::move(_Image)),
+              IsActive(_IsActive),
+              PurchaseItem(_PurchaseItem),
+              SellItem(_SellItem),
+              InventoryItem(_InventoryItem),
+              Price(_Price),
+              Brand(_Brand),
+              Group(_Group),
+              OnHand(_OnHand),
+              OnOrder(_OnOrder),
+              OnRequest(_OnRequest),
+              MinStock(_MinStock),
+              MaxStock(_MaxStock),
+              MinOrder(_MinOrder),
+              MaxOrder(_MaxOrder),
+              MinRequest(_MinRequest),
+              MaxRequest(_MaxRequest),
+              CreatedBy(_CreatedBy),
+              CreateDate(std::move(_CreateDate)),
+              LastUpdatedBy(_LastUpdatedBy),
+              UpdateDate(std::move(_LastUpdateDate))
         {
-            ValidateItem();
+            // Manual validation should be called after population
         }
 
-        const std::optional<std::string> Description;
-        const std::optional<std::string> Image;
-        const bool IsActive;
-        const bool PurchaseItem;
-        const bool SellItem;
-        const bool InventoryItem;
-        const double Price;
-        const std::optional<int> Brand;
-        const std::optional<int> Group;
-        const double OnHand;
-        const std::optional<double> OnOrder;
-        const std::optional<double> OnRequest;
-        const std::optional<double> MinStock;
-        const std::optional<double> MaxStock;
-        const std::optional<double> MinOrder;
-        const std::optional<double> MaxOrder;
-        const std::optional<double> MinRequest;
-        const std::optional<double> MaxRequest;
+        // BaseModel properties
+        int Entry = 0;
+        std::string Code = "";
+        std::string Name = "";
+        int CreatedBy = 0;
+        std::string CreateDate = "";
+        std::optional<int> LastUpdatedBy;
+        std::optional<std::string> UpdateDate;
+        std::shared_ptr<omnisphere::models::User> CreatedByUser;
+        std::shared_ptr<omnisphere::models::User> LastUpdatedByUser;
+
+        // Item properties
+        std::optional<std::string> Description;
+        std::optional<std::string> Image;
+        bool IsActive = false;
+        bool PurchaseItem = false;
+        bool SellItem = false;
+        bool InventoryItem = false;
+        double Price = 0.0;
+        std::optional<int> Brand;
+        std::optional<int> Group;
+        std::shared_ptr<omnisphere::models::ItemBrand> BrandObj;
+        std::shared_ptr<omnisphere::models::ItemGroup> GroupObj;
+        double OnHand = 0.0;
+        std::optional<double> OnOrder;
+        std::optional<double> OnRequest;
+        std::optional<double> MinStock;
+        std::optional<double> MaxStock;
+        std::optional<double> MinOrder;
+        std::optional<double> MaxOrder;
+        std::optional<double> MinRequest;
+        std::optional<double> MaxRequest;
+
+
 
         void ValidateItem() const
         {
+            if (Code.size() < 3)
+                throw std::runtime_error("Code demasiado corto");
+
+            if (Code.size() > 20)
+                throw std::runtime_error("Code demasiado largo");
+
+            if (Code.find(' ') != std::string::npos)
+                throw std::runtime_error("Code no puede contener espacios");
+
+            if (!std::regex_match(Code, alphaNumRegex))
+                throw std::runtime_error(
+                    "Code solo puede contener caracteres alfanuméricos");
+
+            if (Name.size() < 3)
+                throw std::runtime_error("Name demasiado corto");
+
+            if (Name.size() > 50)
+                throw std::runtime_error("Name demasiado largo");
+
+            if (CreatedBy <= 0)
+                throw std::runtime_error("CreatedBy inválido");
+
             if (Price < 0.0)
                 throw std::runtime_error("'Price' must be >= 0.");
 
@@ -146,11 +188,12 @@ namespace omnisphere::models
             }
         }
 
-        const std::regex descriptionLengthRegex
-        {R"(^.{3,200}$)"};
-        const std::regex descriptionValidCharsRegex
-        {
+        const std::regex alphaNumRegex{"^[A-Za-z0-9]+$"};
+        const std::regex descriptionLengthRegex{R"(^.{3,200}$)"};
+        const std::regex descriptionValidCharsRegex{
             R"(^[A-Za-z0-9\s\.,;:!¡¿\?\-_()]*$)"};
     };
+
+    BOOST_DESCRIBE_STRUCT(Item, (), (Entry, Code, Name, Description, Image, IsActive, PurchaseItem, SellItem, InventoryItem, Price, Brand, Group, OnHand, OnOrder, OnRequest, MinStock, MaxStock, MinOrder, MaxOrder, MinRequest, MaxRequest, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate))
 
 } // namespace omnisphere::models

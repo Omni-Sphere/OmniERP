@@ -4,6 +4,12 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
 #include <Item/Repositories/Item.hpp>
+#include <map>
+#include <string>
+#include <vector>
+#include <functional>
+#include <QueryBuilder.hpp>
+
 
 namespace omnisphere::repositories
 {
@@ -29,8 +35,8 @@ namespace omnisphere::repositories
             "SellItem, "
             "InventoryItem, "
             "Price, "
-            "BrandEntry, "
-            "GroupEntry, "
+            "Brand, "
+            "[Group], "
             "MinStock, "
             "MaxStock, "
             "MinOrder, "
@@ -159,180 +165,127 @@ namespace omnisphere::repositories
     }
 
     omnisphere::types::DataTable
-    Item::Read(const omnisphere::dtos::SearchItems &filter) const
+    Item::Read(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &filter) const
     {
         try
         {
-            omnisphere::types::DataTable datatable;
+            std::vector<omnisphere::types::Condition> conditions;
+            std::vector<omnisphere::types::SQLParam> sqlParams;
 
-            std::string sQuery = "SELECT "
-            "[Entry] AS ItemEntry, "
-            "[Code], "
-            "[Name], "
-            "Description, "
-            "Image, "
-            "IsActive, "
-            "PurchaseItem, "
-            "SellItem, "
-            "InventoryItem, "
-            "Price, "
-            "BrandEntry Brand, "
-            "GroupEntry [Group],"
-            "OnHand, "
-            "OnOrder, "
-            "OnRequest, "
-            "MinStock, "
-            "MaxStock, "
-            "MinOrder, "
-            "MaxOrder, "
-            "MinRequest, "
-            "MaxRequest, "
-            "CreatedBy, "
-            "CreateDate, "
-            "LastUpdatedBy, "
-            "UpdateDate "
-            "FROM Items WHERE ";
-
-            const std::vector<omnisphere::types::SQLParam> params = {
-                omnisphere::types::MakeSQLParam(filter.CodeEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.CodeContains),
-                omnisphere::types::MakeSQLParam(filter.NameEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.NameContains),
-                omnisphere::types::MakeSQLParam(filter.DescriptionEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.DescriptionContains),
-                omnisphere::types::MakeSQLParam(filter.IsActive),
-                omnisphere::types::MakeSQLParam(filter.PurchaseItem),
-                omnisphere::types::MakeSQLParam(filter.SellItem),
-                omnisphere::types::MakeSQLParam(filter.InventoryItem),
-                omnisphere::types::MakeSQLParam(filter.Price),
-                omnisphere::types::MakeSQLParam(filter.OnHandEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.OnHandGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.OnHandLessThan),
-                omnisphere::types::MakeSQLParam(filter.OnRequestEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.OnRequestGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.OnRequestLessThan),
-                omnisphere::types::MakeSQLParam(filter.OnOrderEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.OnOrderGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.OnOrderLessThan),
-                omnisphere::types::MakeSQLParam(filter.MinStockEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.MinStockGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.MinStockLessThan),
-                omnisphere::types::MakeSQLParam(filter.MaxStockEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.MaxStockGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.MaxStockLessThan),
-                omnisphere::types::MakeSQLParam(filter.MinOrderEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.MinOrderGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.MinOrderLessThan),
-                omnisphere::types::MakeSQLParam(filter.MaxOrderEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.MaxOrderGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.MaxOrderLessThan),
-                omnisphere::types::MakeSQLParam(filter.MinRequestEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.MinRequestGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.MinRequestLessThan),
-                omnisphere::types::MakeSQLParam(filter.MaxReqeuestEqualsTo),
-                omnisphere::types::MakeSQLParam(filter.MaxRequestGreaterThan),
-                omnisphere::types::MakeSQLParam(filter.MaxRequestLessThan)};
-
-            return datatable;
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[Read Exception]: ") + e.what());
-        }
-    }
-
-    omnisphere::types::DataTable
-    Item::Read(const omnisphere::dtos::GetItem &filter) const
-    {
-        try
-        {
-            omnisphere::types::DataTable datatable;
-
-            std::string sQuery = "SELECT "
-            "[Entry] AS ItemEntry, "
-            "[Code], "
-            "[Name], "
-            "Description, "
-            "Image, "
-            "IsActive, "
-            "'N' StockByWarehouse, "
-            "PurchaseItem, "
-            "SellItem, "
-            "InventoryItem, "
-            "Price, "
-            "BrandEntry Brand, "
-            "GroupEntry [Group], "
-            "OnHand, "
-            "OnOrder, "
-            "OnRequest, "
-            "MinStock, "
-            "MaxStock, "
-            "MinOrder, "
-            "MaxOrder, "
-            "MinRequest, "
-            "MaxRequest, "
-            "CreatedBy, "
-            "CreateDate, "
-            "LastUpdatedBy, "
-            "UpdateDate "
-            "FROM Items WHERE ";
-
-            if (filter.Code.has_value())
-            {
-                sQuery += "[Code] = ?";
-                datatable = Database->FetchPrepared(sQuery, filter.Code.value(), "Item::Read");
+            // Search (Global text search, skipped for now or simple implementation)
+            if (filter.Search.has_value()) {
+                conditions.push_back({"", "Name", "LIKE", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam("%" + filter.Search.value() + "%"));
             }
 
-            if (filter.Name.has_value())
-            {
-                sQuery += "[Name] = ?";
-                datatable = Database->FetchPrepared(sQuery, filter.Name.value(), "Item::Read");
+            // Code
+            if (filter.Code.has_value()) {
+                if (filter.Code->eq.has_value()) {
+                    conditions.push_back({"", "Code", "=", "?"});
+                    sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Code->eq.value()));
+                }
+                if (filter.Code->contains.has_value()) {
+                    conditions.push_back({"", "Code", "LIKE", "?"});
+                    sqlParams.push_back(omnisphere::types::MakeSQLParam("%" + filter.Code->contains.value() + "%"));
+                }
             }
 
-            return datatable;
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[Read Exception]: ") + e.what());
-        }
-    }
+            // Name
+            if (filter.Name.has_value()) {
+                if (filter.Name->eq.has_value()) {
+                    conditions.push_back({"", "Name", "=", "?"});
+                    sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Name->eq.value()));
+                }
+                if (filter.Name->contains.has_value()) {
+                    conditions.push_back({"", "Name", "LIKE", "?"});
+                    sqlParams.push_back(omnisphere::types::MakeSQLParam("%" + filter.Name->contains.value() + "%"));
+                }
+            }
 
-    omnisphere::types::DataTable Item::Read() const
-    {
-        try
-        {
-            omnisphere::types::DataTable datatable;
+            if (filter.IsActive.has_value()) {
+                conditions.push_back({"", "IsActive", "=", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.IsActive.value()));
+            }
 
-            std::string sQuery = "SELECT "
-            "[Entry] AS ItemEntry, "
-            "[Code], "
-            "[Name], "
-            "Description, "
-            "Image, "
-            "IsActive, "
-            "PurchaseItem, "
-            "SellItem, "
-            "InventoryItem, "
-            "Price, "
-            "BrandEntry Brand, "
-            "GroupEntry [Group], "
-            "OnHand, "
-            "OnOrder, "
-            "OnRequest, "
-            "MinStock, "
-            "MaxStock, "
-            "MinOrder, "
-            "MaxOrder, "
-            "MinRequest, "
-            "MaxRequest, "
-            "CreatedBy, "
-            "CreateDate, "
-            "LastUpdatedBy, "
-            "UpdateDate "
-            "FROM Items";
-            datatable = Database->FetchResults(sQuery, "Item::Read");
+            // Price Advanced Filters
+            std::function<void(const std::optional<omnisphere::dtos::FloatFilter>&, const std::string&)> mapFloatCondition = [&](const std::optional<omnisphere::dtos::FloatFilter>& f, const std::string& fieldName) {
+                if (f.has_value()) {
+                    if (f->eq.has_value()) {
+                        conditions.push_back({"", fieldName, "=", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam(f->eq.value()));
+                    }
+                    if (f->gt.has_value()) {
+                        conditions.push_back({"", fieldName, ">", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam(f->gt.value()));
+                    }
+                    if (f->lt.has_value()) {
+                        conditions.push_back({"", fieldName, "<", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam(f->lt.value()));
+                    }
+                    if (f->gte.has_value()) {
+                        conditions.push_back({"", fieldName, ">=", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam(f->gte.value()));
+                    }
+                    if (f->lte.has_value()) {
+                        conditions.push_back({"", fieldName, "<=", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam(f->lte.value()));
+                    }
+                }
+            };
 
-            return datatable;
+            mapFloatCondition(filter.Price, "Price");
+            mapFloatCondition(filter.OnHand, "OnHand");
+            mapFloatCondition(filter.OnOrder, "OnOrder");
+            mapFloatCondition(filter.OnRequest, "OnRequest");
+            mapFloatCondition(filter.MinStock, "MinStock");
+            mapFloatCondition(filter.MaxStock, "MaxStock");
+            mapFloatCondition(filter.MinOrder, "MinOrder");
+            mapFloatCondition(filter.MaxOrder, "MaxOrder");
+            mapFloatCondition(filter.MinRequest, "MinRequest");
+            mapFloatCondition(filter.MaxRequest, "MaxRequest");
+
+
+            // Brand
+            if (filter.Brand.has_value()) {
+                if (filter.Brand->Name.has_value()) {
+                    if (filter.Brand->Name->eq.has_value()) {
+                        conditions.push_back({"Brand", "Name", "=", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Brand->Name->eq.value()));
+                    }
+                    if (filter.Brand->Name->contains.has_value()) {
+                        conditions.push_back({"Brand", "Name", "LIKE", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam("%" + filter.Brand->Name->contains.value() + "%"));
+                    }
+                }
+            }
+
+            // Group
+            if (filter.Group.has_value()) {
+                if (filter.Group->Name.has_value()) {
+                    if (filter.Group->Name->eq.has_value()) {
+                        conditions.push_back({"Group", "Name", "=", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Group->Name->eq.value()));
+                    }
+                    if (filter.Group->Name->contains.has_value()) {
+                        conditions.push_back({"Group", "Name", "LIKE", "?"});
+                        sqlParams.push_back(omnisphere::types::MakeSQLParam("%" + filter.Group->Name->contains.value() + "%"));
+                    }
+                }
+            }
+
+            static const std::map<std::string, omnisphere::types::RelationMap> relations = {
+                {"Brand", {"ItemBrands", "B", "ItBEntry", "Items.Brand = B.ItBEntry"}},
+                {"Group", {"ItemGroups", "G", "ItGEntry", "Items.[Group] = G.ItGEntry"}}
+            };
+
+            omnisphere::types::QueryParts queryParts = omnisphere::types::BuildQueryParts(fields, conditions, relations);
+
+            std::string sQuery = "SELECT " + queryParts.SelectClause + " FROM Items" + queryParts.JoinClause;
+            if (!queryParts.WhereClause.empty()) {
+                sQuery += " WHERE " + queryParts.WhereClause;
+            }
+
+            return Database->FetchPrepared(sQuery, sqlParams, "Item::Read(fields, filter)");
         }
         catch (const std::exception &e)
         {
