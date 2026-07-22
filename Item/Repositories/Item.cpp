@@ -274,13 +274,13 @@ namespace omnisphere::repositories
             }
 
             static const std::map<std::string, omnisphere::types::RelationMap> relations = {
-                {"Brand", {"ItemBrands", "B", "ItBEntry", "Items.Brand = B.ItBEntry"}},
-                {"Group", {"ItemGroups", "G", "ItGEntry", "Items.[Group] = G.ItGEntry"}}
+                {"Brand", {"Brands", "B", "Entry", "I.[Brand] = B.[Entry]"}},
+                {"Group", {"Groups", "G", "Entry", "I.[Group] = G.[Entry]"}}
             };
 
-            omnisphere::types::QueryParts queryParts = omnisphere::types::BuildQueryParts(fields, conditions, relations);
+            omnisphere::types::QueryParts queryParts = omnisphere::types::BuildQueryParts(fields, conditions, relations, "I");
 
-            std::string sQuery = "SELECT " + queryParts.SelectClause + " FROM Items" + queryParts.JoinClause;
+            std::string sQuery = "SELECT " + queryParts.SelectClause + " FROM Items I" + queryParts.JoinClause;
             if (!queryParts.WhereClause.empty()) {
                 sQuery += " WHERE " + queryParts.WhereClause;
             }

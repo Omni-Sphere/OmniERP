@@ -56,7 +56,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "INSERT INTO ItemGroups (ItGEntry, Code, Name, "
+            std::string sQuery = "INSERT INTO Groups (Entry, Code, Name, "
             "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?);";
 
             std::vector<omnisphere::types::SQLParam> params = {
@@ -86,7 +86,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "UPDATE ItemGroups SET Name = ?, LastUpdatedBy = ?, "
+            std::string sQuery = "UPDATE Groups SET Name = ?, LastUpdatedBy = ?, "
             "UpdateDate = ? WHERE Code = ?;";
 
             std::vector<omnisphere::types::SQLParam> params = {
@@ -113,8 +113,7 @@ namespace omnisphere::repositories
         try
         {
             std::string sQuery =
-            "SELECT ItGEntry [Entry], Code, Name, CreatedBy, CreateDate, "
-            "LastUpdatedBy, UpdateDate FROM ItemGroups";
+            "SELECT [Entry], Code, Name, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Groups";
 
             omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemGroup::ReadAll");
 
@@ -135,13 +134,12 @@ namespace omnisphere::repositories
         try
         {
             std::string sQuery =
-            "SELECT ItGEntry [Entry], Code, Name, CreatedBy, CreateDate, "
-            "LastUpdatedBy, UpdateDate FROM ItemGroups WHERE ";
+            "SELECT [Entry], Code, Name, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Groups WHERE ";
             std::vector<omnisphere::types::SQLParam> params;
 
             if (itemGroup.Entry.has_value())
             {
-                sQuery += "ItGEntry = ? ";
+                sQuery += "Entry = ? ";
                 params.emplace_back(
                     omnisphere::types::MakeSQLParam(itemGroup.Entry.value()));
             }

@@ -56,14 +56,14 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "INSERT INTO ItemBrands (ItBEntry, Code, Name, "
+            std::string sQuery = "INSERT INTO Brands (Entry, Code, Name, "
             "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?);";
 
             std::vector<omnisphere::types::SQLParam> params = {
                 GetCurrentSequence(), createItemBrand.Code, createItemBrand.Name,
                 createItemBrand.CreatedBy, createItemBrand.CreateDate};
 
-            if (!database->RunPrepared(sQuery, params, "ItemBrand::Create"))
+            if (!database->RunPrepared(sQuery, params, "Brand::Create"))
                 throw std::runtime_error("[RunPrepared exception]");
 
             if (!UpdateItemBrandsSequence())
@@ -86,7 +86,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "UPDATE ItemBrands SET Name = ?, LastUpdatedBy = ?, "
+            std::string sQuery = "UPDATE Brands SET Name = ?, LastUpdatedBy = ?, "
             "UpdateDate = ? WHERE Code = ?;";
 
             std::vector<omnisphere::types::SQLParam> params = {
@@ -113,14 +113,14 @@ namespace omnisphere::repositories
         try
         {
             std::string sQuery = "SELECT "
-            "ItBEntry [Entry], "
+            "[Entry], "
             "[Code], "
             "[Name], "
             "CreatedBy, "
             "CreateDate, "
             "LastUpdatedBy, "
             "UpdateDate "
-            "FROM ItemBrands";
+            "FROM Brands";
 
             omnisphere::types::DataTable dataTable = database->FetchResults(sQuery, "ItemBrand::ReadAll");
 
@@ -139,7 +139,7 @@ namespace omnisphere::repositories
         try
         {
             std::string sQuery = "SELECT "
-            "ItBEntry [Entry], "
+            "[Entry], "
             "[Code], "
             "[Name], "
             "CreatedBy, "

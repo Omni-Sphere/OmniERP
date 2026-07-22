@@ -67,14 +67,14 @@ namespace omnisphere::services
             {
                 omnisphere::models::Item item = omnisphere::data::MapFromRow<omnisphere::models::Item>(data[i]);
 
-                if (data[i].HasColumn("Brand_Entry")) {
+                if (data[i].HasColumn("Brand_Entry") && !data[i]["Brand_Entry"].IsNull()) {
                     item.BrandObj = std::make_shared<omnisphere::models::ItemBrand>(
                         omnisphere::data::MapFromRow<omnisphere::models::ItemBrand>(data[i], "Brand_")
                     );
                     item.BrandObj->IsActive = true;
                 }
 
-                if (data[i].HasColumn("Group_Entry")) {
+                if (data[i].HasColumn("Group_Entry") && !data[i]["Group_Entry"].IsNull()) {
                     item.GroupObj = std::make_shared<omnisphere::models::ItemGroup>(
                         omnisphere::data::MapFromRow<omnisphere::models::ItemGroup>(data[i], "Group_")
                     );

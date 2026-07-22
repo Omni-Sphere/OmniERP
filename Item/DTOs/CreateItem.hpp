@@ -33,7 +33,7 @@ namespace omnisphere::dtos
             MinOrder(_MinOrder), MaxOrder(_MaxOrder), MinRequest(_MinRequest),
             MaxRequest(_MaxRequest)
         {
-            ValidateItem();
+            //ValidateItem();
         }
 
         const std::optional<std::string> Description;
