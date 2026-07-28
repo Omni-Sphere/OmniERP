@@ -25,7 +25,7 @@ namespace omnisphere::repositories
         bool Create(const omnisphere::dtos::CreateItem &_item) const;
         bool Update(const omnisphere::dtos::UpdateItem &_item) const;
         omnisphere::types::DataTable
-        Read(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &_item) const;
+        Search(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &_item) const;
         // Full read without field filtering (SELECT *)
         
         private:

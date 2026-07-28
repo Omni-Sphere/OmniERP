@@ -61,7 +61,7 @@ namespace omnisphere::services
         try
         {
             std::vector<omnisphere::models::Item> items;
-            omnisphere::types::DataTable data = pimpl->item->Read(fields, _item);
+            omnisphere::types::DataTable data = pimpl->item->Search(fields, _item);
 
             for (int i = 0; i < data.RowsCount(); i++)
             {

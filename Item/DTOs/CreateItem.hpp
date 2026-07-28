@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <boost/describe.hpp>
+
 namespace omnisphere::dtos
 {
     struct CreateItem : public omnisphere::dtos::BaseCreateDTO
@@ -36,92 +38,25 @@ namespace omnisphere::dtos
             //ValidateItem();
         }
 
-        const std::optional<std::string> Description;
-        const std::optional<std::string> Image;
-        const bool PurchaseItem;
-        const bool SellItem;
-        const bool InventoryItem;
-        const double Price;
-        const std::optional<int> Brand;
-        const std::optional<int> Group;
-        const std::optional<double> MinStock;
-        const std::optional<double> MaxStock;
-        const std::optional<double> MinOrder;
-        const std::optional<double> MaxOrder;
-        const std::optional<double> MinRequest;
-        const std::optional<double> MaxRequest;
+        std::optional<std::string> Description;
+        std::optional<std::string> Image;
+        bool PurchaseItem;
+        bool SellItem;
+        bool InventoryItem;
+        double Price;
+        std::optional<int> Brand;
+        std::optional<int> Group;
+        std::optional<double> MinStock;
+        std::optional<double> MaxStock;
+        std::optional<double> MinOrder;
+        std::optional<double> MaxOrder;
+        std::optional<double> MinRequest;
+        std::optional<double> MaxRequest;
 
         void ValidateItem() const
         {
-            if (Price < 0.0)
-                throw std::runtime_error("'Price' must be >= 0.");
-
-            ValidateOptionalRange(MinStock, "MinStock");
-            ValidateOptionalRange(MaxStock, "MaxStock");
-            ValidateOptionalRange(MinOrder, "MinOrder");
-            ValidateOptionalRange(MaxOrder, "MaxOrder");
-            ValidateOptionalRange(MinRequest, "MinRequest");
-            ValidateOptionalRange(MaxRequest, "MaxRequest");
-
-            ValidateMinMaxPair(MinStock, MaxStock, "MinStock", "MaxStock");
-            ValidateMinMaxPair(MinOrder, MaxOrder, "MinOrder", "MaxOrder");
-            ValidateMinMaxPair(MinRequest, MaxRequest, "MinRequest", "MaxRequest");
-
-            if (Description.has_value())
-            {
-                const std::string &d = Description.value();
-
-                if (!std::regex_match(d, descriptionLengthRegex))
-                    throw std::runtime_error(
-                        "'Description' length must be 3-200 characters.");
-
-                if (!std::regex_match(d, descriptionValidCharsRegex))
-                    throw std::runtime_error("'Description' contains invalid characters.");
-            }
-
-            ValidateBrandAndGroup(Brand, "Brand");
-            ValidateBrandAndGroup(Group, "Group");
         }
-
-        private:
-        void ValidateOptionalRange(const std::optional<double> &val,
-                                   const char *field) const
-        {
-            if (val.has_value() && val.value() < 0)
-                throw std::runtime_error(std::string(field) + "' must be >= 0.");
-        }
-
-        void ValidateMinMaxPair(const std::optional<double> &minV,
-                                const std::optional<double> &maxV,
-                                const char *minName, const char *maxName) const
-        {
-            if (minV.has_value() && maxV.has_value())
-            {
-                if (minV.value() > maxV.value())
-                {
-                    throw std::runtime_error(std::string("") + minName +
-                                             " cannot be greater than " + maxName);
-                }
-            }
-        }
-
-        void ValidateBrandAndGroup(const std::optional<int> &_entry,
-                                   const std::string &field) const
-        {
-            if (Brand.has_value() && Brand.value() <= 0)
-                throw std::runtime_error("[Validation error]: " + field +
-                                         " cannot be negative or zero");
-
-            if (Group.has_value() && Group.value() <= 0)
-                throw std::runtime_error("[Validation error]: " + field +
-                                         " cannot be negative or zero");
-        }
-
-        const std::regex descriptionLengthRegex
-        {R"(^.{3,200}$)"};
-        const std::regex descriptionValidCharsRegex
-        {
-            R"(^[A-Za-z0-9\s\.,;:!¡¿\?\-_()]*$)"};
     };
 
+    BOOST_DESCRIBE_STRUCT(CreateItem, (), (Code, Name, Description, Image, PurchaseItem, SellItem, InventoryItem, Price, Brand, Group, MinStock, MaxStock, MinOrder, MaxOrder, MinRequest, MaxRequest, CreatedBy, CreateDate))
 } // namespace omnisphere::dtos

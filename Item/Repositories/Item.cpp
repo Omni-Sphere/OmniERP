@@ -24,52 +24,9 @@ namespace omnisphere::repositories
         {
             Database->BeginTransaction();
 
-            std::string sQuery =
-            "INSERT INTO Items ("
-            "[Entry], "
-            "[Code], "
-            "[Name], "
-            "Description, "
-            "Image, "
-            "PurchaseItem, "
-            "SellItem, "
-            "InventoryItem, "
-            "Price, "
-            "Brand, "
-            "[Group], "
-            "MinStock, "
-            "MaxStock, "
-            "MinOrder, "
-            "MaxOrder, "
-            "MinRequest, "
-            "MaxRequest, "
-            "CreatedBy, "
-            "CreateDate"
-            ")"
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            auto insertData = omnisphere::types::BuildInsertQuery("Items", GetCurrentSequence(), item);
 
-            const std::vector<omnisphere::types::SQLParam> params = {
-                omnisphere::types::MakeSQLParam(GetCurrentSequence()),
-                omnisphere::types::MakeSQLParam(item.Code),
-                omnisphere::types::MakeSQLParam(item.Name),
-                omnisphere::types::MakeSQLParam(item.Description),
-                omnisphere::types::MakeSQLParam(item.Image),
-                omnisphere::types::MakeSQLParam(item.PurchaseItem),
-                omnisphere::types::MakeSQLParam(item.SellItem),
-                omnisphere::types::MakeSQLParam(item.InventoryItem),
-                omnisphere::types::MakeSQLParam(item.Price),
-                omnisphere::types::MakeSQLParam(item.Brand),
-                omnisphere::types::MakeSQLParam(item.Group),
-                omnisphere::types::MakeSQLParam(item.MinStock),
-                omnisphere::types::MakeSQLParam(item.MaxStock),
-                omnisphere::types::MakeSQLParam(item.MinOrder),
-                omnisphere::types::MakeSQLParam(item.MaxOrder),
-                omnisphere::types::MakeSQLParam(item.MinRequest),
-                omnisphere::types::MakeSQLParam(item.MaxRequest),
-                omnisphere::types::MakeSQLParam(item.CreatedBy),
-                omnisphere::types::MakeSQLParam(item.CreateDate)};
-
-            if (!Database->RunPrepared(sQuery, params, "Item::Create"))
+            if (!Database->RunPrepared(insertData.Query, insertData.Parameters, "Item::Create"))
                 throw std::runtime_error("Error creating item");
 
             UpdateUserSequence();
@@ -89,70 +46,14 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "UPDATE Items SET ";
-            std::vector<omnisphere::types::SQLParam> params;
+            auto cols = omnisphere::types::ExtractUpdateColumns(item);
 
-            if (item.Name.has_value())
-            {
-                sQuery += "Name = ?, ";
-                params.emplace_back(omnisphere::types::MakeSQLParam(item.Name.value()));
-            }
+            cols.push_back({"LastUpdatedBy", omnisphere::types::MakeSQLParam(item.LastUpdatedBy)});
+            cols.push_back({"UpdateDate", omnisphere::types::MakeSQLParam(item.UpdateDate)});
 
-            if (item.Description.has_value())
-            {
-                sQuery += "Description = ?, ";
-                params.emplace_back(
-                    omnisphere::types::MakeSQLParam(item.Description.value()));
-            }
+            auto updateResult = omnisphere::types::BuildUpdateQuery("Items", cols, "Code", omnisphere::types::MakeSQLParam(item.Code));
 
-            if (item.Image.has_value())
-            {
-                sQuery += "Image = ?, ";
-                params.emplace_back(omnisphere::types::MakeSQLParam(item.Image.value()));
-            }
-
-            if (item.PurchaseItem.has_value())
-            {
-                sQuery += "PurchaseItem = ?, ";
-                params.emplace_back(
-                    omnisphere::types::MakeSQLParam(item.PurchaseItem.value()));
-            }
-
-            if (item.SellItem.has_value())
-            {
-                sQuery += "SellItem = ?, ";
-                params.emplace_back(
-                    omnisphere::types::MakeSQLParam(item.SellItem.value()));
-            }
-
-            if (item.InventoryItem.has_value())
-            {
-                sQuery += "InventoryItem = ?, ";
-                params.emplace_back(
-                    omnisphere::types::MakeSQLParam(item.InventoryItem.value()));
-            }
-
-            if (item.Price.has_value())
-            {
-                sQuery += "Price = ?, ";
-                params.emplace_back(omnisphere::types::MakeSQLParam(item.Price.value()));
-            }
-
-            if (item.Brand.has_value())
-            {
-                sQuery += "Brand = ?, ";
-                params.emplace_back(omnisphere::types::MakeSQLParam(item.Brand.value()));
-            }
-
-            if (item.Group.has_value())
-            {
-                sQuery += "Group = ?, ";
-                params.emplace_back(omnisphere::types::MakeSQLParam(item.Group.value()));
-            }
-
-            sQuery += "WHERE Entry = ?";
-
-            if (!Database->RunPrepared(sQuery, params, "Item::Update"))
+            if (!Database->RunPrepared(updateResult.Query, updateResult.Parameters, "Item::Update"))
                 throw std::runtime_error("Error updating item");
 
             return true;
@@ -165,7 +66,7 @@ namespace omnisphere::repositories
     }
 
     omnisphere::types::DataTable
-    Item::Read(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &filter) const
+    Item::Search(const std::vector<std::string>& fields, const omnisphere::dtos::ItemFilter &filter) const
     {
         try
         {

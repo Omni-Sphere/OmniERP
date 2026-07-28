@@ -27,7 +27,7 @@ namespace omnisphere::repositories
 
         bool Create(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
         bool Update(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
-        omnisphere::types::DataTable ReadAll() const;
-        omnisphere::types::DataTable Read(const omnisphere::dtos::GetItemGroup) const;
+        omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
+        omnisphere::types::DataTable Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetItemGroup &itemGroup) const;
     };
 } // namespace omnisphere::repositories

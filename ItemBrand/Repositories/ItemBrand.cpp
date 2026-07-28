@@ -1,12 +1,14 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
-#include <DataTable.hpp>
-#include <Database.hpp>
-#include <DataTable.hpp>
+#include <QueryBuilder.hpp>
 #include <ItemBrand/Repositories/ItemBrand.hpp>
 
 namespace omnisphere::repositories
 {
+    static const std::vector<std::string> brandSelectFields = {
+        "Entry", "Code", "Name", "CreatedBy", "CreateDate", "LastUpdatedBy", "UpdateDate"
+    };
+
     ItemBrand::ItemBrand(std::shared_ptr<omnisphere::services::Database> _database)
         : database(std::move(_database)) {}
 
@@ -56,12 +58,18 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "INSERT INTO Brands (Entry, Code, Name, "
-            "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?);";
+            static const std::vector<std::string> insertColumns = {
+                "Entry", "Code", "Name", "CreatedBy", "CreateDate"
+            };
+            const std::string sQuery = omnisphere::types::BuildInsertQuery("Brands", insertColumns);
 
             std::vector<omnisphere::types::SQLParam> params = {
-                GetCurrentSequence(), createItemBrand.Code, createItemBrand.Name,
-                createItemBrand.CreatedBy, createItemBrand.CreateDate};
+                omnisphere::types::MakeSQLParam(GetCurrentSequence()),
+                omnisphere::types::MakeSQLParam(createItemBrand.Code),
+                omnisphere::types::MakeSQLParam(createItemBrand.Name),
+                omnisphere::types::MakeSQLParam(createItemBrand.CreatedBy),
+                omnisphere::types::MakeSQLParam(createItemBrand.CreateDate)
+            };
 
             if (!database->RunPrepared(sQuery, params, "Brand::Create"))
                 throw std::runtime_error("[RunPrepared exception]");
@@ -86,14 +94,25 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "UPDATE Brands SET Name = ?, LastUpdatedBy = ?, "
-            "UpdateDate = ? WHERE Code = ?;";
+            std::vector<std::string> setColumns;
+            std::vector<omnisphere::types::SQLParam> parameters;
 
-            std::vector<omnisphere::types::SQLParam> params = {
-                updateItemBrand.Name.value(), updateItemBrand.LastUpdatedBy,
-                updateItemBrand.UpdateDate, updateItemBrand.Code};
+            if (updateItemBrand.Name.has_value())
+            {
+                setColumns.push_back("Name");
+                parameters.push_back(omnisphere::types::MakeSQLParam(updateItemBrand.Name.value()));
+            }
 
-            if (!database->RunPrepared(sQuery, params, "ItemBrand::Update"))
+            setColumns.push_back("LastUpdatedBy");
+            parameters.push_back(omnisphere::types::MakeSQLParam(updateItemBrand.LastUpdatedBy));
+
+            setColumns.push_back("UpdateDate");
+            parameters.push_back(omnisphere::types::MakeSQLParam(updateItemBrand.UpdateDate));
+
+            const std::string sQuery = omnisphere::types::BuildUpdateQuery("Brands", setColumns, "Code = ?");
+            parameters.push_back(omnisphere::types::MakeSQLParam(updateItemBrand.Code));
+
+            if (!database->RunPrepared(sQuery, parameters, "ItemBrand::Update"))
                 throw std::runtime_error("[RunPrepared exception]");
 
             database->CommitTransaction();
@@ -108,23 +127,15 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable ItemBrand::ReadAll() const
+    omnisphere::types::DataTable ItemBrand::ReadAll(const std::vector<std::string>& fields) const
     {
         try
         {
-            std::string sQuery = "SELECT "
-            "[Entry], "
-            "[Code], "
-            "[Name], "
-            "CreatedBy, "
-            "CreateDate, "
-            "LastUpdatedBy, "
-            "UpdateDate "
-            "FROM Brands";
+            const std::vector<std::string>& selectFields = fields.empty() ? brandSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, {});
+            const std::string sQuery = "SELECT " + qp.SelectClause + " FROM Brands";
 
-            omnisphere::types::DataTable dataTable = database->FetchResults(sQuery, "ItemBrand::ReadAll");
-
-            return dataTable;
+            return database->FetchResults(sQuery, "ItemBrand::ReadAll");
         }
         catch (const std::exception &e)
         {
@@ -134,47 +145,34 @@ namespace omnisphere::repositories
     }
 
     omnisphere::types::DataTable
-    ItemBrand::Read(const omnisphere::dtos::GetItemBrand itemBrand) const
+    ItemBrand::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetItemBrand &itemBrand) const
     {
         try
         {
-            std::string sQuery = "SELECT "
-            "[Entry], "
-            "[Code], "
-            "[Name], "
-            "CreatedBy, "
-            "CreateDate, "
-            "LastUpdatedBy, "
-            "UpdateDate "
-            "FROM ItemBrands WHERE ";
-
+            std::vector<omnisphere::types::Condition> conditions;
             std::vector<omnisphere::types::SQLParam> parameters;
 
             if (itemBrand.Entry.has_value())
             {
-                sQuery += "ItBEntry = ?";
-                parameters.emplace_back(
-                    omnisphere::types::MakeSQLParam(itemBrand.Entry.value()));
+                conditions.push_back({"", "Entry", "=", "?"});
+                parameters.push_back(omnisphere::types::MakeSQLParam(itemBrand.Entry.value()));
             }
-
-            if (itemBrand.Code.has_value())
+            else if (itemBrand.Code.has_value())
             {
-                sQuery += "Code = ?";
-                parameters.emplace_back(
-                    omnisphere::types::MakeSQLParam(itemBrand.Code.value()));
+                conditions.push_back({"", "Code", "=", "?"});
+                parameters.push_back(omnisphere::types::MakeSQLParam(itemBrand.Code.value()));
             }
-
-            if (itemBrand.Name.has_value())
+            else if (itemBrand.Name.has_value())
             {
-                sQuery += "Name = ?";
-                parameters.emplace_back(
-                    omnisphere::types::MakeSQLParam(itemBrand.Name.value()));
+                conditions.push_back({"", "Name", "LIKE", "?"});
+                parameters.push_back(omnisphere::types::MakeSQLParam("%" + itemBrand.Name.value() + "%"));
             }
 
-            omnisphere::types::DataTable dataTable =
-            database->FetchPrepared(sQuery, parameters, "ItemBrand::ReadAll");
+            const std::vector<std::string>& selectFields = fields.empty() ? brandSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+            const std::string sQuery = "SELECT " + qp.SelectClause + " FROM Brands" + (qp.WhereClause.empty() ? "" : " WHERE " + qp.WhereClause);
 
-            return dataTable;
+            return database->FetchPrepared(sQuery, parameters, "ItemBrand::Read");
         }
         catch (const std::exception &e)
         {

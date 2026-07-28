@@ -25,14 +25,14 @@ namespace omnisphere::services
         ~ItemBrand();
 
         omnisphere::models::ItemBrand
-        Add(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
+        Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
 
         omnisphere::models::ItemBrand
-        Modify(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
+        Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
 
-        std::vector<omnisphere::models::ItemBrand> GetAll() const;
+        std::vector<omnisphere::models::ItemBrand> GetAll(const std::vector<std::string>& fields = {}) const;
 
         omnisphere::models::ItemBrand
-        Get(const omnisphere::dtos::GetItemBrand &getItemBrand) const;
+        Get(const std::vector<std::string>& fields, const omnisphere::dtos::GetItemBrand &getItemBrand) const;
     };
 } // namespace omnisphere::services

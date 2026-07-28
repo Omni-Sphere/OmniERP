@@ -21,11 +21,11 @@ namespace omnisphere::node
         explicit Node(std::shared_ptr<omnisphere::services::Database> database);
 
         ~Node();
-        omnisphere::models::Node Add(const omnisphere::dtos::CreateNode &node) const;
-        omnisphere::models::Node Modify(const omnisphere::dtos::UpdateNode &node) const;
-        std::vector<omnisphere::models::Node> GetAll() const;
-        omnisphere::models::Node Get(const omnisphere::dtos::GetNode &getNode) const;
-        std::vector<omnisphere::models::Node> Search(const omnisphere::dtos::GetNode &getNode) const;
+        omnisphere::models::Node Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateNode &node) const;
+        omnisphere::models::Node Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateNode &node) const;
+        std::vector<omnisphere::models::Node> GetAll(const std::vector<std::string>& fields = {}) const;
+        omnisphere::models::Node Get(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const;
+        std::vector<omnisphere::models::Node> Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const;
         bool Remove(int entry) const;
     };
 } // namespace omnisphere::node

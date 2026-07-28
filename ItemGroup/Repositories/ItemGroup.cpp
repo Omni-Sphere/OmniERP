@@ -1,12 +1,14 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
-#include <DataTable.hpp>
-#include <Database.hpp>
-#include <DataTable.hpp>
+#include <QueryBuilder.hpp>
 #include <ItemGroup/Repositories/ItemGroup.hpp>
 
 namespace omnisphere::repositories
 {
+    static const std::vector<std::string> groupSelectFields = {
+        "Entry", "Code", "Name", "CreatedBy", "CreateDate", "LastUpdatedBy", "UpdateDate"
+    };
+
     ItemGroup::ItemGroup(std::shared_ptr<omnisphere::services::Database> Database)
         : database(std::move(Database)) {}
 
@@ -56,12 +58,18 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "INSERT INTO Groups (Entry, Code, Name, "
-            "CreatedBy, CreateDate) VALUES (?, ?, ?, ?, ?);";
+            static const std::vector<std::string> insertColumns = {
+                "Entry", "Code", "Name", "CreatedBy", "CreateDate"
+            };
+            const std::string sQuery = omnisphere::types::BuildInsertQuery("Groups", insertColumns);
 
             std::vector<omnisphere::types::SQLParam> params = {
-                GetCurrentSequence(), createItemGroup.Code, createItemGroup.Name,
-                createItemGroup.CreatedBy, createItemGroup.CreateDate};
+                omnisphere::types::MakeSQLParam(GetCurrentSequence()),
+                omnisphere::types::MakeSQLParam(createItemGroup.Code),
+                omnisphere::types::MakeSQLParam(createItemGroup.Name),
+                omnisphere::types::MakeSQLParam(createItemGroup.CreatedBy),
+                omnisphere::types::MakeSQLParam(createItemGroup.CreateDate)
+            };
 
             if (!database->RunPrepared(sQuery, params, "ItemGroup::Create"))
                 throw std::runtime_error("[RunPrepared exception]");
@@ -86,14 +94,25 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "UPDATE Groups SET Name = ?, LastUpdatedBy = ?, "
-            "UpdateDate = ? WHERE Code = ?;";
+            std::vector<std::string> setColumns;
+            std::vector<omnisphere::types::SQLParam> parameters;
 
-            std::vector<omnisphere::types::SQLParam> params = {
-                updateItemGroup.Name.value(), updateItemGroup.LastUpdatedBy,
-                updateItemGroup.UpdateDate, updateItemGroup.Code};
+            if (updateItemGroup.Name.has_value())
+            {
+                setColumns.push_back("Name");
+                parameters.push_back(omnisphere::types::MakeSQLParam(updateItemGroup.Name.value()));
+            }
 
-            if (!database->RunPrepared(sQuery, params, "ItemGroup::Update"))
+            setColumns.push_back("LastUpdatedBy");
+            parameters.push_back(omnisphere::types::MakeSQLParam(updateItemGroup.LastUpdatedBy));
+
+            setColumns.push_back("UpdateDate");
+            parameters.push_back(omnisphere::types::MakeSQLParam(updateItemGroup.UpdateDate));
+
+            const std::string sQuery = omnisphere::types::BuildUpdateQuery("Groups", setColumns, "Code = ?");
+            parameters.push_back(omnisphere::types::MakeSQLParam(updateItemGroup.Code));
+
+            if (!database->RunPrepared(sQuery, parameters, "ItemGroup::Update"))
                 throw std::runtime_error("[RunPrepared exception]");
 
             database->CommitTransaction();
@@ -108,18 +127,15 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable ItemGroup::ReadAll() const
+    omnisphere::types::DataTable ItemGroup::ReadAll(const std::vector<std::string>& fields) const
     {
         try
         {
-            std::string sQuery =
-            "SELECT [Entry], Code, Name, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Groups";
+            const std::vector<std::string>& selectFields = fields.empty() ? groupSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, {});
+            const std::string sQuery = "SELECT " + qp.SelectClause + " FROM Groups";
 
-            omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemGroup::ReadAll");
-
-            return
-
-            {data};
+            return database->FetchResults(sQuery, "ItemGroup::ReadAll");
         }
         catch (const std::exception &e)
         {
@@ -129,41 +145,38 @@ namespace omnisphere::repositories
     }
 
     omnisphere::types::DataTable
-    ItemGroup::Read(const omnisphere::dtos::GetItemGroup itemGroup) const
+    ItemGroup::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetItemGroup &itemGroup) const
     {
         try
         {
-            std::string sQuery =
-            "SELECT [Entry], Code, Name, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Groups WHERE ";
-            std::vector<omnisphere::types::SQLParam> params;
+            std::vector<omnisphere::types::Condition> conditions;
+            std::vector<omnisphere::types::SQLParam> parameters;
 
             if (itemGroup.Entry.has_value())
             {
-                sQuery += "Entry = ? ";
-                params.emplace_back(
-                    omnisphere::types::MakeSQLParam(itemGroup.Entry.value()));
+                conditions.push_back({"", "Entry", "=", "?"});
+                parameters.push_back(omnisphere::types::MakeSQLParam(itemGroup.Entry.value()));
             }
             else if (itemGroup.Code.has_value())
             {
-                sQuery += "Code = ? ";
-                params.emplace_back(
-                    omnisphere::types::MakeSQLParam(itemGroup.Code.value()));
+                conditions.push_back({"", "Code", "=", "?"});
+                parameters.push_back(omnisphere::types::MakeSQLParam(itemGroup.Code.value()));
             }
             else if (itemGroup.Name.has_value())
             {
-                sQuery += "Name = ? ";
-                params.emplace_back(
-                    omnisphere::types::MakeSQLParam(itemGroup.Name.value()));
+                conditions.push_back({"", "Name", "LIKE", "?"});
+                parameters.push_back(omnisphere::types::MakeSQLParam("%" + itemGroup.Name.value() + "%"));
             }
             else
             {
-                throw std::runtime_error(
-                    "At least one filter must be provided to read ItemGroup");
+                throw std::runtime_error("At least one filter must be provided to read ItemGroup");
             }
 
-            omnisphere::types::DataTable data = database->FetchPrepared(sQuery, params, "ItemGroup::Read");
+            const std::vector<std::string>& selectFields = fields.empty() ? groupSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+            const std::string sQuery = "SELECT " + qp.SelectClause + " FROM Groups WHERE " + qp.WhereClause;
 
-            return data;
+            return database->FetchPrepared(sQuery, parameters, "ItemGroup::Read");
         }
         catch (const std::exception &e)
         {

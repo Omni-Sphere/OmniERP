@@ -1,10 +1,8 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
-#include <Database.hpp>
-#include <Node/Repositories/Node.hpp>
-#include <DataTable.hpp>
-#include <Database.hpp>
 #include <SQLParams.hpp>
+#include <QueryBuilder.hpp>
+#include <Node/Repositories/Node.hpp>
 #include <Node/DTOs/CreateNode.hpp>
 #include <Node/DTOs/UpdateNode.hpp>
 #include <Node/Models/Node.hpp>
@@ -30,13 +28,21 @@ namespace omnisphere::repositories
         return mode == omnisphere::enums::OperationMode::POS ? "P" : "R";
     }
 
+    static const std::vector<std::string> nodeSelectFields = {
+        "Entry", "Code", "Name", "NodeType", "OperationMode", "CashLimit",
+        "IPAddress", "ExtendedLog", "IsActive", "CreatedBy", "CreateDate", "LastUpdatedBy", "UpdateDate"
+    };
+
     bool NodeRepository::Create(const omnisphere::dtos::CreateNode &node) const
     {
         try
         {
-            const std::string query =
-                "INSERT INTO Nodes (Entry, Code, Name, NodeType, OperationMode, CashLimit, IPAddress, IsActive, CreatedBy, CreateDate) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, 'Y', ?, ?)";
+            static const std::vector<std::string> insertColumns = {
+                "Entry", "Code", "Name", "NodeType", "OperationMode", "CashLimit", "IPAddress", "ExtendedLog", "IsActive", "CreatedBy", "CreateDate"
+            };
+            const std::string query = omnisphere::types::BuildInsertQuery("Nodes", insertColumns);
+
+            std::string extVal = (node.ExtendedLog.has_value() && node.ExtendedLog.value()) ? "Y" : "N";
 
             std::vector<omnisphere::types::SQLParam> parameters = {
                 omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -46,6 +52,8 @@ namespace omnisphere::repositories
                 omnisphere::types::MakeSQLParam(OperationModeToChar(node.OperationMode)),
                 omnisphere::types::MakeSQLParam(node.CashLimit),
                 omnisphere::types::MakeSQLParam(node.IPAddress),
+                omnisphere::types::MakeSQLParam(extVal),
+                omnisphere::types::MakeSQLParam("Y"),
                 omnisphere::types::MakeSQLParam(node.CreatedBy),
                 omnisphere::types::MakeSQLParam(node.CreateDate)
             };
@@ -71,76 +79,72 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string query = "UPDATE Nodes SET ";
+            if (!node.Entry.has_value())
+            {
+                throw std::runtime_error("UpdateNode: 'Entry' is required for UPDATE");
+            }
+
+            std::vector<std::string> setColumns;
             std::vector<omnisphere::types::SQLParam> parameters;
-            std::vector<std::string> setClauses;
 
             if (node.Code.has_value())
             {
-                setClauses.push_back("Code = ?");
+                setColumns.push_back("Code");
                 parameters.push_back(omnisphere::types::MakeSQLParam(node.Code.value()));
             }
 
             if (node.Name.has_value())
             {
-                setClauses.push_back("Name = ?");
+                setColumns.push_back("Name");
                 parameters.push_back(omnisphere::types::MakeSQLParam(node.Name.value()));
             }
 
             if (node.NodeType.has_value())
             {
-                setClauses.push_back("NodeType = ?");
+                setColumns.push_back("NodeType");
                 parameters.push_back(omnisphere::types::MakeSQLParam(NodeTypeToChar(node.NodeType.value())));
             }
 
             if (node.OperationMode.has_value())
             {
-                setClauses.push_back("OperationMode = ?");
+                setColumns.push_back("OperationMode");
                 parameters.push_back(omnisphere::types::MakeSQLParam(OperationModeToChar(node.OperationMode.value())));
             }
 
             if (node.CashLimit.has_value())
             {
-                setClauses.push_back("CashLimit = ?");
+                setColumns.push_back("CashLimit");
                 parameters.push_back(omnisphere::types::MakeSQLParam(node.CashLimit.value()));
             }
 
             if (node.IPAddress.has_value())
             {
-                setClauses.push_back("IPAddress = ?");
+                setColumns.push_back("IPAddress");
                 parameters.push_back(omnisphere::types::MakeSQLParam(node.IPAddress.value()));
+            }
+
+            if (node.ExtendedLog.has_value())
+            {
+                setColumns.push_back("ExtendedLog");
+                parameters.push_back(omnisphere::types::MakeSQLParam(node.ExtendedLog.value() ? "Y" : "N"));
             }
 
             if (node.IsActive.has_value())
             {
-                setClauses.push_back("IsActive = ?");
+                setColumns.push_back("IsActive");
                 parameters.push_back(omnisphere::types::MakeSQLParam(node.IsActive.value()));
             }
 
-            setClauses.push_back("LastUpdatedBy = ?");
+            setColumns.push_back("LastUpdatedBy");
             parameters.push_back(omnisphere::types::MakeSQLParam(node.LastUpdatedBy));
 
-            setClauses.push_back("UpdateDate = ?");
+            setColumns.push_back("UpdateDate");
             parameters.push_back(omnisphere::types::MakeSQLParam(node.UpdateDate));
 
-            if (setClauses.empty()) return true;
+            if (setColumns.empty()) return true;
 
-            for (size_t i = 0; i < setClauses.size(); ++i)
-            {
-                query += setClauses[i];
-                if (i < setClauses.size() - 1) query += ", ";
-            }
-
-            query += " WHERE Entry = ?";
-
-            if (node.Entry.has_value())
-            {
-                parameters.push_back(omnisphere::types::MakeSQLParam(node.Entry.value()));
-            }
-            else
-            {
-                throw std::runtime_error("UpdateNode: 'Entry' is required for UPDATE");
-            }
+            const std::string query = omnisphere::types::BuildUpdateQuery("Nodes", setColumns, "[Entry] = ?");
+            parameters.push_back(omnisphere::types::MakeSQLParam(node.Entry.value()));
 
             if (!database->RunPrepared(query, parameters, "NodeRepository::Update"))
                 throw std::runtime_error("[RunPrepared exception]");
@@ -156,13 +160,16 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable NodeRepository::ReadAll() const
+    omnisphere::types::DataTable NodeRepository::ReadAll(const std::vector<std::string>& fields) const
     {
         try
         {
-            const std::string query =
-                "SELECT Entry, Code, Name, NodeType, OperationMode, CashLimit, IPAddress, IsActive, "
-                "CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Nodes WHERE IsActive = 'Y'";
+            std::vector<omnisphere::types::Condition> conditions;
+            conditions.push_back({"", "IsActive", "=", "'Y'"});
+
+            const std::vector<std::string>& selectFields = fields.empty() ? nodeSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+            const std::string query = "SELECT " + qp.SelectClause + " FROM Nodes WHERE " + qp.WhereClause;
 
             return database->FetchResults(query, "NodeRepository::ReadAll");
         }
@@ -172,34 +179,38 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable NodeRepository::Read(const omnisphere::dtos::GetNode &getNode) const
+    omnisphere::types::DataTable NodeRepository::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const
     {
         try
         {
-            std::string query =
-                "SELECT Entry, Code, Name, NodeType, OperationMode, CashLimit, IPAddress, IsActive, "
-                "CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Nodes WHERE IsActive = 'Y'";
+            std::vector<omnisphere::types::Condition> conditions;
+            conditions.push_back({"", "IsActive", "=", "'Y'"});
             std::vector<omnisphere::types::SQLParam> parameters;
 
-            if (getNode.Entry.has_value())
-            {
-                query += " AND Entry = ?";
-                parameters.push_back(omnisphere::types::MakeSQLParam(getNode.Entry.value()));
-            }
-            else if (getNode.Code.has_value())
-            {
-                query += " AND Code = ?";
-                parameters.push_back(omnisphere::types::MakeSQLParam(getNode.Code.value()));
-            }
-            else if (getNode.Name.has_value())
-            {
-                query += " AND Name LIKE ?";
-                parameters.push_back(omnisphere::types::MakeSQLParam("%" + getNode.Name.value() + "%"));
-            }
-            else
+            auto bindFilter = [&](const auto &optField, const std::string &column, const std::string &op, auto transform) {
+                if (optField.has_value() && parameters.empty())
+                {
+                    conditions.push_back({"", column, op, "?"});
+                    parameters.push_back(omnisphere::types::MakeSQLParam(transform(optField.value())));
+                    return true;
+                }
+                return false;
+            };
+
+            auto pass = [](const auto &val) { return val; };
+
+            bool matched = bindFilter(getNode.Entry, "Entry", "=", pass) ||
+                           bindFilter(getNode.Code, "Code", "=", pass) ||
+                           bindFilter(getNode.Name, "Name", "LIKE", [](const std::string &s) { return "%" + s + "%"; });
+
+            if (!matched)
             {
                 throw std::runtime_error("GetNode: 'Entry', 'Code' or 'Name' is required for Read");
             }
+
+            const std::vector<std::string>& selectFields = fields.empty() ? nodeSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+            const std::string query = "SELECT " + qp.SelectClause + " FROM Nodes WHERE " + qp.WhereClause;
 
             return database->FetchPrepared(query, parameters, "NodeRepository::Read");
         }

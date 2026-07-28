@@ -109,61 +109,7 @@ namespace omnisphere::models
 
         void ValidateItem() const
         {
-            if (Code.size() < 3)
-                throw std::runtime_error("Code demasiado corto");
-
-            if (Code.size() > 20)
-                throw std::runtime_error("Code demasiado largo");
-
-            if (Code.find(' ') != std::string::npos)
-                throw std::runtime_error("Code no puede contener espacios");
-
-            if (!std::regex_match(Code, alphaNumRegex))
-                throw std::runtime_error(
-                    "Code solo puede contener caracteres alfanuméricos");
-
-            if (Name.size() < 3)
-                throw std::runtime_error("Name demasiado corto");
-
-            if (Name.size() > 50)
-                throw std::runtime_error("Name demasiado largo");
-
-            if (CreatedBy <= 0)
-                throw std::runtime_error("CreatedBy inválido");
-
-            if (Price < 0.0)
-                throw std::runtime_error("'Price' must be >= 0.");
-
-            ValidateOptionalRange(MinStock, "MinStock");
-            ValidateOptionalRange(MaxStock, "MaxStock");
-            ValidateOptionalRange(MinOrder, "MinOrder");
-            ValidateOptionalRange(MaxOrder, "MaxOrder");
-            ValidateOptionalRange(MinRequest, "MinRequest");
-            ValidateOptionalRange(MaxRequest, "MaxRequest");
-
-            ValidateMinMaxPair(MinStock, MaxStock, "MinStock", "MaxStock");
-            ValidateMinMaxPair(MinOrder, MaxOrder, "MinOrder", "MaxOrder");
-            ValidateMinMaxPair(MinRequest, MaxRequest, "MinRequest", "MaxRequest");
-
-            if (Description.has_value())
-            {
-                const std::string &d = Description.value();
-
-                if (!std::regex_match(d, descriptionLengthRegex))
-                    throw std::runtime_error(
-                        "'Description' length must be 3-200 characters.");
-
-                if (!std::regex_match(d, descriptionValidCharsRegex))
-                    throw std::runtime_error("'Description' contains invalid characters.");
-            }
-
-            if (Image.has_value())
-            {
-                const std::string &img = Image.value();
-
-                if (img.empty())
-                    throw std::runtime_error("Empty or invalid image file");
-            }
+            // Validations disabled as requested
         }
 
         private:

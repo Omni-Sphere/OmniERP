@@ -1,9 +1,10 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
-#include <DataTable.hpp>
-#include <Database.hpp>
-#include <DataTable.hpp>
+#include <DataMapper.hpp>
 #include <ItemGroup/ItemGroup.hpp>
+#include <ItemGroup/DTOs/CreateItemGroup.hpp>
+#include <ItemGroup/DTOs/GetItemGroup.hpp>
+#include <ItemGroup/DTOs/UpdateItemGroup.hpp>
 #include <ItemGroup/Models/ItemGroup.hpp>
 #include <ItemGroup/Repositories/ItemGroup.hpp>
 
@@ -23,6 +24,7 @@ namespace omnisphere::services
     ItemGroup::~ItemGroup() = default;
 
     omnisphere::models::ItemGroup ItemGroup::Add(
+        const std::vector<std::string>& fields,
         const omnisphere::dtos::CreateItemGroup &createItemGroup) const
     {
         try
@@ -32,7 +34,7 @@ namespace omnisphere::services
                 omnisphere::dtos::GetItemGroup getItemGroup;
                 getItemGroup.Code = createItemGroup.Code;
 
-                return Get(getItemGroup);
+                return Get(fields, getItemGroup);
             }
             else
             {
@@ -47,6 +49,7 @@ namespace omnisphere::services
     }
 
     omnisphere::models::ItemGroup ItemGroup::Modify(
+        const std::vector<std::string>& fields,
         const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const
     {
         try
@@ -56,7 +59,7 @@ namespace omnisphere::services
                 omnisphere::dtos::GetItemGroup getItemGroup;
                 getItemGroup.Code = updateItemGroup.Code;
 
-                return Get(getItemGroup);
+                return Get(fields, getItemGroup);
             }
             else
             {
@@ -70,21 +73,16 @@ namespace omnisphere::services
         }
     }
 
-    std::vector<omnisphere::models::ItemGroup> ItemGroup::GetAll() const
+    std::vector<omnisphere::models::ItemGroup> ItemGroup::GetAll(const std::vector<std::string>& fields) const
     {
         try
         {
             std::vector<omnisphere::models::ItemGroup> itemGroups;
             omnisphere::types::DataTable dataTable =
-            pimpl->itemGroupRepository->ReadAll();
+            pimpl->itemGroupRepository->ReadAll(fields);
 
             for (int i = 0; i < dataTable.RowsCount(); i++)
-                itemGroups.emplace_back(omnisphere::models::ItemGroup
-            {
-                                        dataTable[i]["Entry"], dataTable[i]["Code"], dataTable[i]["Name"],
-                                        dataTable[i]["CreatedBy"], dataTable[i]["CreateDate"],
-                                        dataTable[i]["LastUpdatedBy"].GetOptional<int>(),
-                                        dataTable[i]["UpdateDate"].GetOptional<std::string>()});
+                itemGroups.push_back(omnisphere::data::MapFromRow<omnisphere::models::ItemGroup>(dataTable[i]));
 
             return itemGroups;
         }
@@ -96,27 +94,17 @@ namespace omnisphere::services
     }
 
     omnisphere::models::ItemGroup
-    ItemGroup::Get(const omnisphere::dtos::GetItemGroup &getItemGroup) const
+    ItemGroup::Get(const std::vector<std::string>& fields, const omnisphere::dtos::GetItemGroup &getItemGroup) const
     {
         try
         {
             omnisphere::types::DataTable dataTable =
-            pimpl->itemGroupRepository->Read(getItemGroup);
+            pimpl->itemGroupRepository->Search(fields, getItemGroup);
 
             if (dataTable.RowsCount() == 0)
                 throw std::runtime_error("No ItemGroups found");
 
-            omnisphere::models::ItemGroup itemGroup
-            {
-                dataTable[0]["Entry"],
-                dataTable[0]["Code"],
-                dataTable[0]["Name"],
-                dataTable[0]["CreatedBy"],
-                dataTable[0]["CreateDate"],
-                dataTable[0]["LastUpdatedBy"].GetOptional<int>(),
-                dataTable[0]["UpdateDate"].GetOptional<std::string>()};
-
-            return itemGroup;
+            return omnisphere::data::MapFromRow<omnisphere::models::ItemGroup>(dataTable[0]);
         }
         catch (const std::exception &e)
         {

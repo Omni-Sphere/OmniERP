@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <boost/describe.hpp>
+
 namespace omnisphere::dtos
 {
     struct UpdateItem : public omnisphere::dtos::BaseUpdateDTO
@@ -34,61 +36,26 @@ namespace omnisphere::dtos
             ValidateUpdateItem();
         }
 
-        const std::optional<std::string> Description;
-        const std::optional<std::string> Image;
-        const std::optional<bool> IsActive;
-        const std::optional<bool> PurchaseItem;
-        const std::optional<bool> SellItem;
-        const std::optional<bool> InventoryItem;
-        const std::optional<double> Price;
-        const std::optional<int> Brand;
-        const std::optional<int> Group;
-        const std::optional<double> MinStock;
-        const std::optional<double> MaxStock;
-        const std::optional<double> MinOrder;
-        const std::optional<double> MaxOrder;
-        const std::optional<double> MinRequest;
-        const std::optional<double> MaxRequest;
+        std::optional<std::string> Description;
+        std::optional<std::string> Image;
+        std::optional<bool> IsActive;
+        std::optional<bool> PurchaseItem;
+        std::optional<bool> SellItem;
+        std::optional<bool> InventoryItem;
+        std::optional<double> Price;
+        std::optional<int> Brand;
+        std::optional<int> Group;
+        std::optional<double> MinStock;
+        std::optional<double> MaxStock;
+        std::optional<double> MinOrder;
+        std::optional<double> MaxOrder;
+        std::optional<double> MinRequest;
+        std::optional<double> MaxRequest;
 
         void ValidateUpdateItem() const
         {
-            if (Price.has_value() && *Price < 0)
-                throw std::runtime_error("Validation error: Price cannot be negative.");
-
-            ValidateRange(MinStock, MaxStock, "MinStock", "MaxStock");
-            ValidateRange(MinOrder, MaxOrder, "MinOrder", "MaxOrder");
-            ValidateRange(MinRequest, MaxRequest, "MinRequest", "MaxRequest");
-            ValidateBrandAndGroup(Brand, "Brand");
-            ValidateBrandAndGroup(Group, "Group");
-        }
-
-        void ValidateRange(const std::optional<double> &minV,
-                           const std::optional<double> &maxV, const char *minName,
-                           const char *maxName) const
-        {
-            if (minV.has_value() && *minV < 0)
-                throw std::runtime_error(std::string("Validation error: ") + minName +
-                                         " cannot be negative.");
-
-            if (maxV.has_value() && *maxV < 0)
-                throw std::runtime_error(std::string("Validation error: ") + maxName +
-                                         " cannot be negative.");
-
-            if (minV.has_value() && maxV.has_value() && *minV > *maxV)
-                throw std::runtime_error(std::string("Validation error: ") + minName +
-                                         " cannot be greater than " + maxName + ".");
-        }
-
-        void ValidateBrandAndGroup(const std::optional<int> &_entry,
-                                   const std::string &field) const
-        {
-            if (Brand.has_value() && Brand.value() <= 0)
-                throw std::runtime_error("[Validation error]: " + field +
-                                         " cannot be negative or zero");
-
-            if (Group.has_value() && Group.value() <= 0)
-                throw std::runtime_error("[Validation error]: " + field +
-                                         " cannot be negative or zero");
         }
     };
+
+    BOOST_DESCRIBE_STRUCT(UpdateItem, (), (Name, Description, Image, IsActive, PurchaseItem, SellItem, InventoryItem, Price, Brand, Group, MinStock, MaxStock, MinOrder, MaxOrder, MinRequest, MaxRequest))
 } // namespace omnisphere::dtos

@@ -25,14 +25,14 @@ namespace omnisphere::services
         ~ItemGroup();
 
         omnisphere::models::ItemGroup
-        Add(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
+        Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateItemGroup &createItemGroup) const;
 
         omnisphere::models::ItemGroup
-        Modify(const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
+        Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateItemGroup &updateItemGroup) const;
 
-        std::vector<omnisphere::models::ItemGroup> GetAll() const;
+        std::vector<omnisphere::models::ItemGroup> GetAll(const std::vector<std::string>& fields = {}) const;
 
         omnisphere::models::ItemGroup
-        Get(const omnisphere::dtos::GetItemGroup &getItemGroup) const;
+        Get(const std::vector<std::string>& fields, const omnisphere::dtos::GetItemGroup &getItemGroup) const;
     };
 } // namespace omnisphere::services

@@ -22,7 +22,7 @@ namespace omnisphere::repositories
         ~ItemBrand() {};
         bool Create(const omnisphere::dtos::CreateItemBrand &createItemBrand) const;
         bool Update(const omnisphere::dtos::UpdateItemBrand &updateItemBrand) const;
-        omnisphere::types::DataTable ReadAll() const;
-        omnisphere::types::DataTable Read(const omnisphere::dtos::GetItemBrand) const;
+        omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
+        omnisphere::types::DataTable Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetItemBrand &itemBrand) const;
     };
 } // namespace omnisphere::repositories

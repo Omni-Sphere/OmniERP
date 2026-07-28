@@ -1,8 +1,6 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
-#include <DataTable.hpp>
-#include <Database.hpp>
-#include <DataTable.hpp>
+#include <DataMapper.hpp>
 #include <Node/Node.hpp>
 #include <Node/Repositories/Node.hpp>
 #include <stdexcept>
@@ -23,40 +21,8 @@ namespace omnisphere::node
                     database)) {}
     };
 
-    // Helper: convert DB char to NodeType enum
-    static omnisphere::enums::NodeType CharToNodeType(const std::string &c)
-    {
-        return c == "C" ? omnisphere::enums::NodeType::Cashier
-                        : omnisphere::enums::NodeType::ServieStation;
-    }
-
-    // Helper: convert DB char to OperationMode enum
-    static omnisphere::enums::OperationMode CharToOperationMode(const std::string &c)
-    {
-        return c == "P" ? omnisphere::enums::OperationMode::POS
-                        : omnisphere::enums::OperationMode::Restaurant;
-    }
-
-    static omnisphere::models::Node MapRow(omnisphere::types::DataTable::Row &row)
-    {
-        return omnisphere::models::Node(
-            row["Entry"],
-            row["Code"],
-            row["Name"],
-            CharToNodeType(static_cast<std::string>(row["NodeType"])),
-            CharToOperationMode(static_cast<std::string>(row["OperationMode"])),
-            row["CashLimit"].GetOptional<int>(),
-            row["IPAddress"].GetOptional<std::string>(),
-            static_cast<std::string>(row["IsActive"]) == "Y",
-            row["CreatedBy"],
-            row["CreateDate"],
-            row["LastUpdatedBy"].GetOptional<int>(),
-            row["UpdateDate"].GetOptional<std::string>()
-        );
-    }
-
     omnisphere::models::Node
-    Node::Add(const omnisphere::dtos::CreateNode &node) const
+    Node::Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateNode &node) const
     {
         try
         {
@@ -65,7 +31,7 @@ namespace omnisphere::node
                 omnisphere::dtos::GetNode getNode;
                 getNode.Code = node.Code;
 
-                return Get(getNode);
+                return Get(fields, getNode);
             }
             else
             {
@@ -79,16 +45,23 @@ namespace omnisphere::node
     }
 
     omnisphere::models::Node
-    Node::Modify(const omnisphere::dtos::UpdateNode &node) const
+    Node::Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateNode &node) const
     {
         try
         {
             if (pImpl->nodeRepository->Update(node))
             {
                 omnisphere::dtos::GetNode getNode;
-                getNode.Code = node.Code;
+                if (node.Entry.has_value())
+                {
+                    getNode.Entry = node.Entry;
+                }
+                else if (node.Code.has_value())
+                {
+                    getNode.Code = node.Code;
+                }
 
-                return Get(getNode);
+                return Get(fields, getNode);
             }
             else
             {
@@ -101,16 +74,16 @@ namespace omnisphere::node
         }
     }
 
-    std::vector<omnisphere::models::Node> Node::GetAll() const
+    std::vector<omnisphere::models::Node> Node::GetAll(const std::vector<std::string>& fields) const
     {
         try
         {
             std::vector<omnisphere::models::Node> nodes;
-            omnisphere::types::DataTable data = pImpl->nodeRepository->ReadAll();
+            omnisphere::types::DataTable data = pImpl->nodeRepository->ReadAll(fields);
 
             for (int i = 0; i < data.RowsCount(); i++)
             {
-                nodes.emplace_back(MapRow(data[i]));
+                nodes.push_back(omnisphere::data::MapFromRow<omnisphere::models::Node>(data[i]));
             }
 
             return nodes;
@@ -122,16 +95,16 @@ namespace omnisphere::node
     }
 
     omnisphere::models::Node
-    Node::Get(const omnisphere::dtos::GetNode &getNode) const
+    Node::Get(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const
     {
         try
         {
-            omnisphere::types::DataTable data = pImpl->nodeRepository->Read(getNode);
+            omnisphere::types::DataTable data = pImpl->nodeRepository->Search(fields, getNode);
 
             if (data.RowsCount() == 0)
                 throw std::runtime_error("Node doesn't exist");
 
-            return MapRow(data[0]);
+            return omnisphere::data::MapFromRow<omnisphere::models::Node>(data[0]);
         }
         catch (const std::exception &e)
         {
@@ -139,16 +112,16 @@ namespace omnisphere::node
         }
     }
 
-    std::vector<omnisphere::models::Node> Node::Search(const omnisphere::dtos::GetNode &getNode) const
+    std::vector<omnisphere::models::Node> Node::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const
     {
         try
         {
             std::vector<omnisphere::models::Node> nodes;
-            omnisphere::types::DataTable data = pImpl->nodeRepository->Read(getNode);
+            omnisphere::types::DataTable data = pImpl->nodeRepository->Search(fields, getNode);
 
             for (int i = 0; i < data.RowsCount(); i++)
             {
-                nodes.emplace_back(MapRow(data[i]));
+                nodes.push_back(omnisphere::data::MapFromRow<omnisphere::models::Node>(data[i]));
             }
 
             return nodes;

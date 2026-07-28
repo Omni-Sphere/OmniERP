@@ -16,5 +16,6 @@ namespace omnisphere::dtos
         omnisphere::enums::OperationMode OperationMode;
         std::optional<int> CashLimit;
         std::optional<std::string> IPAddress;
+        std::optional<bool> ExtendedLog;
     };
 }
