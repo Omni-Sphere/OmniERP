@@ -2,106 +2,31 @@
 #include <DataTable.hpp>
 #include <Store/Repositories/Store.hpp>
 #include <SQLParams.hpp>
+#include <QueryBuilder.hpp>
 
 namespace omnisphere::repositories
 {
-    Store::Store(std::shared_ptr<omnisphere::services::Database> database) : Database(database) {}
+    static const std::vector<std::string> storeSelectFields = {
+        "Entry", "Code", "Name", "GuestCustomer", "Address", "Address2", "City", "State",
+        "ZipCode", "Country", "TaxID", "Currency", "Phone1", "Phone2", "Email", "WebSite",
+        "FacebookProfile", "InstagramProfile", "XProfile", "LogoFile", "ImagePath",
+        "ReportsPath", "TicketsPath", "IsActive", "CreatedBy", "CreateDate", "LastUpdatedBy", "UpdateDate"
+    };
+
+    Store::Store(std::shared_ptr<omnisphere::services::Database> database) : Database(std::move(database)) {}
 
     Store::~Store() = default;
-
-    template <typename T>
-    void Store::AddInsertParam(const std::string &field, const T &value,
-                               std::vector<std::string> &insertClauses,
-                               std::vector<omnisphere::types::SQLParam> &params) const
-    {
-        using U = std::decay_t<T>;
-
-        if constexpr (omnisphere::types::is_optional<U>::value)
-        {
-            if (value.has_value())
-            {
-                insertClauses.push_back(field);
-                params.push_back(omnisphere::types::MakeSQLParam(value.value()));
-            }
-        }
-        else
-        {
-            insertClauses.push_back(field);
-            params.push_back(omnisphere::types::MakeSQLParam(value));
-        }
-    }
-
-    template <typename T>
-    void Store::AddSetParam(const std::string &field, const T &value,
-                            std::vector<std::string> &setClauses,
-                            std::vector<omnisphere::types::SQLParam> &params) const
-    {
-        using U = std::decay_t<T>;
-
-        if constexpr (omnisphere::types::is_optional<U>::value)
-        {
-            if (value.has_value())
-            {
-                setClauses.push_back(field + " = ?");
-                params.push_back(omnisphere::types::MakeSQLParam(value.value()));
-            }
-        }
-        else
-        {
-            setClauses.push_back(field + " = ?");
-            params.push_back(omnisphere::types::MakeSQLParam(value));
-        }
-    }
 
     bool Store::Create(const omnisphere::dtos::CreateStore &_store) const
     {
         try
         {
-            std::vector<std::string> fields;
-            std::vector<omnisphere::types::SQLParam> params;
+            Database->BeginTransaction();
 
-            AddInsertParam("Entry", GetCurrentSequence(), fields, params);
-            AddInsertParam("Code", _store.Code, fields, params);
-            AddInsertParam("Name", _store.Name, fields, params);
-            AddInsertParam("GuestCustomer", _store.GuestCustomer, fields, params);
-            AddInsertParam("Address", _store.Address, fields, params);
-            AddInsertParam("Address2", _store.Address2, fields, params);
-            AddInsertParam("City", _store.City, fields, params);
-            AddInsertParam("State", _store.State, fields, params);
-            AddInsertParam("ZipCode", _store.ZipCode, fields, params);
-            AddInsertParam("Country", _store.Country, fields, params);
-            AddInsertParam("TaxID", _store.TaxID, fields, params);
-            AddInsertParam("Currency", _store.Currency, fields, params);
-            AddInsertParam("Phone1", _store.Phone1, fields, params);
-            AddInsertParam("Phone2", _store.Phone2, fields, params);
-            AddInsertParam("Email", _store.Email, fields, params);
-            AddInsertParam("WebSite", _store.WebSite, fields, params);
-            AddInsertParam("FacebookProfile", _store.FacebookProfile, fields, params);
-            AddInsertParam("InstagramProfile", _store.InstagramProfile, fields, params);
-            AddInsertParam("XProfile", _store.XProfile, fields, params);
-            AddInsertParam("LogoFile", _store.LogoFile, fields, params);
-            AddInsertParam("IsActive", true, fields, params);
-            AddInsertParam("CreatedBy", _store.CreatedBy, fields, params);
-            AddInsertParam("CreateDate", _store.CreateDate, fields, params);
+            auto insertData = omnisphere::types::BuildInsertQuery("Stores", GetCurrentSequence(), _store);
 
-            std::string query = "INSERT INTO Stores (";
-            std::string values = " VALUES (";
-
-            for (size_t i = 0; i < fields.size(); ++i)
-            {
-                query += fields[i];
-                values += "?";
-
-                if (i < fields.size() - 1)
-                {
-                    query += ", ";
-                    values += ", ";
-                }
-            }
-            query += ")" + values + ")";
-
-            if (!Database->RunPrepared(query, params))
-                throw std::runtime_error("[RunPrepared exception]");
+            if (!Database->RunPrepared(insertData.Query, insertData.Parameters, "Store::Create"))
+                throw std::runtime_error("Error creating store");
 
             if (!UpdateStoreSequence())
                 throw std::runtime_error("[UpdateStoreSequence exception]");
@@ -121,50 +46,15 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "UPDATE Stores SET ";
-            std::vector<omnisphere::types::SQLParam> params;
-            std::vector<std::string> setClauses;
+            auto cols = omnisphere::types::ExtractUpdateColumns(_store);
 
-            AddSetParam("Code", _store.Code, setClauses, params);
-            AddSetParam("Name", _store.Name, setClauses, params);
-            AddSetParam("GuestCustomer", _store.GuestCustomer, setClauses, params);
-            AddSetParam("Address", _store.Address, setClauses, params);
-            AddSetParam("Address2", _store.Address2, setClauses, params);
-            AddSetParam("City", _store.City, setClauses, params);
-            AddSetParam("State", _store.State, setClauses, params);
-            AddSetParam("ZipCode", _store.ZipCode, setClauses, params);
-            AddSetParam("Country", _store.Country, setClauses, params);
-            AddSetParam("TaxID", _store.TaxID, setClauses, params);
-            AddSetParam("Currency", _store.Currency, setClauses, params);
-            AddSetParam("Phone1", _store.Phone1, setClauses, params);
-            AddSetParam("Phone2", _store.Phone2, setClauses, params);
-            AddSetParam("Email", _store.Email, setClauses, params);
-            AddSetParam("WebSite", _store.WebSite, setClauses, params);
-            AddSetParam("FacebookProfile", _store.FacebookProfile, setClauses, params);
-            AddSetParam("InstagramProfile", _store.InstagramProfile, setClauses, params);
-            AddSetParam("XProfile", _store.XProfile, setClauses, params);
-            AddSetParam("LogoFile", _store.LogoFile, setClauses, params);
-            AddSetParam("IsActive", _store.IsActive, setClauses, params);
-            AddSetParam("LastUpdatedBy", _store.LastUpdatedBy, setClauses, params);
-            AddSetParam("UpdateDate", _store.UpdateDate, setClauses, params);
+            cols.push_back({"LastUpdatedBy", omnisphere::types::MakeSQLParam(_store.LastUpdatedBy)});
+            cols.push_back({"UpdateDate", omnisphere::types::MakeSQLParam(_store.UpdateDate)});
 
-            if (setClauses.empty()) return true;
+            auto updateResult = omnisphere::types::BuildUpdateQuery("Stores", cols, "Entry", omnisphere::types::MakeSQLParam(_store.Entry));
 
-            for (size_t i = 0; i < setClauses.size(); ++i)
-            {
-                sQuery += setClauses[i];
-
-                if (i < setClauses.size() - 1)
-                    sQuery += ", ";
-            }
-
-            sQuery += " WHERE Entry = ?";
-            params.push_back(omnisphere::types::MakeSQLParam(_store.Entry));
-
-            if (!Database->RunPrepared(sQuery, params))
-                throw std::runtime_error("[RunPrepared exception]");
-
-            Database->CommitTransaction();
+            if (!Database->RunPrepared(updateResult.Query, updateResult.Parameters, "Store::Update"))
+                throw std::runtime_error("Error updating store");
 
             return true;
         }
@@ -175,15 +65,18 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable Store::Read(int entry) const
+    omnisphere::types::DataTable Store::Read(int entry, const std::vector<std::string>& fields) const
     {
         try
         {
-            std::string sQuery = "SELECT * FROM Stores WHERE Entry = ?";
-            std::vector<omnisphere::types::SQLParam> params;
-            params.push_back(omnisphere::types::MakeSQLParam(entry));
+            const std::vector<std::string>& selectFields = fields.empty() ? storeSelectFields : fields;
+            std::vector<omnisphere::types::Condition> conditions = {{"", "Entry", "=", "?"}};
+            std::vector<omnisphere::types::SQLParam> params = {omnisphere::types::MakeSQLParam(entry)};
 
-            return Database->FetchPrepared(sQuery, params);
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Stores WHERE " + qp.WhereClause;
+
+            return Database->FetchPrepared(sQuery, params, "Store::Read");
         }
         catch (const std::exception &e)
         {
@@ -191,15 +84,18 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable Store::ReadByCode(const std::string& code) const
+    omnisphere::types::DataTable Store::ReadByCode(const std::string& code, const std::vector<std::string>& fields) const
     {
         try
         {
-            std::string sQuery = "SELECT * FROM Stores WHERE Code = ?";
-            std::vector<omnisphere::types::SQLParam> params;
-            params.push_back(omnisphere::types::MakeSQLParam(code));
+            const std::vector<std::string>& selectFields = fields.empty() ? storeSelectFields : fields;
+            std::vector<omnisphere::types::Condition> conditions = {{"", "Code", "=", "?"}};
+            std::vector<omnisphere::types::SQLParam> params = {omnisphere::types::MakeSQLParam(code)};
 
-            return Database->FetchPrepared(sQuery, params);
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Stores WHERE " + qp.WhereClause;
+
+            return Database->FetchPrepared(sQuery, params, "Store::ReadByCode");
         }
         catch (const std::exception &e)
         {
@@ -207,17 +103,59 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable Store::ReadAll() const
+    omnisphere::types::DataTable Store::ReadAll(const std::vector<std::string>& fields) const
     {
         try
         {
-            const std::string query = "SELECT * FROM Stores WHERE IsActive = 'Y'";
+            const std::vector<std::string>& selectFields = fields.empty() ? storeSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, {});
+            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Stores WHERE IsActive = 'Y'";
 
-            return Database->FetchResults(query);
+            return Database->FetchResults(sQuery, "Store::ReadAll");
         }
         catch (const std::exception &e)
         {
             throw std::runtime_error(std::string("[ReadAllStore Exception] ") + e.what());
+        }
+    }
+
+    omnisphere::types::DataTable Store::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetStore &filter) const
+    {
+        try
+        {
+            std::vector<omnisphere::types::Condition> conditions;
+            std::vector<omnisphere::types::SQLParam> sqlParams;
+
+            if (filter.Entry > 0)
+            {
+                conditions.push_back({"", "Entry", "=", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Entry));
+            }
+            if (!filter.Code.empty())
+            {
+                conditions.push_back({"", "Code", "=", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Code));
+            }
+            if (!filter.Name.empty())
+            {
+                conditions.push_back({"", "Name", "LIKE", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam("%" + filter.Name + "%"));
+            }
+
+            const std::vector<std::string>& selectFields = fields.empty() ? storeSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+
+            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Stores";
+            if (!qp.WhereClause.empty())
+            {
+                sQuery += " WHERE " + qp.WhereClause;
+            }
+
+            return Database->FetchPrepared(sQuery, sqlParams, "Store::Search");
+        }
+        catch (const std::exception &e)
+        {
+            throw std::runtime_error(std::string("[SearchStore Exception] ") + e.what());
         }
     }
 

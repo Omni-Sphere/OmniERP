@@ -1,5 +1,6 @@
 #include <Database.hpp>
 #include <DataTable.hpp>
+#include <DataMapper.hpp>
 #include <Store/Store.hpp>
 #include <Store/Repositories/Store.hpp>
 
@@ -18,69 +19,51 @@ namespace omnisphere::services
 
     Store::~Store() = default;
 
-    static omnisphere::models::Store MapToModel(omnisphere::types::DataTable::Row& row)
+    std::optional<omnisphere::models::Store> Store::Get(int entry, const std::vector<std::string>& fields) const
     {
-        return omnisphere::models::Store(
-            row["Entry"],
-            row["Code"],
-            row["Name"],
-            row["GuestCustomer"],
-            row["Address"].GetOptional<std::string>(),
-            row["Address2"].GetOptional<std::string>(),
-            row["City"].GetOptional<int>(),
-            row["State"].GetOptional<int>(),
-            row["ZipCode"].GetOptional<int>(),
-            row["Country"].GetOptional<int>(),
-            row["TaxID"].GetOptional<std::string>(),
-            row["Currency"],
-            row["Phone1"].GetOptional<std::string>(),
-            row["Phone2"].GetOptional<std::string>(),
-            row["Email"].GetOptional<std::string>(),
-            row["WebSite"].GetOptional<std::string>(),
-            row["FacebookProfile"].GetOptional<std::string>(),
-            row["InstagramProfile"].GetOptional<std::string>(),
-            row["XProfile"].GetOptional<std::string>(),
-            row["LogoFile"].GetOptional<std::string>(),
-            row["IsActive"],
-            row["CreatedBy"],
-            row["CreateDate"],
-            row["LastUpdatedBy"].GetOptional<int>(),
-            row["UpdateDate"].GetOptional<std::string>()
-        );
-    }
-
-    std::optional<omnisphere::models::Store> Store::Get(int entry) const
-    {
-        omnisphere::types::DataTable dataTable = pimpl->repository.Read(entry);
+        omnisphere::types::DataTable dataTable = pimpl->repository.Read(entry, fields);
 
         if (dataTable.IsEmpty())
         {
             return std::nullopt;
         }
 
-        return MapToModel(dataTable[0]);
+        return omnisphere::data::MapFromRow<omnisphere::models::Store>(dataTable[0]);
     }
 
-    std::optional<omnisphere::models::Store> Store::GetByCode(const std::string& code) const
+    std::optional<omnisphere::models::Store> Store::GetByCode(const std::string& code, const std::vector<std::string>& fields) const
     {
-        omnisphere::types::DataTable dataTable = pimpl->repository.ReadByCode(code);
+        omnisphere::types::DataTable dataTable = pimpl->repository.ReadByCode(code, fields);
 
         if (dataTable.IsEmpty())
         {
             return std::nullopt;
         }
 
-        return MapToModel(dataTable[0]);
+        return omnisphere::data::MapFromRow<omnisphere::models::Store>(dataTable[0]);
     }
 
-    std::vector<omnisphere::models::Store> Store::GetAll() const
+    std::vector<omnisphere::models::Store> Store::GetAll(const std::vector<std::string>& fields) const
     {
-        omnisphere::types::DataTable dataTable = pimpl->repository.ReadAll();
+        omnisphere::types::DataTable dataTable = pimpl->repository.ReadAll(fields);
         std::vector<omnisphere::models::Store> results;
 
         for (int i = 0; i < dataTable.RowsCount(); i++)
         {
-            results.emplace_back(MapToModel(dataTable[i]));
+            results.emplace_back(omnisphere::data::MapFromRow<omnisphere::models::Store>(dataTable[i]));
+        }
+
+        return results;
+    }
+
+    std::vector<omnisphere::models::Store> Store::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetStore &filter) const
+    {
+        omnisphere::types::DataTable dataTable = pimpl->repository.Search(fields, filter);
+        std::vector<omnisphere::models::Store> results;
+
+        for (int i = 0; i < dataTable.RowsCount(); i++)
+        {
+            results.emplace_back(omnisphere::data::MapFromRow<omnisphere::models::Store>(dataTable[i]));
         }
 
         return results;

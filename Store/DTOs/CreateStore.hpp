@@ -2,20 +2,19 @@
 #include <DataTable.hpp>
 #pragma once
 
-#include <Base/BaseModel.hpp>
+#include <Base/BaseCreateDTO.hpp>
 #include <optional>
 #include <string>
+#include <boost/describe.hpp>
 
 namespace omnisphere::dtos
 {
-    class CreateStore : public omnisphere::models::BaseModel
+    struct CreateStore : public omnisphere::dtos::BaseCreateDTO
     {
-        public:
         CreateStore(
-            int _Entry,
             std::string _Code,
             std::string _Name,
-            int _GuestCustomer,
+            std::optional<int> _GuestCustomer,
             std::optional<std::string> _Address,
             std::optional<std::string> _Address2,
             std::optional<int> _City,
@@ -23,7 +22,7 @@ namespace omnisphere::dtos
             std::optional<int> _ZipCode,
             std::optional<int> _Country,
             std::optional<std::string> _TaxID,
-            int _Currency,
+            std::optional<int> _Currency,
             std::optional<std::string> _Phone1,
             std::optional<std::string> _Phone2,
             std::optional<std::string> _Email,
@@ -32,17 +31,17 @@ namespace omnisphere::dtos
             std::optional<std::string> _InstagramProfile,
             std::optional<std::string> _XProfile,
             std::optional<std::string> _LogoFile,
+            std::optional<std::string> _ImagePath,
+            std::optional<std::string> _ReportsPath,
+            std::optional<std::string> _TicketsPath,
             int _CreatedBy,
             std::string _CreateDate
         )
-            : omnisphere::models::BaseModel(
-                _Entry,
+            : omnisphere::dtos::BaseCreateDTO(
                 std::move(_Code),
                 std::move(_Name),
                 _CreatedBy,
-                std::move(_CreateDate),
-                std::nullopt,
-                std::nullopt
+                std::move(_CreateDate)
             ),
             GuestCustomer(_GuestCustomer),
             Address(std::move(_Address)),
@@ -60,24 +59,32 @@ namespace omnisphere::dtos
             FacebookProfile(std::move(_FacebookProfile)),
             InstagramProfile(std::move(_InstagramProfile)),
             XProfile(std::move(_XProfile)),
-            LogoFile(std::move(_LogoFile)) {}
+            LogoFile(std::move(_LogoFile)),
+            ImagePath(std::move(_ImagePath)),
+            ReportsPath(std::move(_ReportsPath)),
+            TicketsPath(std::move(_TicketsPath)) {}
 
-        const int GuestCustomer;
-        const std::optional<std::string> Address;
-        const std::optional<std::string> Address2;
-        const std::optional<int> City;
-        const std::optional<int> State;
-        const std::optional<int> ZipCode;
-        const std::optional<int> Country;
-        const std::optional<std::string> TaxID;
-        const int Currency;
-        const std::optional<std::string> Phone1;
-        const std::optional<std::string> Phone2;
-        const std::optional<std::string> Email;
-        const std::optional<std::string> WebSite;
-        const std::optional<std::string> FacebookProfile;
-        const std::optional<std::string> InstagramProfile;
-        const std::optional<std::string> XProfile;
-        const std::optional<std::string> LogoFile;
+        std::optional<int> GuestCustomer;
+        std::optional<std::string> Address;
+        std::optional<std::string> Address2;
+        std::optional<int> City;
+        std::optional<int> State;
+        std::optional<int> ZipCode;
+        std::optional<int> Country;
+        std::optional<std::string> TaxID;
+        std::optional<int> Currency;
+        std::optional<std::string> Phone1;
+        std::optional<std::string> Phone2;
+        std::optional<std::string> Email;
+        std::optional<std::string> WebSite;
+        std::optional<std::string> FacebookProfile;
+        std::optional<std::string> InstagramProfile;
+        std::optional<std::string> XProfile;
+        std::optional<std::string> LogoFile;
+        std::optional<std::string> ImagePath;
+        std::optional<std::string> ReportsPath;
+        std::optional<std::string> TicketsPath;
     };
+
+    BOOST_DESCRIBE_STRUCT(CreateStore, (), (Code, Name, GuestCustomer, Address, Address2, City, State, ZipCode, Country, TaxID, Currency, Phone1, Phone2, Email, WebSite, FacebookProfile, InstagramProfile, XProfile, LogoFile, ImagePath, ReportsPath, TicketsPath, CreatedBy, CreateDate))
 }

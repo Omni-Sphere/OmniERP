@@ -21,22 +21,13 @@ namespace omnisphere::repositories
 
         bool Create(const omnisphere::dtos::CreateStore &_store) const;
         bool Update(const omnisphere::dtos::UpdateStore &_store) const;
-        omnisphere::types::DataTable Read(int entry) const;
-        omnisphere::types::DataTable ReadByCode(const std::string& code) const;
-        omnisphere::types::DataTable ReadAll() const;
+        omnisphere::types::DataTable Read(int entry, const std::vector<std::string>& fields = {}) const;
+        omnisphere::types::DataTable ReadByCode(const std::string& code, const std::vector<std::string>& fields = {}) const;
+        omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
+        omnisphere::types::DataTable Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetStore &filter) const;
 
         private:
         std::shared_ptr<omnisphere::services::Database> Database;
-
-        template <typename T>
-        void AddInsertParam(const std::string &field, const T &value,
-                            std::vector<std::string> &insertClauses,
-                            std::vector<omnisphere::types::SQLParam> &params) const;
-
-        template <typename T>
-        void AddSetParam(const std::string &field, const T &value,
-                         std::vector<std::string> &setClauses,
-                         std::vector<omnisphere::types::SQLParam> &params) const;
 
         int GetCurrentSequence() const;
         bool UpdateStoreSequence() const;
