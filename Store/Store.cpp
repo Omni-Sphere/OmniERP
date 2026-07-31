@@ -1,3 +1,4 @@
+#include "Store/DTOs/SearchStore.hpp"
 #include <Database.hpp>
 #include <DataTable.hpp>
 #include <DataMapper.hpp>
@@ -31,18 +32,6 @@ namespace omnisphere::services
         return omnisphere::data::MapFromRow<omnisphere::models::Store>(dataTable[0]);
     }
 
-    std::optional<omnisphere::models::Store> Store::GetByCode(const std::string& code, const std::vector<std::string>& fields) const
-    {
-        omnisphere::types::DataTable dataTable = pimpl->repository.ReadByCode(code, fields);
-
-        if (dataTable.IsEmpty())
-        {
-            return std::nullopt;
-        }
-
-        return omnisphere::data::MapFromRow<omnisphere::models::Store>(dataTable[0]);
-    }
-
     std::vector<omnisphere::models::Store> Store::GetAll(const std::vector<std::string>& fields) const
     {
         omnisphere::types::DataTable dataTable = pimpl->repository.ReadAll(fields);
@@ -56,7 +45,7 @@ namespace omnisphere::services
         return results;
     }
 
-    std::vector<omnisphere::models::Store> Store::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetStore &filter) const
+    std::vector<omnisphere::models::Store> Store::Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchStore &filter) const
     {
         omnisphere::types::DataTable dataTable = pimpl->repository.Search(fields, filter);
         std::vector<omnisphere::models::Store> results;

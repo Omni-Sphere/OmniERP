@@ -2,6 +2,7 @@
 #include <DataTable.hpp>
 #pragma once
 #include <vector>
+#include <optional>
 
 #include <Node/DTOs/CreateNode.hpp>
 #include <Node/DTOs/GetNode.hpp>

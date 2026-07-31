@@ -8,7 +8,7 @@
 #include <string>
 
 #include <Store/DTOs/CreateStore.hpp>
-#include <Store/DTOs/GetStore.hpp>
+#include <Store/DTOs/SearchStore.hpp>
 #include <Store/DTOs/UpdateStore.hpp>
 #include <Store/Models/Store.hpp>
 
@@ -21,9 +21,8 @@ namespace omnisphere::services
         ~Store();
 
         std::optional<omnisphere::models::Store> Get(int entry, const std::vector<std::string>& fields = {}) const;
-        std::optional<omnisphere::models::Store> GetByCode(const std::string& code, const std::vector<std::string>& fields = {}) const;
         std::vector<omnisphere::models::Store> GetAll(const std::vector<std::string>& fields = {}) const;
-        std::vector<omnisphere::models::Store> Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetStore &filter) const;
+        std::vector<omnisphere::models::Store> Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchStore &filter) const;
         bool Add(const omnisphere::dtos::CreateStore &_store) const;
         bool Modify(const omnisphere::dtos::UpdateStore &_store) const;
 

@@ -7,7 +7,7 @@
 
 namespace omnisphere::dtos
 {
-    struct GetStore
+    struct SearchStore
     {
         int Entry;
         std::string Code;

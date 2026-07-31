@@ -1,3 +1,4 @@
+#include "Store/DTOs/SearchStore.hpp"
 #include <Database.hpp>
 #include <DataTable.hpp>
 #include <Store/Repositories/Store.hpp>
@@ -84,25 +85,6 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable Store::ReadByCode(const std::string& code, const std::vector<std::string>& fields) const
-    {
-        try
-        {
-            const std::vector<std::string>& selectFields = fields.empty() ? storeSelectFields : fields;
-            std::vector<omnisphere::types::Condition> conditions = {{"", "Code", "=", "?"}};
-            std::vector<omnisphere::types::SQLParam> params = {omnisphere::types::MakeSQLParam(code)};
-
-            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
-            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Stores WHERE " + qp.WhereClause;
-
-            return Database->FetchPrepared(sQuery, params, "Store::ReadByCode");
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[ReadStoreByCode Exception] ") + e.what());
-        }
-    }
-
     omnisphere::types::DataTable Store::ReadAll(const std::vector<std::string>& fields) const
     {
         try
@@ -119,7 +101,7 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable Store::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetStore &filter) const
+    omnisphere::types::DataTable Store::Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchStore &filter) const
     {
         try
         {
