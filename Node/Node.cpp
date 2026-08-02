@@ -1,146 +1,80 @@
+#include "Node/DTOs/SearchNode.hpp"
 #include <Database.hpp>
 #include <DataTable.hpp>
 #include <DataMapper.hpp>
 #include <Node/Node.hpp>
 #include <Node/Repositories/Node.hpp>
 #include <stdexcept>
-#include <string>
 
-namespace omnisphere::node
+namespace omnisphere::services
 {
-    Node::Node(std::shared_ptr<omnisphere::services::Database> database)
-        : pImpl(std::make_unique<Impl>(database)) {}
-    Node::~Node() = default;
-
     struct Node::Impl
     {
-        std::shared_ptr<omnisphere::repositories::NodeRepository> nodeRepository;
         explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
-            : nodeRepository(
-                std::make_shared<omnisphere::repositories::NodeRepository>(
-                    database)) {}
+            : repository(database) {}
+
+        omnisphere::repositories::Node repository;
     };
 
-    omnisphere::models::Node
-    Node::Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateNode &node) const
+    Node::Node(std::shared_ptr<omnisphere::services::Database> database)
+        : pimpl(std::make_unique<Impl>(database)) {}
+
+    Node::~Node() = default;
+
+    std::optional<omnisphere::models::Node> Node::Get(const omnisphere::dtos::GetNode &filter, const std::vector<std::string>& fields) const
     {
-        try
-        {
-            if (pImpl->nodeRepository->Create(node))
-            {
-                omnisphere::dtos::GetNode getNode;
-                getNode.Code = node.Code;
+        if (!filter.Entry.has_value() && !filter.Name.has_value() && !filter.Code.has_value())
+            throw std::invalid_argument("Filter (Entry, Code, or Name) cannot be empty");
 
-                return Get(fields, getNode);
-            }
-            else
-            {
-                throw std::runtime_error("Error adding node");
-            }
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[AddNode Exception] ") + e.what());
-        }
-    }
+        omnisphere::types::DataTable dataTable = pimpl->repository.Read(filter, fields);
 
-    omnisphere::models::Node
-    Node::Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateNode &node) const
-    {
-        try
+        if (dataTable.IsEmpty())
         {
-            if (pImpl->nodeRepository->Update(node))
-            {
-                omnisphere::dtos::GetNode getNode;
-                if (node.Entry.has_value())
-                {
-                    getNode.Entry = node.Entry;
-                }
-                else if (node.Code.has_value())
-                {
-                    getNode.Code = node.Code;
-                }
+            return std::nullopt;
+        }
 
-                return Get(fields, getNode);
-            }
-            else
-            {
-                throw std::runtime_error("Error updating node");
-            }
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[ModifyNode Exception] ") + e.what());
-        }
+        return omnisphere::repositories::Node::MapNodeRow(dataTable[0]);
     }
 
     std::vector<omnisphere::models::Node> Node::GetAll(const std::vector<std::string>& fields) const
     {
-        try
-        {
-            std::vector<omnisphere::models::Node> nodes;
-            omnisphere::types::DataTable data = pImpl->nodeRepository->ReadAll(fields);
+        omnisphere::types::DataTable dataTable = pimpl->repository.ReadAll(fields);
+        std::vector<omnisphere::models::Node> results;
 
-            for (int i = 0; i < data.RowsCount(); i++)
-            {
-                nodes.push_back(omnisphere::data::MapFromRow<omnisphere::models::Node>(data[i]));
-            }
-
-            return nodes;
-        }
-        catch (const std::exception &e)
+        for (int i = 0; i < dataTable.RowsCount(); i++)
         {
-            throw std::runtime_error(std::string("[GetAllNodes Exception] ") + e.what());
+            results.emplace_back(omnisphere::repositories::Node::MapNodeRow(dataTable[i]));
         }
+
+        return results;
     }
 
-    omnisphere::models::Node
-    Node::Get(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const
+    std::vector<omnisphere::models::Node> Node::Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchNode &filter) const
     {
-        try
-        {
-            omnisphere::types::DataTable data = pImpl->nodeRepository->Search(fields, getNode);
+        omnisphere::types::DataTable dataTable = pimpl->repository.Search(fields, filter);
+        std::vector<omnisphere::models::Node> results;
 
-            if (data.RowsCount() == 0)
-                throw std::runtime_error("Node doesn't exist");
-
-            return omnisphere::data::MapFromRow<omnisphere::models::Node>(data[0]);
-        }
-        catch (const std::exception &e)
+        for (int i = 0; i < dataTable.RowsCount(); i++)
         {
-            throw std::runtime_error(std::string("[GetNode Exception] ") + e.what());
+            results.emplace_back(omnisphere::repositories::Node::MapNodeRow(dataTable[i]));
         }
+
+        return results;
     }
 
-    std::vector<omnisphere::models::Node> Node::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const
+    bool Node::Add(const omnisphere::dtos::CreateNode &_node) const
     {
-        try
-        {
-            std::vector<omnisphere::models::Node> nodes;
-            omnisphere::types::DataTable data = pImpl->nodeRepository->Search(fields, getNode);
+        return pimpl->repository.Create(_node);
+    }
 
-            for (int i = 0; i < data.RowsCount(); i++)
-            {
-                nodes.push_back(omnisphere::data::MapFromRow<omnisphere::models::Node>(data[i]));
-            }
-
-            return nodes;
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[SearchNodes Exception] ") + e.what());
-        }
+    bool Node::Modify(const omnisphere::dtos::UpdateNode &_node) const
+    {
+        return pimpl->repository.Update(_node);
     }
 
     bool Node::Remove(int entry) const
     {
-        try
-        {
-            return pImpl->nodeRepository->Delete(entry);
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[RemoveNode Exception] ") + e.what());
-        }
+        return pimpl->repository.Delete(entry);
     }
-} // namespace omnisphere::node
+
+} // namespace omnisphere::services

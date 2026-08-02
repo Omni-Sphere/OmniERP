@@ -66,13 +66,29 @@ namespace omnisphere::repositories
         }
     }
 
-    omnisphere::types::DataTable Store::Read(int entry, const std::vector<std::string>& fields) const
+    omnisphere::types::DataTable Store::Read(const omnisphere::dtos::GetStore &filter, const std::vector<std::string>& fields) const
     {
         try
         {
             const std::vector<std::string>& selectFields = fields.empty() ? storeSelectFields : fields;
-            std::vector<omnisphere::types::Condition> conditions = {{"", "Entry", "=", "?"}};
-            std::vector<omnisphere::types::SQLParam> params = {omnisphere::types::MakeSQLParam(entry)};
+            std::vector<omnisphere::types::Condition> conditions;
+            std::vector<omnisphere::types::SQLParam> params;
+
+            if (filter.Entry.has_value())
+            {
+                conditions = {{"", "Entry", "=", "?"}};
+                params = {omnisphere::types::MakeSQLParam(filter.Entry.value())};
+            }
+            else if (filter.Code.has_value())
+            {
+                conditions = {{"", "Code", "=", "?"}};
+                params = {omnisphere::types::MakeSQLParam(filter.Code.value())};
+            }
+            else if (filter.Name.has_value())
+            {
+                conditions = {{"", "Name", "=", "?"}};
+                params = {omnisphere::types::MakeSQLParam(filter.Name.value())};
+            }
 
             auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
             std::string sQuery = "SELECT " + qp.SelectClause + " FROM Stores WHERE " + qp.WhereClause;

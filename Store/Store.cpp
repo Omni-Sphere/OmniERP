@@ -20,14 +20,15 @@ namespace omnisphere::services
 
     Store::~Store() = default;
 
-    std::optional<omnisphere::models::Store> Store::Get(int entry, const std::vector<std::string>& fields) const
+    std::optional<omnisphere::models::Store> Store::Get(const omnisphere::dtos::GetStore &filter, const std::vector<std::string>& fields) const
     {
-        omnisphere::types::DataTable dataTable = pimpl->repository.Read(entry, fields);
+        if (!filter.Entry.has_value() && !filter.Name.has_value() && !filter.Code.has_value())
+            throw std::invalid_argument("Filter (Entry, Code, or Name) cannot be empty");
+
+        omnisphere::types::DataTable dataTable = pimpl->repository.Read(filter, fields);
 
         if (dataTable.IsEmpty())
-        {
             return std::nullopt;
-        }
 
         return omnisphere::data::MapFromRow<omnisphere::models::Store>(dataTable[0]);
     }
@@ -46,7 +47,7 @@ namespace omnisphere::services
     }
 
     std::vector<omnisphere::models::Store> Store::Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchStore &filter) const
-    {
+    {        
         omnisphere::types::DataTable dataTable = pimpl->repository.Search(fields, filter);
         std::vector<omnisphere::models::Store> results;
 

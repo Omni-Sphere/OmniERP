@@ -1,3 +1,4 @@
+#include "Store/DTOs/GetStore.hpp"
 #include <Database.hpp>
 #include <DataTable.hpp>
 #pragma once
@@ -20,7 +21,7 @@ namespace omnisphere::services
         explicit Store(std::shared_ptr<omnisphere::services::Database> database);
         ~Store();
 
-        std::optional<omnisphere::models::Store> Get(int entry, const std::vector<std::string>& fields = {}) const;
+        std::optional<omnisphere::models::Store> Get(const omnisphere::dtos::GetStore &filter, const std::vector<std::string>& fields = {}) const;
         std::vector<omnisphere::models::Store> GetAll(const std::vector<std::string>& fields = {}) const;
         std::vector<omnisphere::models::Store> Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchStore &filter) const;
         bool Add(const omnisphere::dtos::CreateStore &_store) const;

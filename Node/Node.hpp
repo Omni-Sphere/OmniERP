@@ -1,32 +1,36 @@
+#include "Node/DTOs/GetNode.hpp"
 #include <Database.hpp>
 #include <DataTable.hpp>
 #pragma once
+
+#include <memory>
 #include <vector>
 #include <optional>
+#include <string>
 
 #include <Node/DTOs/CreateNode.hpp>
-#include <Node/DTOs/GetNode.hpp>
+#include <Node/DTOs/SearchNode.hpp>
 #include <Node/DTOs/UpdateNode.hpp>
 #include <Node/Models/Node.hpp>
 
-#include <Database.hpp>
-
-namespace omnisphere::node
+namespace omnisphere::services
 {
     class Node
     {
-        struct Impl;
-        std::unique_ptr<Impl> pImpl;
-
         public:
         explicit Node(std::shared_ptr<omnisphere::services::Database> database);
-
         ~Node();
-        omnisphere::models::Node Add(const std::vector<std::string>& fields, const omnisphere::dtos::CreateNode &node) const;
-        omnisphere::models::Node Modify(const std::vector<std::string>& fields, const omnisphere::dtos::UpdateNode &node) const;
+
+        std::optional<omnisphere::models::Node> Get(const omnisphere::dtos::GetNode &filter, const std::vector<std::string>& fields = {}) const;
         std::vector<omnisphere::models::Node> GetAll(const std::vector<std::string>& fields = {}) const;
-        omnisphere::models::Node Get(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const;
-        std::vector<omnisphere::models::Node> Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const;
+        std::vector<omnisphere::models::Node> Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchNode &filter) const;
+        bool Add(const omnisphere::dtos::CreateNode &_node) const;
+        bool Modify(const omnisphere::dtos::UpdateNode &_node) const;
         bool Remove(int entry) const;
+
+        private:
+        struct Impl;
+        std::unique_ptr<Impl> pimpl;
     };
-} // namespace omnisphere::node
+
+} // namespace omnisphere::services

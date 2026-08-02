@@ -1,3 +1,4 @@
+#include "Store/DTOs/GetStore.hpp"
 #include "Store/DTOs/SearchStore.hpp"
 #include <Database.hpp>
 #include <DataTable.hpp>
@@ -21,7 +22,7 @@ namespace omnisphere::repositories
 
         bool Create(const omnisphere::dtos::CreateStore &_store) const;
         bool Update(const omnisphere::dtos::UpdateStore &_store) const;
-        omnisphere::types::DataTable Read(int entry, const std::vector<std::string>& fields = {}) const;
+        omnisphere::types::DataTable Read(const omnisphere::dtos::GetStore &filter, const std::vector<std::string>& fields = {}) const;
         omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
         omnisphere::types::DataTable Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchStore &filter) const;
 

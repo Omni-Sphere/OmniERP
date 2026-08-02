@@ -1,42 +1,74 @@
+#include "Node/DTOs/SearchNode.hpp"
 #include <Database.hpp>
 #include <DataTable.hpp>
+#include <Node/Repositories/Node.hpp>
 #include <SQLParams.hpp>
 #include <QueryBuilder.hpp>
-#include <Node/Repositories/Node.hpp>
-#include <Node/DTOs/CreateNode.hpp>
-#include <Node/DTOs/UpdateNode.hpp>
-#include <Node/Models/Node.hpp>
 #include <stdexcept>
 #include <string>
-#include <vector>
+
+#include <DataMapper.hpp>
 
 namespace omnisphere::repositories
 {
-    NodeRepository::NodeRepository(std::shared_ptr<omnisphere::services::Database> Database) : database(Database) {}
-
-    NodeRepository::~NodeRepository() {}
-
-    // Helper: convert NodeType enum to DB char
-    static std::string NodeTypeToChar(omnisphere::enums::NodeType type)
-    {
-        return type == omnisphere::enums::NodeType::Cashier ? "C" : "S";
-    }
-
-    // Helper: convert OperationMode enum to DB char
-    static std::string OperationModeToChar(omnisphere::enums::OperationMode mode)
-    {
-        return mode == omnisphere::enums::OperationMode::POS ? "P" : "R";
-    }
-
     static const std::vector<std::string> nodeSelectFields = {
         "Entry", "Code", "Name", "NodeType", "OperationMode", "CashLimit",
         "IPAddress", "ExtendedLog", "IsActive", "CreatedBy", "CreateDate", "LastUpdatedBy", "UpdateDate"
     };
 
-    bool NodeRepository::Create(const omnisphere::dtos::CreateNode &node) const
+    std::string Node::NodeTypeToChar(omnisphere::enums::NodeType type)
+    {
+        return type == omnisphere::enums::NodeType::Cashier ? "C" : "S";
+    }
+
+    omnisphere::enums::NodeType Node::CharToNodeType(const std::string& str)
+    {
+        return (str == "C" || str == "Cashier")
+            ? omnisphere::enums::NodeType::Cashier
+            : omnisphere::enums::NodeType::ServieStation;
+    }
+
+    std::string Node::OperationModeToChar(omnisphere::enums::OperationMode mode)
+    {
+        return mode == omnisphere::enums::OperationMode::POS ? "P" : "R";
+    }
+
+    omnisphere::enums::OperationMode Node::CharToOperationMode(const std::string& str)
+    {
+        if (str == "R" || str == "Restaurant") return omnisphere::enums::OperationMode::Restaurant;
+        if (str == "T" || str == "Touch") return omnisphere::enums::OperationMode::Touch;
+        return omnisphere::enums::OperationMode::POS;
+    }
+
+    omnisphere::models::Node Node::MapNodeRow(omnisphere::types::DataTable::Row& row)
+    {
+        omnisphere::models::Node n = omnisphere::data::MapFromRow<omnisphere::models::Node>(row);
+
+        if (row.HasColumn("NodeType") && !row["NodeType"].IsNull())
+        {
+            std::string nodeTypeStr = row["NodeType"];
+            n.NodeType = CharToNodeType(nodeTypeStr);
+        }
+
+        if (row.HasColumn("OperationMode") && !row["OperationMode"].IsNull())
+        {
+            std::string opModeStr = row["OperationMode"];
+            n.OperationMode = CharToOperationMode(opModeStr);
+        }
+
+        return n;
+    }
+
+    Node::Node(std::shared_ptr<omnisphere::services::Database> database) : Database(std::move(database)) {}
+
+    Node::~Node() = default;
+
+    bool Node::Create(const omnisphere::dtos::CreateNode &node) const
     {
         try
         {
+            Database->BeginTransaction();
+
             static const std::vector<std::string> insertColumns = {
                 "Entry", "Code", "Name", "NodeType", "OperationMode", "CashLimit", "IPAddress", "ExtendedLog", "IsActive", "CreatedBy", "CreateDate"
             };
@@ -58,24 +90,24 @@ namespace omnisphere::repositories
                 omnisphere::types::MakeSQLParam(node.CreateDate)
             };
 
-            if (!database->RunPrepared(query, parameters, "NodeRepository::Create"))
-                throw std::runtime_error("[RunPrepared exception]");
+            if (!Database->RunPrepared(query, parameters, "Node::Create"))
+                throw std::runtime_error("Error creating node");
 
             if (!UpdateNodeSequence())
                 throw std::runtime_error("[UpdateNodeSequence exception]");
 
-            database->CommitTransaction();
+            Database->CommitTransaction();
 
             return true;
         }
         catch (const std::exception &e)
         {
-            database->RollbackTransaction();
-            throw(std::runtime_error(std::string("[Create Exception]") + " " + e.what()));
+            Database->RollbackTransaction();
+            throw std::runtime_error(std::string("[CreateNode Exception] ") + e.what());
         }
     }
 
-    bool NodeRepository::Update(const omnisphere::dtos::UpdateNode &node) const
+    bool Node::Update(const omnisphere::dtos::UpdateNode &node) const
     {
         try
         {
@@ -146,114 +178,142 @@ namespace omnisphere::repositories
             const std::string query = omnisphere::types::BuildUpdateQuery("Nodes", setColumns, "[Entry] = ?");
             parameters.push_back(omnisphere::types::MakeSQLParam(node.Entry.value()));
 
-            if (!database->RunPrepared(query, parameters, "NodeRepository::Update"))
-                throw std::runtime_error("[RunPrepared exception]");
-
-            database->CommitTransaction();
+            if (!Database->RunPrepared(query, parameters, "Node::Update"))
+                throw std::runtime_error("Error updating node");
 
             return true;
         }
         catch (const std::exception &e)
         {
-            database->RollbackTransaction();
-            throw(std::runtime_error(std::string("[Update Exception]") + " " + e.what()));
+            Database->RollbackTransaction();
+            throw std::runtime_error(std::string("[UpdateNode Exception] ") + e.what());
         }
     }
 
-    omnisphere::types::DataTable NodeRepository::ReadAll(const std::vector<std::string>& fields) const
+    omnisphere::types::DataTable Node::Read(const omnisphere::dtos::GetNode &filter, const std::vector<std::string>& fields) const
     {
         try
         {
-            std::vector<omnisphere::types::Condition> conditions;
-            conditions.push_back({"", "IsActive", "=", "'Y'"});
-
             const std::vector<std::string>& selectFields = fields.empty() ? nodeSelectFields : fields;
-            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
-            const std::string query = "SELECT " + qp.SelectClause + " FROM Nodes WHERE " + qp.WhereClause;
+            std::vector<omnisphere::types::Condition> conditions;
+            std::vector<omnisphere::types::SQLParam> params;
 
-            return database->FetchResults(query, "NodeRepository::ReadAll");
+            if (filter.Entry.has_value())
+            {
+                conditions = {{"", "Entry", "=", "?"}};
+                params = {omnisphere::types::MakeSQLParam(filter.Entry.value())};
+            }
+            else if (filter.Code.has_value())
+            {
+                conditions = {{"", "Code", "=", "?"}};
+                params = {omnisphere::types::MakeSQLParam(filter.Code.value())};
+            }
+            else if (filter.Name.has_value())
+            {
+                conditions = {{"", "Name", "=", "?"}};
+                params = {omnisphere::types::MakeSQLParam(filter.Name.value())};
+            }
+
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Nodes WHERE " + qp.WhereClause;
+
+            return Database->FetchPrepared(sQuery, params, "Node::Read");
         }
         catch (const std::exception &e)
         {
-            throw(std::runtime_error(std::string("[ReadAll Exception]") + " " + e.what()));
+            throw std::runtime_error(std::string("[ReadNode Exception] ") + e.what());
         }
     }
 
-    omnisphere::types::DataTable NodeRepository::Search(const std::vector<std::string>& fields, const omnisphere::dtos::GetNode &getNode) const
+    omnisphere::types::DataTable Node::ReadAll(const std::vector<std::string>& fields) const
+    {
+        try
+        {
+            const std::vector<std::string>& selectFields = fields.empty() ? nodeSelectFields : fields;
+            auto qp = omnisphere::types::BuildQueryParts(selectFields, {});
+            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Nodes WHERE IsActive = 'Y'";
+
+            return Database->FetchResults(sQuery, "Node::ReadAll");
+        }
+        catch (const std::exception &e)
+        {
+            throw std::runtime_error(std::string("[ReadAllNode Exception] ") + e.what());
+        }
+    }
+
+    omnisphere::types::DataTable Node::Search(const std::vector<std::string>& fields, const omnisphere::dtos::SearchNode &filter) const
     {
         try
         {
             std::vector<omnisphere::types::Condition> conditions;
-            conditions.push_back({"", "IsActive", "=", "'Y'"});
-            std::vector<omnisphere::types::SQLParam> parameters;
+            std::vector<omnisphere::types::SQLParam> sqlParams;
 
-            auto bindFilter = [&](const auto &optField, const std::string &column, const std::string &op, auto transform) {
-                if (optField.has_value() && parameters.empty())
-                {
-                    conditions.push_back({"", column, op, "?"});
-                    parameters.push_back(omnisphere::types::MakeSQLParam(transform(optField.value())));
-                    return true;
-                }
-                return false;
-            };
-
-            auto pass = [](const auto &val) { return val; };
-
-            bool matched = bindFilter(getNode.Entry, "Entry", "=", pass) ||
-                           bindFilter(getNode.Code, "Code", "=", pass) ||
-                           bindFilter(getNode.Name, "Name", "LIKE", [](const std::string &s) { return "%" + s + "%"; });
-
-            if (!matched)
+            if (filter.Entry > 0)
             {
-                throw std::runtime_error("GetNode: 'Entry', 'Code' or 'Name' is required for Read");
+                conditions.push_back({"", "Entry", "=", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Entry));
+            }
+            if (!filter.Code.empty())
+            {
+                conditions.push_back({"", "Code", "=", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam(filter.Code));
+            }
+            if (!filter.Name.empty())
+            {
+                conditions.push_back({"", "Name", "LIKE", "?"});
+                sqlParams.push_back(omnisphere::types::MakeSQLParam("%" + filter.Name + "%"));
             }
 
             const std::vector<std::string>& selectFields = fields.empty() ? nodeSelectFields : fields;
             auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
-            const std::string query = "SELECT " + qp.SelectClause + " FROM Nodes WHERE " + qp.WhereClause;
 
-            return database->FetchPrepared(query, parameters, "NodeRepository::Read");
+            std::string sQuery = "SELECT " + qp.SelectClause + " FROM Nodes";
+            if (!qp.WhereClause.empty())
+            {
+                sQuery += " WHERE " + qp.WhereClause;
+            }
+
+            return Database->FetchPrepared(sQuery, sqlParams, "Node::Search");
         }
         catch (const std::exception &e)
         {
-            throw(std::runtime_error(std::string("[Read Exception]") + " " + e.what()));
+            throw std::runtime_error(std::string("[SearchNode Exception] ") + e.what());
         }
     }
 
-    int NodeRepository::GetCurrentSequence() const
+    int Node::GetCurrentSequence() const
     {
         try
         {
             const std::string query = "SELECT ISNULL(NodeSequence, 0) + 1 NodeSequence FROM Sequences WHERE Entry = 1";
-
-            omnisphere::types::DataTable dataTable = database->FetchResults(query, "NodeRepository::GetCurrentSequence");
+            omnisphere::types::DataTable dataTable = Database->FetchResults(query, "Node::GetCurrentSequence");
 
             return dataTable[0]["NodeSequence"];
         }
         catch (const std::exception &e)
         {
-            throw(std::runtime_error(std::string("[GetCurrentSequence Exception]") + " " + e.what()));
+            throw std::runtime_error(std::string("[GetCurrentSequence Exception] ") + e.what());
         }
     }
 
-    bool NodeRepository::UpdateNodeSequence() const
+    bool Node::UpdateNodeSequence() const
     {
         try
         {
             const std::string query = "UPDATE Sequences SET NodeSequence = ISNULL(NodeSequence, 0) + 1";
 
-            if (!database->RunStatement(query, "NodeRepository::UpdateNodeSequence"))
+            if (!Database->RunStatement(query, "Node::UpdateNodeSequence"))
                 throw std::runtime_error("[RunStatement exception]");
 
             return true;
         }
         catch (const std::exception &e)
         {
-            throw(std::runtime_error(std::string("[UpdateNodeSequence Exception]") + " " + e.what()));
+            throw std::runtime_error(std::string("[UpdateNodeSequence Exception] ") + e.what());
         }
     }
 
-    bool NodeRepository::Delete(int entry) const
+    bool Node::Delete(int entry) const
     {
         try
         {
@@ -262,17 +322,14 @@ namespace omnisphere::repositories
                 omnisphere::types::MakeSQLParam(entry)
             };
 
-            if (!database->RunPrepared(query, parameters, "NodeRepository::Delete"))
-                throw std::runtime_error("[RunPrepared exception]");
-
-            database->CommitTransaction();
+            if (!Database->RunPrepared(query, parameters, "Node::Delete"))
+                throw std::runtime_error("Error deleting node");
 
             return true;
         }
         catch (const std::exception &e)
         {
-            database->RollbackTransaction();
-            throw(std::runtime_error(std::string("[Delete Exception]") + " " + e.what()));
+            throw std::runtime_error(std::string("[DeleteNode Exception] ") + e.what());
         }
     }
 }
