@@ -12,7 +12,7 @@
 
 namespace omnisphere::repositories
 {
-    UserPermissionRepository::UserPermissionRepository(std::shared_ptr<omnisphere::services::Database> Database)
+    UserPermissionRepository::UserPermissionRepository(std::shared_ptr<omnisphere::data::Database> Database)
         : database(Database) {}
 
     UserPermissionRepository::~UserPermissionRepository() = default;
@@ -119,7 +119,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            omnisphere::types::DataTable dataTable = database->FetchResults("SELECT ISNULL(UserPermSequence, 0) + 1 UserPermSequence FROM Sequences WHERE Entry = 1");
+            omnisphere::types::DataTable dataTable = database->FetchResults("SELECT COALESCE(UserPermSequence, 0) + 1 UserPermSequence FROM Sequences WHERE Entry = 1");
 
             return dataTable[0]["UserPermSequence"];
         }
@@ -132,7 +132,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            if (!database->RunStatement("UPDATE Sequences SET UserPermSequence = ISNULL(UserPermSequence, 0) + 1 WHERE Entry = 1")) throw std::runtime_error("[RunStatement exception]");
+            if (!database->RunStatement("UPDATE Sequences SET UserPermSequence = COALESCE(UserPermSequence, 0) + 1 WHERE Entry = 1")) throw std::runtime_error("[RunStatement exception]");
 
             return true;
         }

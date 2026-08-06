@@ -13,12 +13,12 @@ namespace omnisphere::services
     struct ItemGroup::Impl
     {
         std::shared_ptr<omnisphere::repositories::ItemGroup> itemGroupRepository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> db)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> db)
             : itemGroupRepository(
                 std::make_shared<omnisphere::repositories::ItemGroup>(db)) {}
     };
 
-    ItemGroup::ItemGroup(std::shared_ptr<omnisphere::services::Database> db)
+    ItemGroup::ItemGroup(std::shared_ptr<omnisphere::data::Database> db)
         : pimpl(std::make_unique<Impl>(db)) {}
 
     ItemGroup::~ItemGroup() = default;

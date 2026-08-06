@@ -12,7 +12,7 @@
 
 namespace omnisphere::repositories
 {
-    EmployeeRepository::EmployeeRepository(std::shared_ptr<omnisphere::services::Database> Database)
+    EmployeeRepository::EmployeeRepository(std::shared_ptr<omnisphere::data::Database> Database)
         : database(Database) {}
 
     EmployeeRepository::~EmployeeRepository() = default;
@@ -179,7 +179,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(EmpSequence, 0) + 1 EmpSequence FROM Sequences WHERE Entry = 1";
+            const std::string query = "SELECT COALESCE(EmpSequence, 0) + 1 EmpSequence FROM Sequences WHERE Entry = 1";
             omnisphere::types::DataTable dataTable = database->FetchResults(query, "EmployeeRepository::GetCurrentSequence");
 
             return dataTable[0]["EmpSequence"];
@@ -194,7 +194,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "UPDATE Sequences SET EmpSequence = ISNULL(EmpSequence, 0) + 1 WHERE Entry = 1";
+            const std::string query = "UPDATE Sequences SET EmpSequence = COALESCE(EmpSequence, 0) + 1 WHERE Entry = 1";
 
             if (!database->RunStatement(query, "EmployeeRepository::UpdateSequence"))
                 throw std::runtime_error("[RunStatement exception]");

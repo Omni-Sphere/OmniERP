@@ -40,13 +40,14 @@ namespace omnisphere::dtos
             std::string _UpdateDate
         )
             : omnisphere::dtos::BaseUpdateDTO(
-                _Code.value_or(""),
-                _Name.value_or(""),
+                "",
+                "",
                 _LastUpdatedBy,
                 std::move(_UpdateDate)
             ),
             Entry(_Entry),
-            Code(_Code),
+            Code(std::move(_Code)),
+            Name(std::move(_Name)),
             GuestCustomer(_GuestCustomer),
             Address(std::move(_Address)),
             Address2(std::move(_Address2)),
@@ -71,6 +72,7 @@ namespace omnisphere::dtos
 
         int Entry;
         std::optional<std::string> Code;
+        std::optional<std::string> Name;
         std::optional<int> GuestCustomer;
         std::optional<std::string> Address;
         std::optional<std::string> Address2;

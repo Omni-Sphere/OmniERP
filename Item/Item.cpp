@@ -16,12 +16,12 @@ namespace omnisphere::services
     struct Item::Impl
     {
         std::shared_ptr<omnisphere::repositories::Item> item;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : item(std::make_shared<omnisphere::repositories::Item>(database)) {}
     };
 
     // Update constructor to initialize pimpl
-    Item::Item(std::shared_ptr<omnisphere::services::Database> database)
+    Item::Item(std::shared_ptr<omnisphere::data::Database> database)
         : pimpl(std::make_unique<Impl>(database)) {}
 
     // Define destructor

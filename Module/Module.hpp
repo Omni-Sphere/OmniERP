@@ -9,7 +9,7 @@ namespace omnisphere::module
     class Module
     {
         public:
-        explicit Module(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Module(std::shared_ptr<omnisphere::data::Database> database);
         ~Module();
 
         std::vector<omnisphere::models::Module> GetAll() const;

@@ -20,7 +20,7 @@ namespace omnisphere::services
         std::unique_ptr<Impl> pimpl;
 
         public:
-        explicit ItemBrand(std::shared_ptr<omnisphere::services::Database> db);
+        explicit ItemBrand(std::shared_ptr<omnisphere::data::Database> db);
 
         ~ItemBrand();
 

@@ -14,11 +14,11 @@ namespace omnisphere::department
     struct Department::Impl
     {
         std::shared_ptr<omnisphere::repositories::DepartmentRepository> repository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : repository(std::make_shared<omnisphere::repositories::DepartmentRepository>(database)) {}
     };
 
-    Department::Department(std::shared_ptr<omnisphere::services::Database> database)
+    Department::Department(std::shared_ptr<omnisphere::data::Database> database)
         : pImpl(std::make_unique<Impl>(database)) {}
     Department::~Department() = default;
 

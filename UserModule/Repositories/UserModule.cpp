@@ -12,7 +12,7 @@
 
 namespace omnisphere::repositories
 {
-    UserModuleRepository::UserModuleRepository(std::shared_ptr<omnisphere::services::Database> Database)
+    UserModuleRepository::UserModuleRepository(std::shared_ptr<omnisphere::data::Database> Database)
         : database(Database) {}
 
     UserModuleRepository::~UserModuleRepository() = default;
@@ -150,7 +150,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(UserModSequence, 0) + 1 UserModSequence FROM Sequences WHERE Entry = 1";
+            const std::string query = "SELECT COALESCE(UserModSequence, 0) + 1 UserModSequence FROM Sequences WHERE Entry = 1";
             omnisphere::types::DataTable dataTable = database->FetchResults(query, "UserModuleRepository::GetCurrentSequence");
 
             return dataTable[0]["UserModSequence"];
@@ -165,7 +165,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "UPDATE Sequences SET UserModSequence = ISNULL(UserModSequence, 0) + 1 WHERE Entry = 1";
+            const std::string query = "UPDATE Sequences SET UserModSequence = COALESCE(UserModSequence, 0) + 1 WHERE Entry = 1";
 
             if (!database->RunStatement(query, "UserModuleRepository::UpdateSequence"))
                 throw std::runtime_error("[RunStatement exception]");

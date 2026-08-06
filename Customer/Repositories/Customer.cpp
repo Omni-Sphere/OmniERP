@@ -5,7 +5,7 @@
 
 namespace omnisphere::repositories
 {
-    Customer::Customer(std::shared_ptr<omnisphere::services::Database> database) : Database(database) {}
+    Customer::Customer(std::shared_ptr<omnisphere::data::Database> database) : Database(database) {}
 
     Customer::~Customer() = default;
 
@@ -198,7 +198,7 @@ namespace omnisphere::repositories
 
     int Customer::GetCurrentSequence() const
     {
-        const std::string query = "SELECT ISNULL(CustomerSequence, 0) + 1 CustomerSequence FROM Sequences WHERE Entry = 1";
+        const std::string query = "SELECT COALESCE(CustomerSequence, 0) + 1 CustomerSequence FROM Sequences WHERE Entry = 1";
         omnisphere::types::DataTable dataTable = Database->FetchResults(query);
 
         if (dataTable.IsEmpty())
@@ -209,7 +209,7 @@ namespace omnisphere::repositories
 
     bool Customer::UpdateCustomerSequence() const
     {
-        const std::string query = "UPDATE Sequences SET CustomerSequence = ISNULL(CustomerSequence, 0) + 1 WHERE Entry = 1";
+        const std::string query = "UPDATE Sequences SET CustomerSequence = COALESCE(CustomerSequence, 0) + 1 WHERE Entry = 1";
 
         if (!Database->RunStatement(query))
             throw std::runtime_error("[RunStatement exception]");

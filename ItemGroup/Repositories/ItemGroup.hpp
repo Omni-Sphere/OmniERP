@@ -17,12 +17,12 @@ namespace omnisphere::repositories
     class ItemGroup
     {
         private:
-        std::shared_ptr<omnisphere::services::Database> database;
+        std::shared_ptr<omnisphere::data::Database> database;
         int GetCurrentSequence() const;
         bool UpdateItemGroupsSequence() const;
 
         public:
-        explicit ItemGroup(std::shared_ptr<omnisphere::services::Database> Database);
+        explicit ItemGroup(std::shared_ptr<omnisphere::data::Database> Database);
         ~ItemGroup() {};
 
         bool Create(const omnisphere::dtos::CreateItemGroup &createItemGroup) const;

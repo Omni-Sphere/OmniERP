@@ -9,7 +9,7 @@ namespace omnisphere::repositories
     class UserPermissionRepository
     {
         public:
-        explicit UserPermissionRepository(std::shared_ptr<omnisphere::services::Database> Database);
+        explicit UserPermissionRepository(std::shared_ptr<omnisphere::data::Database> Database);
         ~UserPermissionRepository();
 
         bool Create(const omnisphere::dtos::CreateUserPermission& userPermission) const;
@@ -19,7 +19,7 @@ namespace omnisphere::repositories
         bool Delete(int entry) const;
 
         private:
-        std::shared_ptr<omnisphere::services::Database> database;
+        std::shared_ptr<omnisphere::data::Database> database;
         int GetCurrentSequence() const;
         bool UpdateSequence() const;
     };

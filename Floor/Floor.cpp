@@ -11,7 +11,7 @@
 
 namespace omnisphere::floor
 {
-    Floor::Floor(std::shared_ptr<omnisphere::services::Database> database)
+    Floor::Floor(std::shared_ptr<omnisphere::data::Database> database)
         : pImpl(std::make_unique<Impl>(database)) {}
     Floor::~Floor() = default;
 
@@ -19,7 +19,7 @@ namespace omnisphere::floor
     {
         std::shared_ptr<omnisphere::repositories::FloorRepository> floorRepository;
         std::shared_ptr<omnisphere::repositories::AreaRepository> areaRepository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : floorRepository(
                 std::make_shared<omnisphere::repositories::FloorRepository>(
                     database)),

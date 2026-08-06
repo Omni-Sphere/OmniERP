@@ -17,7 +17,7 @@ namespace omnisphere::services
     class Company
     {
         public:
-        explicit Company(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Company(std::shared_ptr<omnisphere::data::Database> database);
         ~Company();
 
         omnisphere::models::Company Get(const omnisphere::dtos::GetCompany &_company) const;

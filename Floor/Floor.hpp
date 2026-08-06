@@ -18,7 +18,7 @@ namespace omnisphere::floor
         std::unique_ptr<Impl> pImpl;
 
         public:
-        explicit Floor(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Floor(std::shared_ptr<omnisphere::data::Database> database);
 
         ~Floor();
         omnisphere::models::Floor Add(const omnisphere::dtos::CreateFloor &floor) const;

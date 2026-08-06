@@ -18,7 +18,7 @@ namespace omnisphere::services
     class Store
     {
         public:
-        explicit Store(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Store(std::shared_ptr<omnisphere::data::Database> database);
         ~Store();
 
         std::optional<omnisphere::models::Store> Get(const omnisphere::dtos::GetStore &filter, const std::vector<std::string>& fields = {}) const;

@@ -15,7 +15,7 @@ namespace omnisphere::repositories
     class Customer
     {
         public:
-        explicit Customer(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Customer(std::shared_ptr<omnisphere::data::Database> database);
         ~Customer();
 
         bool Create(const omnisphere::dtos::CreateCustomer &_customer) const;
@@ -24,7 +24,7 @@ namespace omnisphere::repositories
         omnisphere::types::DataTable ReadAll() const;
 
         private:
-        std::shared_ptr<omnisphere::services::Database> Database;
+        std::shared_ptr<omnisphere::data::Database> Database;
 
         template <typename T>
         void AddInsertParam(const std::string &field, const T &value,

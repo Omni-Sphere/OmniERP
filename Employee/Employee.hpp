@@ -9,7 +9,7 @@ namespace omnisphere::employee
     class Employee
     {
         public:
-        explicit Employee(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Employee(std::shared_ptr<omnisphere::data::Database> database);
         ~Employee();
 
         omnisphere::models::Employee Add(const omnisphere::dtos::CreateEmployee& employee) const;

@@ -8,7 +8,7 @@ namespace omnisphere::rolepermission
     class RolePermission
     {
         public:
-        explicit RolePermission(std::shared_ptr<omnisphere::services::Database> database);
+        explicit RolePermission(std::shared_ptr<omnisphere::data::Database> database);
         ~RolePermission();
         omnisphere::models::RolePermission Add(const omnisphere::dtos::CreateRolePermission& rolePermission) const;
         omnisphere::models::RolePermission Modify(const omnisphere::dtos::UpdateRolePermission& rolePermission) const;

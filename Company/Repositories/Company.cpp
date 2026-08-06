@@ -6,7 +6,7 @@
 namespace omnisphere::repositories
 {
     Company::Company(
-        std::shared_ptr<omnisphere::services::Database> database)
+        std::shared_ptr<omnisphere::data::Database> database)
         : Database(database) {}
 
     Company::~Company() = default;
@@ -206,9 +206,9 @@ namespace omnisphere::repositories
     {
         try
         {
-            std::string sQuery = "SELECT [Entry], [Code], [Name], CommercialName, Address, "
+            std::string sQuery = "SELECT Entry, Code, Name, CommercialName, Address, "
             "Address2, City, State, ZipCode, Country, TaxID, Currency, Phone1, Phone2, Email, WebSite, "
-            "FacebookProfile, InstagramProfile, XProfile, LogoFile, [IsActive] "
+            "FacebookProfile, InstagramProfile, XProfile, LogoFile, IsActive "
             "FROM Company ";
 
             return Database->FetchResults(sQuery, "Company::Read");

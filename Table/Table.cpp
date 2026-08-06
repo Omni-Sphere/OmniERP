@@ -10,14 +10,14 @@
 
 namespace omnisphere::table
 {
-    Table::Table(std::shared_ptr<omnisphere::services::Database> database)
+    Table::Table(std::shared_ptr<omnisphere::data::Database> database)
         : pImpl(std::make_unique<Impl>(database)) {}
     Table::~Table() = default;
 
     struct Table::Impl
     {
         std::shared_ptr<omnisphere::repositories::TableRepository> tableRepository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : tableRepository(
                 std::make_shared<omnisphere::repositories::TableRepository>(
                     database)) {}

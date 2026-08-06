@@ -19,7 +19,7 @@ namespace omnisphere::table
         std::unique_ptr<Impl> pImpl;
 
         public:
-        explicit Table(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Table(std::shared_ptr<omnisphere::data::Database> database);
         ~Table();
 
         omnisphere::models::Table Add(const omnisphere::dtos::CreateTable &table) const;

@@ -21,7 +21,7 @@ namespace omnisphere::repositories
     class Node
     {
         public:
-        explicit Node(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Node(std::shared_ptr<omnisphere::data::Database> database);
         ~Node();
 
         static omnisphere::enums::NodeType CharToNodeType(const std::string& str);
@@ -38,7 +38,7 @@ namespace omnisphere::repositories
         bool Delete(int entry) const;
 
         private:
-        std::shared_ptr<omnisphere::services::Database> Database;
+        std::shared_ptr<omnisphere::data::Database> Database;
 
         int GetCurrentSequence() const;
         bool UpdateNodeSequence() const;

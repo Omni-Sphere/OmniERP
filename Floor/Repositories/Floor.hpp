@@ -16,11 +16,11 @@ namespace omnisphere::repositories
     class FloorRepository
     {
         private:
-        std::shared_ptr<omnisphere::services::Database> database;
+        std::shared_ptr<omnisphere::data::Database> database;
         int GetCurrentSequence() const;
         bool UpdateFloorSequence() const;
         public:
-        explicit FloorRepository(std::shared_ptr<omnisphere::services::Database> Database);
+        explicit FloorRepository(std::shared_ptr<omnisphere::data::Database> Database);
         ~FloorRepository();
         bool Create(const omnisphere::dtos::CreateFloor &floor) const;
         bool Update(const omnisphere::dtos::UpdateFloor &floor) const;

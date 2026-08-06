@@ -13,7 +13,7 @@
 
 namespace omnisphere::repositories
 {
-    Item::Item(std::shared_ptr<omnisphere::services::Database> database)
+    Item::Item(std::shared_ptr<omnisphere::data::Database> database)
         : Database(std::move(database)) {}
 
     Item::~Item() = default;
@@ -175,8 +175,8 @@ namespace omnisphere::repositories
             }
 
             static const std::map<std::string, omnisphere::types::RelationMap> relations = {
-                {"Brand", {"Brands", "B", "Entry", "I.[Brand] = B.[Entry]"}},
-                {"Group", {"Groups", "G", "Entry", "I.[Group] = G.[Entry]"}}
+                {"Brand", {"Brands", "B", "Entry", "I.Brand = B.Entry"}},
+                {"Group", {"Groups", "G", "Entry", "I.Group = G.Entry"}}
             };
 
             omnisphere::types::QueryParts queryParts = omnisphere::types::BuildQueryParts(fields, conditions, relations, "I");
@@ -198,7 +198,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string sQuery = "SELECT ISNULL(ItemSequence, 0) + 1 "
+            const std::string sQuery = "SELECT COALESCE(ItemSequence, 0) + 1 "
             "ItemSequence FROM Sequences WHERE Entry = 1";
 
             omnisphere::types::DataTable data = Database->FetchResults(sQuery, "Item::GetCurrentSequence");
@@ -220,7 +220,7 @@ namespace omnisphere::repositories
         try
         {
             const std::string sQuery =
-            "UPDATE Sequences SET ItemSequence = ISNULL(ItemSequence,0) + 1";
+            "UPDATE Sequences SET ItemSequence = COALESCE(ItemSequence,0) + 1";
 
             if (!Database->RunStatement(sQuery, "Item::UpdateUserSequence"))
                 return false;

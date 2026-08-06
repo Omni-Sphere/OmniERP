@@ -10,13 +10,13 @@ namespace omnisphere::services
 {
     struct Node::Impl
     {
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : repository(database) {}
 
         omnisphere::repositories::Node repository;
     };
 
-    Node::Node(std::shared_ptr<omnisphere::services::Database> database)
+    Node::Node(std::shared_ptr<omnisphere::data::Database> database)
         : pimpl(std::make_unique<Impl>(database)) {}
 
     Node::~Node() = default;

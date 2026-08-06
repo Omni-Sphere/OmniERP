@@ -11,7 +11,7 @@
 
 namespace omnisphere::area
 {
-    Area::Area(std::shared_ptr<omnisphere::services::Database> database)
+    Area::Area(std::shared_ptr<omnisphere::data::Database> database)
         : pImpl(std::make_unique<Impl>(database)) {}
     Area::~Area() = default;
 
@@ -19,7 +19,7 @@ namespace omnisphere::area
     {
         std::shared_ptr<omnisphere::repositories::AreaRepository> areaRepository;
         std::shared_ptr<omnisphere::repositories::TableRepository> tableRepository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : areaRepository(
                 std::make_shared<omnisphere::repositories::AreaRepository>(
                     database)),

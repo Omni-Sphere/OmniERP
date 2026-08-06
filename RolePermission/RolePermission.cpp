@@ -11,9 +11,9 @@ namespace omnisphere::rolepermission
     struct RolePermission::Impl
     {
         std::shared_ptr<omnisphere::repositories::RolePermissionRepository> repository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database) : repository(std::make_shared<omnisphere::repositories::RolePermissionRepository>(database)) {}
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database) : repository(std::make_shared<omnisphere::repositories::RolePermissionRepository>(database)) {}
     };
-    RolePermission::RolePermission(std::shared_ptr<omnisphere::services::Database> database) : pImpl(std::make_unique<Impl>(database)) {}
+    RolePermission::RolePermission(std::shared_ptr<omnisphere::data::Database> database) : pImpl(std::make_unique<Impl>(database)) {}
     RolePermission::~RolePermission() = default;
     omnisphere::models::RolePermission RolePermission::Add(const omnisphere::dtos::CreateRolePermission& rolePermission) const
     {

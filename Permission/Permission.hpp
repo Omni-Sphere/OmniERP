@@ -9,7 +9,7 @@ namespace omnisphere::permission
     class Permission
     {
         public:
-        explicit Permission(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Permission(std::shared_ptr<omnisphere::data::Database> database);
         ~Permission();
 
         std::vector<omnisphere::models::Permission> GetAll() const;

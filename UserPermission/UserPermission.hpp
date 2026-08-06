@@ -8,7 +8,7 @@ namespace omnisphere::userpermission
     class UserPermission
     {
         public:
-        explicit UserPermission(std::shared_ptr<omnisphere::services::Database> database);
+        explicit UserPermission(std::shared_ptr<omnisphere::data::Database> database);
         ~UserPermission();
         omnisphere::models::UserPermission Add(const omnisphere::dtos::CreateUserPermission& userPermission) const;
         omnisphere::models::UserPermission Modify(const omnisphere::dtos::UpdateUserPermission& userPermission) const;

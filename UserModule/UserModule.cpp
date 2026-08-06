@@ -13,11 +13,11 @@ namespace omnisphere::usermodule
     struct UserModule::Impl
     {
         std::shared_ptr<omnisphere::repositories::UserModuleRepository> repository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : repository(std::make_shared<omnisphere::repositories::UserModuleRepository>(database)) {}
     };
 
-    UserModule::UserModule(std::shared_ptr<omnisphere::services::Database> database)
+    UserModule::UserModule(std::shared_ptr<omnisphere::data::Database> database)
         : pImpl(std::make_unique<Impl>(database)) {}
     UserModule::~UserModule() = default;
 

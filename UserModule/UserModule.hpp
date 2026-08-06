@@ -9,7 +9,7 @@ namespace omnisphere::usermodule
     class UserModule
     {
         public:
-        explicit UserModule(std::shared_ptr<omnisphere::services::Database> database);
+        explicit UserModule(std::shared_ptr<omnisphere::data::Database> database);
         ~UserModule();
 
         omnisphere::models::UserModule Add(const omnisphere::dtos::CreateUserModule& userModule) const;

@@ -9,13 +9,13 @@ namespace omnisphere::repositories
     class ModuleRepository
     {
         public:
-        explicit ModuleRepository(std::shared_ptr<omnisphere::services::Database> Database);
+        explicit ModuleRepository(std::shared_ptr<omnisphere::data::Database> Database);
         ~ModuleRepository();
 
         omnisphere::types::DataTable ReadAll() const;
         omnisphere::types::DataTable Read(const omnisphere::dtos::GetModule& getModule) const;
 
         private:
-        std::shared_ptr<omnisphere::services::Database> database;
+        std::shared_ptr<omnisphere::data::Database> database;
     };
 } // namespace omnisphere::repositories

@@ -13,12 +13,12 @@ namespace omnisphere::services
     struct ItemBrand::Impl
     {
         std::shared_ptr<omnisphere::repositories::ItemBrand> itemBrandRepository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> db)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> db)
             : itemBrandRepository(
                 std::make_shared<omnisphere::repositories::ItemBrand>(db)) {}
     };
 
-    ItemBrand::ItemBrand(std::shared_ptr<omnisphere::services::Database> db)
+    ItemBrand::ItemBrand(std::shared_ptr<omnisphere::data::Database> db)
         : pimpl(std::make_unique<Impl>(db)) {}
 
     ItemBrand::~ItemBrand() = default;

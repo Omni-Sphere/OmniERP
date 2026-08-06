@@ -13,11 +13,11 @@ namespace omnisphere::permission
     struct Permission::Impl
     {
         std::shared_ptr<omnisphere::repositories::PermissionRepository> repository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : repository(std::make_shared<omnisphere::repositories::PermissionRepository>(database)) {}
     };
 
-    Permission::Permission(std::shared_ptr<omnisphere::services::Database> database)
+    Permission::Permission(std::shared_ptr<omnisphere::data::Database> database)
         : pImpl(std::make_unique<Impl>(database)) {}
     Permission::~Permission() = default;
 

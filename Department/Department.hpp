@@ -9,7 +9,7 @@ namespace omnisphere::department
     class Department
     {
         public:
-        explicit Department(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Department(std::shared_ptr<omnisphere::data::Database> database);
         ~Department();
 
         omnisphere::models::Department Add(const omnisphere::dtos::CreateDepartment& department) const;

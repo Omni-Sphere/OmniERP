@@ -59,7 +59,7 @@ namespace omnisphere::repositories
         return n;
     }
 
-    Node::Node(std::shared_ptr<omnisphere::services::Database> database) : Database(std::move(database)) {}
+    Node::Node(std::shared_ptr<omnisphere::data::Database> database) : Database(std::move(database)) {}
 
     Node::~Node() = default;
 
@@ -285,7 +285,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(NodeSequence, 0) + 1 NodeSequence FROM Sequences WHERE Entry = 1";
+            const std::string query = "SELECT COALESCE(NodeSequence, 0) + 1 NodeSequence FROM Sequences WHERE Entry = 1";
             omnisphere::types::DataTable dataTable = Database->FetchResults(query, "Node::GetCurrentSequence");
 
             return dataTable[0]["NodeSequence"];
@@ -300,7 +300,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "UPDATE Sequences SET NodeSequence = ISNULL(NodeSequence, 0) + 1";
+            const std::string query = "UPDATE Sequences SET NodeSequence = COALESCE(NodeSequence, 0) + 1";
 
             if (!Database->RunStatement(query, "Node::UpdateNodeSequence"))
                 throw std::runtime_error("[RunStatement exception]");

@@ -16,10 +16,10 @@ namespace omnisphere::repositories
     class TableRepository
     {
         private:
-        std::shared_ptr<omnisphere::services::Database> database;
+        std::shared_ptr<omnisphere::data::Database> database;
 
         public:
-        explicit TableRepository(std::shared_ptr<omnisphere::services::Database> Database);
+        explicit TableRepository(std::shared_ptr<omnisphere::data::Database> Database);
         ~TableRepository();
         bool UpdateTableSequence() const;
         int GetCurrentSequence() const;

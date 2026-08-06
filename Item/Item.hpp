@@ -21,7 +21,7 @@ namespace omnisphere::services
     class Item
     {
         public:
-        explicit Item(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Item(std::shared_ptr<omnisphere::data::Database> database);
 
         ~Item();
 

@@ -9,7 +9,7 @@ namespace omnisphere::repositories
         "Entry", "Code", "Name", "CreatedBy", "CreateDate", "LastUpdatedBy", "UpdateDate"
     };
 
-    ItemBrand::ItemBrand(std::shared_ptr<omnisphere::services::Database> _database)
+    ItemBrand::ItemBrand(std::shared_ptr<omnisphere::data::Database> _database)
         : database(std::move(_database)) {}
 
     int ItemBrand::GetCurrentSequence() const
@@ -17,7 +17,7 @@ namespace omnisphere::repositories
         try
         {
             const std::string sQuery =
-            "SELECT ISNULL(ItemBrandsSequence, 0) + 1 ItemBrandsSequence FROM "
+            "SELECT COALESCE(ItemBrandsSequence, 0) + 1 ItemBrandsSequence FROM "
             "Sequences WHERE Entry = 1";
 
             omnisphere::types::DataTable data = database->FetchResults(sQuery, "ItemBrand::GetCurrentSequence");
@@ -39,7 +39,7 @@ namespace omnisphere::repositories
         try
         {
             const std::string sQuery = "UPDATE Sequences SET ItemBrandsSequence = "
-            "ISNULL(ItemBrandsSequence,0) + 1";
+            "COALESCE(ItemBrandsSequence,0) + 1";
 
             if (!database->RunStatement(sQuery, "ItemBrand::UpdateItemBrandsSequence"))
                 return false;

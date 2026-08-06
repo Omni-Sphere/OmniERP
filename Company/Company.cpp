@@ -10,13 +10,13 @@ namespace omnisphere::services
 {
     struct Company::Impl
     {
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : repository(database) {}
 
         omnisphere::repositories::Company repository;
     };
 
-    Company::Company(std::shared_ptr<omnisphere::services::Database> database)
+    Company::Company(std::shared_ptr<omnisphere::data::Database> database)
         : pimpl(std::make_unique<Impl>(database)) {}
 
     Company::~Company() = default;

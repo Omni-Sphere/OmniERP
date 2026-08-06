@@ -19,7 +19,7 @@ namespace omnisphere::repositories
     class Item
     {
         public:
-        explicit Item(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Item(std::shared_ptr<omnisphere::data::Database> database);
         ~Item();
 
         bool Create(const omnisphere::dtos::CreateItem &_item) const;
@@ -29,7 +29,7 @@ namespace omnisphere::repositories
         // Full read without field filtering (SELECT *)
         
         private:
-        std::shared_ptr<omnisphere::services::Database> Database;
+        std::shared_ptr<omnisphere::data::Database> Database;
 
         int GetCurrentSequence() const;
         bool UpdateUserSequence() const;

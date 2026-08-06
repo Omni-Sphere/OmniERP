@@ -16,10 +16,10 @@ namespace omnisphere::repositories
     class AreaRepository
     {
         private:
-        std::shared_ptr<omnisphere::services::Database> database;
+        std::shared_ptr<omnisphere::data::Database> database;
 
         public:
-        explicit AreaRepository(std::shared_ptr<omnisphere::services::Database> Database);
+        explicit AreaRepository(std::shared_ptr<omnisphere::data::Database> Database);
         ~AreaRepository();
         bool UpdateAreaSequence() const;
         int GetCurrentSequence() const;

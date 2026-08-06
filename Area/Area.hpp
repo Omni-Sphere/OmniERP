@@ -18,7 +18,7 @@ namespace omnisphere::area
         std::unique_ptr<Impl> pImpl;
 
         public:
-        explicit Area(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Area(std::shared_ptr<omnisphere::data::Database> database);
 
         ~Area();
         omnisphere::models::Area Add(const omnisphere::dtos::CreateArea &area) const;

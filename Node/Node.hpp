@@ -18,7 +18,7 @@ namespace omnisphere::services
     class Node
     {
         public:
-        explicit Node(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Node(std::shared_ptr<omnisphere::data::Database> database);
         ~Node();
 
         std::optional<omnisphere::models::Node> Get(const omnisphere::dtos::GetNode &filter, const std::vector<std::string>& fields = {}) const;

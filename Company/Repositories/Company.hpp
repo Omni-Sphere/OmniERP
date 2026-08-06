@@ -18,7 +18,7 @@ namespace omnisphere::repositories
     class Company
     {
         public:
-        explicit Company(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Company(std::shared_ptr<omnisphere::data::Database> database);
         ~Company();
 
         bool Create(const omnisphere::dtos::CreateCompany &_company) const;
@@ -26,7 +26,7 @@ namespace omnisphere::repositories
         omnisphere::types::DataTable Read(const omnisphere::dtos::GetCompany &_company) const;
 
         private:
-        std::shared_ptr<omnisphere::services::Database> Database;
+        std::shared_ptr<omnisphere::data::Database> Database;
 
         template <typename T>
         void AddInsertParam(const std::string &field, const T &value,

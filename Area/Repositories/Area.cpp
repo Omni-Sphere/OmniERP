@@ -15,7 +15,7 @@
 
 namespace omnisphere::repositories
 {
-    AreaRepository::AreaRepository(std::shared_ptr<omnisphere::services::Database> Database) : database(Database) {}
+    AreaRepository::AreaRepository(std::shared_ptr<omnisphere::data::Database> Database) : database(Database) {}
 
     AreaRepository::~AreaRepository() {}
 
@@ -186,7 +186,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(AreaSequence, 0) + 1 AreaSequence FROM Sequences WHERE Entry = 1";
+            const std::string query = "SELECT COALESCE(AreaSequence, 0) + 1 AreaSequence FROM Sequences WHERE Entry = 1";
 
             omnisphere::types::DataTable dataTable = database->FetchResults(query, "AreaRepository::GetCurrentSequence");
 
@@ -202,7 +202,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "UPDATE Sequences SET AreaSequence = ISNULL(AreaSequence, 0) + 1";
+            const std::string query = "UPDATE Sequences SET AreaSequence = COALESCE(AreaSequence, 0) + 1";
 
             if (!database->RunStatement(query, "AreaRepository::UpdateAreaSequence"))
                 throw std::runtime_error("[RunStatement exception]");

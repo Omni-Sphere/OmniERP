@@ -14,7 +14,7 @@ namespace omnisphere::services
     class Customer
     {
         public:
-        explicit Customer(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Customer(std::shared_ptr<omnisphere::data::Database> database);
         ~Customer();
 
         std::optional<omnisphere::models::Customer> Get(int entry) const;

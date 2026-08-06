@@ -20,7 +20,7 @@ namespace omnisphere::services
         std::unique_ptr<Impl> pimpl;
 
         public:
-        explicit ItemGroup(std::shared_ptr<omnisphere::services::Database> db);
+        explicit ItemGroup(std::shared_ptr<omnisphere::data::Database> db);
 
         ~ItemGroup();
 

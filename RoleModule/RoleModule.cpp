@@ -9,9 +9,9 @@
 namespace omnisphere::rolemodule {
 struct RoleModule::Impl {
     std::shared_ptr<omnisphere::repositories::RoleModuleRepository> repository;
-    explicit Impl(std::shared_ptr<omnisphere::services::Database> database) : repository(std::make_shared<omnisphere::repositories::RoleModuleRepository>(database)) {}
+    explicit Impl(std::shared_ptr<omnisphere::data::Database> database) : repository(std::make_shared<omnisphere::repositories::RoleModuleRepository>(database)) {}
 };
-RoleModule::RoleModule(std::shared_ptr<omnisphere::services::Database> database) : pImpl(std::make_unique<Impl>(database)) {}
+RoleModule::RoleModule(std::shared_ptr<omnisphere::data::Database> database) : pImpl(std::make_unique<Impl>(database)) {}
 RoleModule::~RoleModule() = default;
 omnisphere::models::RoleModule RoleModule::Add(const omnisphere::dtos::CreateRoleModule& roleModule) const {
     if (pImpl->repository->Create(roleModule)) { omnisphere::dtos::GetRoleModule get; get.RoleEntry = roleModule.RoleEntry; get.ModuleEntry = roleModule.ModuleEntry; return Get(get); }

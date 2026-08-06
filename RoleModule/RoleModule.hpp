@@ -8,7 +8,7 @@ namespace omnisphere::rolemodule
     class RoleModule
     {
         public:
-        explicit RoleModule(std::shared_ptr<omnisphere::services::Database> database);
+        explicit RoleModule(std::shared_ptr<omnisphere::data::Database> database);
         ~RoleModule();
         omnisphere::models::RoleModule Add(const omnisphere::dtos::CreateRoleModule& roleModule) const;
         omnisphere::models::RoleModule Modify(const omnisphere::dtos::UpdateRoleModule& roleModule) const;

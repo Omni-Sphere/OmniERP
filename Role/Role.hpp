@@ -9,7 +9,7 @@ namespace omnisphere::role
     class Role
     {
         public:
-        explicit Role(std::shared_ptr<omnisphere::services::Database> database);
+        explicit Role(std::shared_ptr<omnisphere::data::Database> database);
         ~Role();
 
         omnisphere::models::Role Add(const omnisphere::dtos::CreateRole& role) const;

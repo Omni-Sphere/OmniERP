@@ -11,9 +11,9 @@ namespace omnisphere::userpermission
     struct UserPermission::Impl
     {
         std::shared_ptr<omnisphere::repositories::UserPermissionRepository> repository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database) : repository(std::make_shared<omnisphere::repositories::UserPermissionRepository>(database)) {}
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database) : repository(std::make_shared<omnisphere::repositories::UserPermissionRepository>(database)) {}
     };
-    UserPermission::UserPermission(std::shared_ptr<omnisphere::services::Database> database) : pImpl(std::make_unique<Impl>(database)) {}
+    UserPermission::UserPermission(std::shared_ptr<omnisphere::data::Database> database) : pImpl(std::make_unique<Impl>(database)) {}
     UserPermission::~UserPermission() = default;
     omnisphere::models::UserPermission UserPermission::Add(const omnisphere::dtos::CreateUserPermission& userPermission) const
     {

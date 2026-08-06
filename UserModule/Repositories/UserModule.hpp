@@ -9,7 +9,7 @@ namespace omnisphere::repositories
     class UserModuleRepository
     {
         public:
-        explicit UserModuleRepository(std::shared_ptr<omnisphere::services::Database> Database);
+        explicit UserModuleRepository(std::shared_ptr<omnisphere::data::Database> Database);
         ~UserModuleRepository();
 
         bool Create(const omnisphere::dtos::CreateUserModule& userModule) const;
@@ -19,7 +19,7 @@ namespace omnisphere::repositories
         bool Delete(int entry) const;
 
         private:
-        std::shared_ptr<omnisphere::services::Database> database;
+        std::shared_ptr<omnisphere::data::Database> database;
         int GetCurrentSequence() const;
         bool UpdateSequence() const;
     };

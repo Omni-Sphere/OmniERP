@@ -14,7 +14,7 @@ namespace omnisphere::repositories
         "ReportsPath", "TicketsPath", "IsActive", "CreatedBy", "CreateDate", "LastUpdatedBy", "UpdateDate"
     };
 
-    Store::Store(std::shared_ptr<omnisphere::services::Database> database) : Database(std::move(database)) {}
+    Store::Store(std::shared_ptr<omnisphere::data::Database> database) : Database(std::move(database)) {}
 
     Store::~Store() = default;
 
@@ -161,7 +161,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "SELECT ISNULL(StoreSequence, 0) + 1 StoreSequence FROM Sequences WHERE Entry = 1";
+            const std::string query = "SELECT COALESCE(StoreSequence, 0) + 1 StoreSequence FROM Sequences WHERE Entry = 1";
             omnisphere::types::DataTable dataTable = Database->FetchResults(query);
 
             return dataTable[0]["StoreSequence"];
@@ -176,7 +176,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            const std::string query = "UPDATE Sequences SET StoreSequence = ISNULL(StoreSequence, 0) + 1";
+            const std::string query = "UPDATE Sequences SET StoreSequence = COALESCE(StoreSequence, 0) + 1";
 
             if (!Database->RunStatement(query))
                 throw std::runtime_error("[RunStatement exception]");

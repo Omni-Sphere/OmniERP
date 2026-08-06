@@ -12,7 +12,7 @@
 
 namespace omnisphere::repositories
 {
-    RoleModuleRepository::RoleModuleRepository(std::shared_ptr<omnisphere::services::Database> Database) : database(Database) {}
+    RoleModuleRepository::RoleModuleRepository(std::shared_ptr<omnisphere::data::Database> Database) : database(Database) {}
     RoleModuleRepository::~RoleModuleRepository() = default;
 
     bool RoleModuleRepository::Create(const omnisphere::dtos::CreateRoleModule& roleModule) const
@@ -145,7 +145,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            omnisphere::types::DataTable dataTable = database->FetchResults("SELECT ISNULL(RoleModSequence, 0) + 1 RoleModSequence FROM Sequences WHERE Entry = 1");
+            omnisphere::types::DataTable dataTable = database->FetchResults("SELECT COALESCE(RoleModSequence, 0) + 1 RoleModSequence FROM Sequences WHERE Entry = 1");
             return dataTable[0]["RoleModSequence"];
         }
         catch (const std::exception& e)
@@ -158,7 +158,7 @@ namespace omnisphere::repositories
     {
         try
         {
-            if (!database->RunStatement("UPDATE Sequences SET RoleModSequence = ISNULL(RoleModSequence, 0) + 1 WHERE Entry = 1"))
+            if (!database->RunStatement("UPDATE Sequences SET RoleModSequence = COALESCE(RoleModSequence, 0) + 1 WHERE Entry = 1"))
                 throw std::runtime_error("[RunStatement exception]");
 
             return true;

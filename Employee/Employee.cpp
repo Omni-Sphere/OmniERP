@@ -14,11 +14,11 @@ namespace omnisphere::employee
     struct Employee::Impl
     {
         std::shared_ptr<omnisphere::repositories::EmployeeRepository> repository;
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : repository(std::make_shared<omnisphere::repositories::EmployeeRepository>(database)) {}
     };
 
-    Employee::Employee(std::shared_ptr<omnisphere::services::Database> database)
+    Employee::Employee(std::shared_ptr<omnisphere::data::Database> database)
         : pImpl(std::make_unique<Impl>(database)) {}
     Employee::~Employee() = default;
 

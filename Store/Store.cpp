@@ -9,13 +9,13 @@ namespace omnisphere::services
 {
     struct Store::Impl
     {
-        explicit Impl(std::shared_ptr<omnisphere::services::Database> database)
+        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
             : repository(database) {}
 
         omnisphere::repositories::Store repository;
     };
 
-    Store::Store(std::shared_ptr<omnisphere::services::Database> database)
+    Store::Store(std::shared_ptr<omnisphere::data::Database> database)
         : pimpl(std::make_unique<Impl>(database)) {}
 
     Store::~Store() = default;
