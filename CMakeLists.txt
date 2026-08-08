@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(OmniERP LANGUAGES CXX)
 
+include(GNUInstallDirs)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -59,10 +61,22 @@ add_library(OmniERP SHARED
 target_include_directories(OmniERP
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:include/OmniSphere/OmniERP>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(OmniERP PUBLIC OmniUtils OmniData OmniCore)
+add_library(OmniERP::OmniERP ALIAS OmniERP)
+
+if(NOT TARGET OmniUtils::OmniUtils)
+    find_package(OmniUtils REQUIRED)
+endif()
+if(NOT TARGET OmniData::OmniData)
+    find_package(OmniData REQUIRED)
+endif()
+if(NOT TARGET OmniCore::OmniCore)
+    find_package(OmniCore REQUIRED)
+endif()
+
+target_link_libraries(OmniERP PUBLIC OmniUtils::OmniUtils OmniData::OmniData OmniCore::OmniCore)
 
 if(WIN32)
     set_target_properties(OmniERP PROPERTIES
@@ -168,4 +182,42 @@ foreach(DIR ${HEADER_DIRS})
         )
     endforeach()
 endforeach()
+
+# --- Installation & Export ---
+include(GNUInstallDirs)
+
+install(TARGETS OmniERP
+    EXPORT OmniERPTargets
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h"
+    PATTERN "build" EXCLUDE
+    PATTERN ".git" EXCLUDE
+    PATTERN ".vscode" EXCLUDE
+)
+
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/OmniERPConfig.cmake"
+"include(CMakeFindDependencyMacro)\n"
+"find_dependency(Boost REQUIRED COMPONENTS json)\n"
+"find_dependency(OmniUtils REQUIRED)\n"
+"find_dependency(OmniData REQUIRED)\n"
+"find_dependency(OmniCore REQUIRED)\n"
+"include(\"\${CMAKE_CURRENT_LIST_DIR}/OmniERPTargets.cmake\")\n"
+)
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/OmniERPConfig.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OmniERP
+)
+
+install(EXPORT OmniERPTargets
+    FILE OmniERPTargets.cmake
+    NAMESPACE OmniERP::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OmniERP
+)
 
