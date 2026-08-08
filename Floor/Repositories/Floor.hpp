@@ -1,31 +1,29 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
-#include <DataTable.hpp>
+#include "Floor/DTOs/CreateFloor.hpp"
+#include "Floor/DTOs/GetFloor.hpp"
+#include "Floor/DTOs/UpdateFloor.hpp"
+#include <OmniData/DataTable.hpp>
+#include <OmniData/Database.hpp>
 #include <memory>
-#include <Database.hpp>
-#include <vector>
 #include <string>
-#include <Floor/DTOs/CreateFloor.hpp>
-#include <Floor/DTOs/UpdateFloor.hpp>
-#include <Floor/DTOs/GetFloor.hpp>
-#include <Database.hpp>
+#include <vector>
 
-namespace omnisphere::repositories
-{
-    class FloorRepository
-    {
-        private:
-        std::shared_ptr<omnisphere::data::Database> database;
-        int GetCurrentSequence() const;
-        bool UpdateFloorSequence() const;
-        public:
-        explicit FloorRepository(std::shared_ptr<omnisphere::data::Database> Database);
-        ~FloorRepository();
-        bool Create(const omnisphere::dtos::CreateFloor &floor) const;
-        bool Update(const omnisphere::dtos::UpdateFloor &floor) const;
-        omnisphere::types::DataTable ReadAll() const;
-        omnisphere::types::DataTable Read(const omnisphere::dtos::GetFloor &getFloor) const;
-        bool Delete(int entry) const;
-    };
+namespace omnisphere::repositories {
+class FloorRepository {
+private:
+  std::shared_ptr<omnisphere::data::Database> database;
+  int GetCurrentSequence() const;
+  bool UpdateFloorSequence() const;
+
+public:
+  explicit FloorRepository(
+      std::shared_ptr<omnisphere::data::Database> Database);
+  ~FloorRepository();
+  bool Create(const omnisphere::dtos::CreateFloor &floor) const;
+  bool Update(const omnisphere::dtos::UpdateFloor &floor) const;
+  omnisphere::types::DataTable ReadAll() const;
+  omnisphere::types::DataTable
+  Read(const omnisphere::dtos::GetFloor &getFloor) const;
+  bool Delete(int entry) const;
 };
+}; // namespace omnisphere::repositories

@@ -1,32 +1,29 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
 
-#include <Table/DTOs/CreateTable.hpp>
-#include <Table/DTOs/GetTable.hpp>
-#include <Table/DTOs/UpdateTable.hpp>
-#include <Database.hpp>
-#include <DataTable.hpp>
+#include <OmniData/DataTable.hpp>
+#include <OmniData/Database.hpp>
+#include "Table/DTOs/CreateTable.hpp"
+#include "Table/DTOs/GetTable.hpp"
+#include "Table/DTOs/UpdateTable.hpp"
 #include <memory>
-#include <Database.hpp>
 #include <vector>
 
-namespace omnisphere::repositories
-{
-    class TableRepository
-    {
-        private:
-        std::shared_ptr<omnisphere::data::Database> database;
+namespace omnisphere::repositories {
+class TableRepository {
+private:
+  std::shared_ptr<omnisphere::data::Database> database;
 
-        public:
-        explicit TableRepository(std::shared_ptr<omnisphere::data::Database> Database);
-        ~TableRepository();
-        bool UpdateTableSequence() const;
-        int GetCurrentSequence() const;
-        bool Create(const omnisphere::dtos::CreateTable &table) const;
-        bool Update(const omnisphere::dtos::UpdateTable &table) const;
-        omnisphere::types::DataTable ReadAll() const;
-        omnisphere::types::DataTable Read(const omnisphere::dtos::GetTable &getTable) const;
-        bool Delete(int entry) const;
-    };
+public:
+  explicit TableRepository(
+      std::shared_ptr<omnisphere::data::Database> Database);
+  ~TableRepository();
+  bool UpdateTableSequence() const;
+  int GetCurrentSequence() const;
+  bool Create(const omnisphere::dtos::CreateTable &table) const;
+  bool Update(const omnisphere::dtos::UpdateTable &table) const;
+  omnisphere::types::DataTable ReadAll() const;
+  omnisphere::types::DataTable
+  Read(const omnisphere::dtos::GetTable &getTable) const;
+  bool Delete(int entry) const;
 };
+}; // namespace omnisphere::repositories

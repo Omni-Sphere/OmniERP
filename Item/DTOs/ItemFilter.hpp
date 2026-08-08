@@ -1,7 +1,7 @@
 #pragma once
 
 #include <optional>
-#include <Base/Filters.hpp>
+#include <OmniCore/Base/Filters.hpp>
 #include <string>
 
 namespace omnisphere::dtos

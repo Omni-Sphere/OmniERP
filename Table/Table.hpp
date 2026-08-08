@@ -1,32 +1,32 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
-#include <vector>
+#include <OmniData/Database.hpp>
 #include <memory>
-#include <Database.hpp>
+#include <vector>
 
-#include <Table/DTOs/CreateTable.hpp>
-#include <Table/DTOs/GetTable.hpp>
-#include <Table/DTOs/UpdateTable.hpp>
-#include <Table/Models/Table.hpp>
-#include <Database.hpp>
+#include <OmniData/Database.hpp>
+#include "Table/DTOs/CreateTable.hpp"
+#include "Table/DTOs/GetTable.hpp"
+#include "Table/DTOs/UpdateTable.hpp"
+#include "Table/Models/Table.hpp"
 
-namespace omnisphere::table
-{
-    class Table
-    {
-        struct Impl;
-        std::unique_ptr<Impl> pImpl;
+namespace omnisphere::table {
+class Table {
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 
-        public:
-        explicit Table(std::shared_ptr<omnisphere::data::Database> database);
-        ~Table();
+public:
+  explicit Table(std::shared_ptr<omnisphere::data::Database> database);
+  ~Table();
 
-        omnisphere::models::Table Add(const omnisphere::dtos::CreateTable &table) const;
-        omnisphere::models::Table Modify(const omnisphere::dtos::UpdateTable &table) const;
-        std::vector<omnisphere::models::Table> GetAll() const;
-        omnisphere::models::Table Get(const omnisphere::dtos::GetTable &getTable) const;
-        std::vector<omnisphere::models::Table> Search(const omnisphere::dtos::GetTable &getTable) const;
-        bool Remove(int entry) const;
-    };
+  omnisphere::models::Table
+  Add(const omnisphere::dtos::CreateTable &table) const;
+  omnisphere::models::Table
+  Modify(const omnisphere::dtos::UpdateTable &table) const;
+  std::vector<omnisphere::models::Table> GetAll() const;
+  omnisphere::models::Table
+  Get(const omnisphere::dtos::GetTable &getTable) const;
+  std::vector<omnisphere::models::Table>
+  Search(const omnisphere::dtos::GetTable &getTable) const;
+  bool Remove(int entry) const;
+};
 } // namespace omnisphere::table

@@ -1,13 +1,9 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
 #include <optional>
 #include <string>
-namespace omnisphere::dtos
-{
-    struct GetFloor
-    {
-        std::optional<int> Entry;
-        std::optional<std::string> Code;
-    };
-}
+namespace omnisphere::dtos {
+struct GetFloor {
+  std::optional<int> Entry;
+  std::optional<std::string> Code;
+};
+} // namespace omnisphere::dtos

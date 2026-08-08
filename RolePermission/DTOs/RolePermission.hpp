@@ -1,30 +1,24 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
-#include <string>
 #include <optional>
+#include <string>
 
-namespace omnisphere::dtos
-{
-    struct CreateRolePermission
-    {
-        int RoleEntry;
-        int PermissionEntry;
-        bool IsActive;
-        int CreatedBy;
-    };
+namespace omnisphere::dtos {
+struct CreateRolePermission {
+  int RoleEntry;
+  int PermissionEntry;
+  bool IsActive;
+  int CreatedBy;
+};
 
-    struct UpdateRolePermission
-    {
-        int Entry;
-        std::optional<bool> IsActive;
-        int UpdatedBy;
-    };
+struct UpdateRolePermission {
+  int Entry;
+  std::optional<bool> IsActive;
+  int UpdatedBy;
+};
 
-    struct GetRolePermission
-    {
-        std::optional<int> Entry;
-        std::optional<int> RoleEntry;
-        std::optional<int> PermissionEntry;
-    };
+struct GetRolePermission {
+  std::optional<int> Entry;
+  std::optional<int> RoleEntry;
+  std::optional<int> PermissionEntry;
+};
 } // namespace omnisphere::dtos

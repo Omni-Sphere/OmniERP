@@ -1,149 +1,113 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
-#include <DataTable.hpp>
-#include <Database.hpp>
-#include <DataTable.hpp>
-#include <Floor/Floor.hpp>
-#include <Floor/Repositories/Floor.hpp>
-#include <Area/Repositories/Area.hpp>
+#include "Area/Repositories/Area.hpp"
+#include "Floor/Floor.hpp"
+#include "Floor/Repositories/Floor.hpp"
+#include <OmniData/DataTable.hpp>
+#include <OmniData/Database.hpp>
 #include <stdexcept>
 #include <string>
 
-namespace omnisphere::floor
-{
-    Floor::Floor(std::shared_ptr<omnisphere::data::Database> database)
-        : pImpl(std::make_unique<Impl>(database)) {}
-    Floor::~Floor() = default;
+namespace omnisphere::floor {
+Floor::Floor(std::shared_ptr<omnisphere::data::Database> database)
+    : pImpl(std::make_unique<Impl>(database)) {}
+Floor::~Floor() = default;
 
-    struct Floor::Impl
-    {
-        std::shared_ptr<omnisphere::repositories::FloorRepository> floorRepository;
-        std::shared_ptr<omnisphere::repositories::AreaRepository> areaRepository;
-        explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
-            : floorRepository(
-                std::make_shared<omnisphere::repositories::FloorRepository>(
-                    database)),
-            areaRepository(
-                std::make_shared<omnisphere::repositories::AreaRepository>(
-                    database)) {}
-    };
+struct Floor::Impl {
+  std::shared_ptr<omnisphere::repositories::FloorRepository> floorRepository;
+  std::shared_ptr<omnisphere::repositories::AreaRepository> areaRepository;
+  explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
+      : floorRepository(
+            std::make_shared<omnisphere::repositories::FloorRepository>(
+                database)),
+        areaRepository(
+            std::make_shared<omnisphere::repositories::AreaRepository>(
+                database)) {}
+};
 
-    omnisphere::models::Floor
-    Floor::Add(const omnisphere::dtos::CreateFloor &floor) const
-    {
-        try
-        {
-            if (pImpl->floorRepository->Create(floor))
-            {
-                omnisphere::dtos::GetFloor getFloor;
-                getFloor.Code = floor.Code;
+omnisphere::models::Floor
+Floor::Add(const omnisphere::dtos::CreateFloor &floor) const {
+  try {
+    if (pImpl->floorRepository->Create(floor)) {
+      omnisphere::dtos::GetFloor getFloor;
+      getFloor.Code = floor.Code;
 
-                return Get(getFloor);
-            }
-            else
-            {
-                throw std::runtime_error("Error adding floor");
-            }
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[AddFloor Exception] ") + e.what());
-        }
+      return Get(getFloor);
+    } else {
+      throw std::runtime_error("Error adding floor");
     }
-    omnisphere::models::Floor
-    Floor::Modify(const omnisphere::dtos::UpdateFloor &floor) const
-    {
-        try
-        {
-            if (pImpl->floorRepository->Update(floor))
-            {
-                omnisphere::dtos::GetFloor getFloor;
-                getFloor.Code = floor.Code;
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[AddFloor Exception] ") + e.what());
+  }
+}
+omnisphere::models::Floor
+Floor::Modify(const omnisphere::dtos::UpdateFloor &floor) const {
+  try {
+    if (pImpl->floorRepository->Update(floor)) {
+      omnisphere::dtos::GetFloor getFloor;
+      getFloor.Code = floor.Code;
 
-                return Get(getFloor);
-            }
-            else
-            {
-                throw std::runtime_error("Error updating floor");
-            }
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[ModifyFloor Exception] ") +
-                                     e.what());
-        }
+      return Get(getFloor);
+    } else {
+      throw std::runtime_error("Error updating floor");
+    }
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[ModifyFloor Exception] ") +
+                             e.what());
+  }
+}
+
+std::vector<omnisphere::models::Floor> Floor::GetAll() const {
+  try {
+    std::vector<omnisphere::models::Floor> floors;
+    omnisphere::types::DataTable data = pImpl->floorRepository->ReadAll();
+
+    for (int i = 0; i < data.RowsCount(); i++) {
+      floors.emplace_back(data[i]["Entry"], data[i]["Code"], data[i]["Name"],
+                          data[i]["CreatedBy"], data[i]["CreateDate"],
+                          data[i]["LastUpdatedBy"].GetOptional<int>(),
+                          data[i]["UpdateDate"].GetOptional<std::string>());
     }
 
-    std::vector<omnisphere::models::Floor> Floor::GetAll() const
-    {
-        try
-        {
-            std::vector<omnisphere::models::Floor> floors;
-            omnisphere::types::DataTable data = pImpl->floorRepository->ReadAll();
+    return floors;
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[GetAllFloors Exception] ") +
+                             e.what());
+  }
+}
+omnisphere::models::Floor
+Floor::Get(const omnisphere::dtos::GetFloor &getFloor) const {
+  try {
+    omnisphere::types::DataTable data = pImpl->floorRepository->Read(getFloor);
 
-            for (int i = 0; i < data.RowsCount(); i++)
-            {
-                floors.emplace_back(data[i]["Entry"],
-                                    data[i]["Code"],
-                                    data[i]["Name"],
-                                    data[i]["CreatedBy"],
-                                    data[i]["CreateDate"],
-                                    data[i]["LastUpdatedBy"].GetOptional<int>(),
-                                    data[i]["UpdateDate"].GetOptional<std::string>());
-            }
+    if (data.RowsCount() == 0)
+      throw std::runtime_error("Floor doesn't exists");
 
-            return floors;
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[GetAllFloors Exception] ") +
-                                     e.what());
-        }
-    }
-    omnisphere::models::Floor
-    Floor::Get(const omnisphere::dtos::GetFloor &getFloor) const
-    {
-        try
-        {
-            omnisphere::types::DataTable data = pImpl->floorRepository->Read(getFloor);
+    return omnisphere::models::Floor(
+        data[0]["Entry"], data[0]["Code"], data[0]["Name"],
+        data[0]["CreatedBy"], data[0]["CreateDate"],
+        data[0]["LastUpdatedBy"].GetOptional<int>(),
+        data[0]["UpdateDate"].GetOptional<std::string>());
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[GetFloor Exception] ") + e.what());
+  }
+}
 
-            if (data.RowsCount() == 0)
-                throw std::runtime_error("Floor doesn't exists");
+bool Floor::Remove(int entry) const {
+  try {
+    // Check for associated areas
+    omnisphere::dtos::GetArea getArea;
+    getArea.FloorEntry = entry;
 
-            return omnisphere::models::Floor(data[0]["Entry"],
-                                             data[0]["Code"],
-                                             data[0]["Name"],
-                                             data[0]["CreatedBy"],
-                                             data[0]["CreateDate"],
-                                             data[0]["LastUpdatedBy"].GetOptional<int>(),
-                                             data[0]["UpdateDate"].GetOptional<std::string>());
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[GetFloor Exception] ") + e.what());
-        }
+    omnisphere::types::DataTable areas = pImpl->areaRepository->Read(getArea);
+
+    if (areas.RowsCount() > 0) {
+      throw std::runtime_error(
+          "Cannot delete Floor because it has associated Areas");
     }
 
-    bool Floor::Remove(int entry) const
-    {
-        try
-        {
-            // Check for associated areas
-            omnisphere::dtos::GetArea getArea;
-            getArea.FloorEntry = entry;
-
-            omnisphere::types::DataTable areas = pImpl->areaRepository->Read(getArea);
-
-            if (areas.RowsCount() > 0)
-            {
-                throw std::runtime_error("Cannot delete Floor because it has associated Areas");
-            }
-
-            return pImpl->floorRepository->Delete(entry);
-        }
-        catch (const std::exception &e)
-        {
-            throw std::runtime_error(std::string("[RemoveFloor Exception] ") + e.what());
-        }
-    }
+    return pImpl->floorRepository->Delete(entry);
+  } catch (const std::exception &e) {
+    throw std::runtime_error(std::string("[RemoveFloor Exception] ") +
+                             e.what());
+  }
+}
 } // namespace omnisphere::floor

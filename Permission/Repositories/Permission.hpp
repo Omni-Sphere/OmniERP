@@ -1,21 +1,19 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
-#include <DataTable.hpp>
-#include <Permission/DTOs/Permission.hpp>
+#include <OmniData/DataTable.hpp>
+#include "Permission/DTOs/Permission.hpp"
 
-namespace omnisphere::repositories
-{
-    class PermissionRepository
-    {
-        public:
-        explicit PermissionRepository(std::shared_ptr<omnisphere::data::Database> Database);
-        ~PermissionRepository();
+namespace omnisphere::repositories {
+class PermissionRepository {
+public:
+  explicit PermissionRepository(
+      std::shared_ptr<omnisphere::data::Database> Database);
+  ~PermissionRepository();
 
-        omnisphere::types::DataTable ReadAll() const;
-        omnisphere::types::DataTable Read(const omnisphere::dtos::GetPermission& getPermission) const;
+  omnisphere::types::DataTable ReadAll() const;
+  omnisphere::types::DataTable
+  Read(const omnisphere::dtos::GetPermission &getPermission) const;
 
-        private:
-        std::shared_ptr<omnisphere::data::Database> database;
-    };
+private:
+  std::shared_ptr<omnisphere::data::Database> database;
+};
 } // namespace omnisphere::repositories

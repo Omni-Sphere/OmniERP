@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <memory>
 #include <boost/describe.hpp>
-#include "User/Models/User.hpp"
+#include <OmniCore/User/Models/User.hpp>
 #include "ItemBrand/Models/ItemBrand.hpp"
 #include "ItemGroup/Models/ItemGroup.hpp"
 

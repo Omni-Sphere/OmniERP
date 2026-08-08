@@ -1,5 +1,3 @@
-#include <Database.hpp>
-#include <DataTable.hpp>
 #pragma once
 
 #include <memory>
@@ -7,36 +5,36 @@
 #include <string>
 #include <vector>
 
-#include <Customer/DTOs/CreateCustomer.hpp>
-#include <Customer/DTOs/UpdateCustomer.hpp>
+#include <OmniData/Database.hpp>
 
-namespace omnisphere::repositories
-{
-    class Customer
-    {
-        public:
-        explicit Customer(std::shared_ptr<omnisphere::data::Database> database);
-        ~Customer();
+#include "Customer/DTOs/CreateCustomer.hpp"
+#include "Customer/DTOs/UpdateCustomer.hpp"
 
-        bool Create(const omnisphere::dtos::CreateCustomer &_customer) const;
-        bool Update(const omnisphere::dtos::UpdateCustomer &_customer) const;
-        omnisphere::types::DataTable Read(int entry) const;
-        omnisphere::types::DataTable ReadAll() const;
+namespace omnisphere::repositories {
+class Customer {
+public:
+  explicit Customer(std::shared_ptr<omnisphere::data::Database> database);
+  ~Customer();
 
-        private:
-        std::shared_ptr<omnisphere::data::Database> Database;
+  bool Create(const omnisphere::dtos::CreateCustomer &_customer) const;
+  bool Update(const omnisphere::dtos::UpdateCustomer &_customer) const;
+  omnisphere::types::DataTable Read(int entry) const;
+  omnisphere::types::DataTable ReadAll() const;
 
-        template <typename T>
-        void AddInsertParam(const std::string &field, const T &value,
-                            std::vector<std::string> &insertClauses,
-                            std::vector<omnisphere::types::SQLParam> &params) const;
+private:
+  std::shared_ptr<omnisphere::data::Database> Database;
 
-        template <typename T>
-        void AddSetParam(const std::string &field, const T &value,
-                         std::vector<std::string> &setClauses,
-                         std::vector<omnisphere::types::SQLParam> &params) const;
+  template <typename T>
+  void AddInsertParam(const std::string &field, const T &value,
+                      std::vector<std::string> &insertClauses,
+                      std::vector<omnisphere::types::SQLParam> &params) const;
 
-        int GetCurrentSequence() const;
-        bool UpdateCustomerSequence() const;
-    };
+  template <typename T>
+  void AddSetParam(const std::string &field, const T &value,
+                   std::vector<std::string> &setClauses,
+                   std::vector<omnisphere::types::SQLParam> &params) const;
+
+  int GetCurrentSequence() const;
+  bool UpdateCustomerSequence() const;
+};
 } // namespace omnisphere::repositories
