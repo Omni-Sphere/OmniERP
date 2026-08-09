@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "Store/DTOs/GetStore.hpp"
 #include "Store/DTOs/CreateStore.hpp"
 #include "Store/DTOs/SearchStore.hpp"
 #include "Store/DTOs/UpdateStore.hpp"
