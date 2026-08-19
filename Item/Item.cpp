@@ -5,18 +5,18 @@
 #include "Item/Item.hpp"
 #include "Item/Repositories/Item.hpp"
 #include <OmniData/DataTable.hpp>
-#include <OmniData/Database.hpp>
+#include <OmniData/DatabasePool.hpp>
 
 namespace omnisphere::services {
 // Define the Impl struct for Pimpl idiom
 struct Item::Impl {
   std::shared_ptr<omnisphere::repositories::Item> item;
-  explicit Impl(std::shared_ptr<omnisphere::data::Database> database)
+  explicit Impl(std::shared_ptr<omnisphere::data::DatabasePool> database)
       : item(std::make_shared<omnisphere::repositories::Item>(database)) {}
 };
 
 // Update constructor to initialize pimpl
-Item::Item(std::shared_ptr<omnisphere::data::Database> database)
+Item::Item(std::shared_ptr<omnisphere::data::DatabasePool> database)
     : pimpl(std::make_unique<Impl>(database)) {}
 
 // Define destructor
@@ -116,4 +116,14 @@ Item::Modify(const std::vector<std::string> &fields,
                              e.what());
   }
 };
+
+omnisphere::types::DataTable
+Item::GetByIds(const std::vector<int> &ids) const {
+  return pimpl->item->GetByIds(ids);
+}
+
+omnisphere::repositories::ItemCursorPage
+Item::GetPage(std::optional<int> afterEntry, int limit) const {
+  return pimpl->item->GetPage(afterEntry, limit);
+}
 } // namespace omnisphere::services

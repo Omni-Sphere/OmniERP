@@ -1,20 +1,27 @@
 #pragma once
 #include <OmniData/DataTable.hpp>
+#include <OmniData/DatabasePool.hpp>
 
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "Item/DTOs/CreateItem.hpp"
 #include "Item/DTOs/ItemFilter.hpp"
 #include "Item/DTOs/UpdateItem.hpp"
-#include <OmniData/Database.hpp>
-#include <string>
-#include <vector>
 
 namespace omnisphere::repositories {
+
+struct ItemCursorPage {
+  omnisphere::types::DataTable dataTable;
+  std::optional<int> nextCursor;
+  bool hasPreviousPage = false;
+  int totalCount = 0;
+};
+
 class Item {
 public:
-  explicit Item(std::shared_ptr<omnisphere::data::Database> database);
+  explicit Item(std::shared_ptr<omnisphere::data::DatabasePool> database);
   ~Item();
 
   bool Create(const omnisphere::dtos::CreateItem &_item) const;
@@ -22,10 +29,15 @@ public:
   omnisphere::types::DataTable
   Search(const std::vector<std::string> &fields,
          const omnisphere::dtos::ItemFilter &_item) const;
-  // Full read without field filtering (SELECT *)
+
+  // Batch lookup for DataLoader
+  omnisphere::types::DataTable GetByIds(const std::vector<int> &ids) const;
+
+  // Keyset pagination
+  ItemCursorPage GetPage(std::optional<int> afterEntry, int limit) const;
 
 private:
-  std::shared_ptr<omnisphere::data::Database> Database;
+  std::shared_ptr<omnisphere::data::DatabasePool> Database;
 
   int GetCurrentSequence() const;
   bool UpdateUserSequence() const;
