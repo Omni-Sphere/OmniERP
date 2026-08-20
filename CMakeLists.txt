@@ -67,24 +67,8 @@ add_library(OmniERP SHARED
     Department/Repositories/Department.cpp
     Employee/Employee.cpp
     Employee/Repositories/Employee.cpp
-    Module/Module.cpp
-    Module/Repositories/Module.cpp
-    Permission/Permission.cpp
-    Permission/Repositories/Permission.cpp
-    Role/Role.cpp
-    Role/Repositories/Role.cpp
-    UserModule/UserModule.cpp
-    UserModule/Repositories/UserModule.cpp
-    RoleModule/RoleModule.cpp
-    RoleModule/Repositories/RoleModule.cpp
-    UserPermission/UserPermission.cpp
-    UserPermission/Repositories/UserPermission.cpp
-    RolePermission/RolePermission.cpp
-    RolePermission/Repositories/RolePermission.cpp
     Customer/Customer.cpp
     Customer/Repositories/Customer.cpp
-    Node/Node.cpp
-    Node/Repositories/Node.cpp
 )
 
 target_include_directories(OmniERP
@@ -144,15 +128,7 @@ set(PUBLIC_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/Store/Store.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Department/Department.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Employee/Employee.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Module/Module.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Permission/Permission.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Role/Role.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/UserModule/UserModule.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/RoleModule/RoleModule.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/UserPermission/UserPermission.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/RolePermission/RolePermission.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Customer/Customer.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Node/Node.hpp
 )
 
 foreach(HDR ${PUBLIC_HEADERS})
@@ -188,25 +164,8 @@ set(
     Department/DTOs
     Employee/Models
     Employee/DTOs
-    Module/Models
-    Module/DTOs
-    Permission/Models
-    Permission/DTOs
-    Role/Models
-    Role/DTOs
-    UserModule/Models
-    UserModule/DTOs
-    RoleModule/Models
-    RoleModule/DTOs
-    UserPermission/Models
-    UserPermission/DTOs
-    RolePermission/Models
-    RolePermission/DTOs
     Customer/Models
     Customer/DTOs
-    Node/Models
-    Node/DTOs
-    Node/Enums
 )
 
 foreach(DIR ${HEADER_DIRS})
