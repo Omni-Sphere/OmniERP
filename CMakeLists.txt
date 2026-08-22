@@ -5,31 +5,32 @@ project(OmniERP LANGUAGES CXX)
 get_filename_component(PROYECTOS_ROOT "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
 
 # --- Configuración inteligente para compilación manual ---
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        set(CMAKE_INSTALL_PREFIX "/usr/lib/OmniSphere" CACHE PATH "Directorio de instalación" FORCE)
-    else()
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Directorio de instalación" FORCE)
+    endif()
+    set(CMAKE_INSTALL_INCLUDEDIR "include/OmniSphere" CACHE PATH "Directorio de cabeceras" FORCE)
+    set(CMAKE_INSTALL_LIBDIR "lib/OmniSphere" CACHE PATH "Directorio de librerías" FORCE)
+    set(OMNI_BASE_DIR "/usr")
+else()
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         set(CMAKE_INSTALL_PREFIX "${PROYECTOS_ROOT}/.omni-dev-sdk" CACHE PATH "Directorio de instalación" FORCE)
     endif()
-endif()
-
-# Forzar la subcarpeta para aislar los headers (ej. include/OmniERP)
-set(CMAKE_INSTALL_INCLUDEDIR "include/${PROJECT_NAME}" CACHE PATH "Directorio de cabeceras" FORCE)
-
-include(GNUInstallDirs)
-
-# --- 1. Resolución de Rutas de las OmniLibs ---
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(OMNI_BASE_DIR "/usr/lib/OmniSphere")
-else()
+    set(CMAKE_INSTALL_INCLUDEDIR "include/OmniSphere" CACHE PATH "Directorio de cabeceras" FORCE)
+    set(CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Directorio de librerías" FORCE)
     set(OMNI_BASE_DIR "${PROYECTOS_ROOT}/.omni-dev-sdk")
 endif()
 
+include(GNUInstallDirs)
+
 if(EXISTS "${OMNI_BASE_DIR}")
     list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}")
-    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/OmniUtils/cmake/OmniUtils")
-    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/OmniData/cmake/OmniData")
-    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/OmniCore/cmake/OmniCore")
+    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/cmake/OmniUtils")
+    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/cmake/OmniData")
+    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/cmake/OmniCore")
+    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/OmniSphere/cmake/OmniUtils")
+    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/OmniSphere/cmake/OmniData")
+    list(APPEND CMAKE_PREFIX_PATH "${OMNI_BASE_DIR}/lib/OmniSphere/cmake/OmniCore")
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
@@ -91,16 +92,7 @@ if(NOT TARGET OmniCore::OmniCore)
 endif()
 
 # --- Corrección limpia de rutas para dependencias importadas ---
-foreach(LIB OmniUtils OmniData OmniCore)
-    if(TARGET ${LIB}::${LIB})
-        get_target_property(IS_IMPORTED ${LIB}::${LIB} IMPORTED)
-        if(IS_IMPORTED)
-            set_target_properties(${LIB}::${LIB} PROPERTIES
-                INTERFACE_INCLUDE_DIRECTORIES "${OMNI_BASE_DIR}/include"
-            )
-        endif()
-    endif()
-endforeach()
+
 
 target_link_libraries(OmniERP PUBLIC OmniUtils::OmniUtils OmniData::OmniData OmniCore::OmniCore)
 
@@ -190,11 +182,11 @@ install(TARGETS OmniERP
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
 )
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
     FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h"
     PATTERN "build" EXCLUDE
     PATTERN ".git" EXCLUDE
