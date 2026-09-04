@@ -75,6 +75,7 @@ add_library(OmniERP SHARED
 target_include_directories(OmniERP
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${OMNI_BASE_DIR}/include/OmniSphere>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
