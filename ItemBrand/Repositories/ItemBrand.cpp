@@ -14,8 +14,8 @@ ItemBrand::ItemBrand(std::shared_ptr<omnisphere::data::Database> _database)
 int ItemBrand::GetCurrentSequence() const {
   try {
     const std::string sQuery =
-        "SELECT COALESCE(ItemBrandsSequence, 0) + 1 ItemBrandsSequence FROM "
-        "Sequences WHERE Entry = 1";
+        "SELECT COALESCE(\"ItemBrandSequence\", 0) + 1 \"ItemBrandsSequence\" FROM "
+        "\"Sequences\" WHERE \"Entry\" = 1";
 
     omnisphere::types::DataTable data =
         database->FetchResults(sQuery, "ItemBrand::GetCurrentSequence");
@@ -32,8 +32,8 @@ int ItemBrand::GetCurrentSequence() const {
 
 bool ItemBrand::UpdateItemBrandsSequence() const {
   try {
-    const std::string sQuery = "UPDATE Sequences SET ItemBrandsSequence = "
-                               "COALESCE(ItemBrandsSequence,0) + 1";
+    const std::string sQuery = "UPDATE \"Sequences\" SET \"ItemBrandSequence\" = "
+                               "COALESCE(\"ItemBrandSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
     if (!database->RunStatement(sQuery, "ItemBrand::UpdateItemBrandsSequence"))
       return false;

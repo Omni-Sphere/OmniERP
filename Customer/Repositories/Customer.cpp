@@ -67,15 +67,15 @@ bool Customer::Create(const omnisphere::dtos::CreateCustomer &_customer) const {
     AddInsertParam("PaymentTerms", _customer.PaymentTerms, fields, params);
     AddInsertParam("MaxDiscount", _customer.MaxDiscount, fields, params);
     AddInsertParam("CreditLimit", _customer.CreditLimit, fields, params);
-    AddInsertParam("IsActive", std::string("Y"), fields, params);
+    AddInsertParam("IsActive", true, fields, params);
     AddInsertParam("CreatedBy", _customer.CreatedBy, fields, params);
     AddInsertParam("CreateDate", _customer.CreateDate, fields, params);
 
-    std::string query = "INSERT INTO Customers (";
+    std::string query = "INSERT INTO \"Customers\" (";
     std::string values = " VALUES (";
 
     for (size_t i = 0; i < fields.size(); ++i) {
-      query += fields[i];
+      query += "\"" + fields[i] + "\"";
       values += "?";
 
       if (i < fields.size() - 1) {
@@ -103,25 +103,25 @@ bool Customer::Create(const omnisphere::dtos::CreateCustomer &_customer) const {
 
 bool Customer::Update(const omnisphere::dtos::UpdateCustomer &_customer) const {
   try {
-    std::string sQuery = "UPDATE Customers SET ";
+    std::string sQuery = "UPDATE \"Customers\" SET ";
     std::vector<omnisphere::types::SQLParam> params;
     std::vector<std::string> setClauses;
 
-    AddSetParam("Code", _customer.Code, setClauses, params);
-    AddSetParam("Name", _customer.Name, setClauses, params);
-    AddSetParam("FirstName", _customer.FirstName, setClauses, params);
-    AddSetParam("MiddleName", _customer.MiddleName, setClauses, params);
-    AddSetParam("LastName", _customer.LastName, setClauses, params);
-    AddSetParam("SecondLastName", _customer.SecondLastName, setClauses, params);
-    AddSetParam("TaxID", _customer.TaxID, setClauses, params);
-    AddSetParam("Email", _customer.Email, setClauses, params);
-    AddSetParam("Phone", _customer.Phone, setClauses, params);
-    AddSetParam("PaymentTerms", _customer.PaymentTerms, setClauses, params);
-    AddSetParam("MaxDiscount", _customer.MaxDiscount, setClauses, params);
-    AddSetParam("CreditLimit", _customer.CreditLimit, setClauses, params);
-    AddSetParam("IsActive", _customer.IsActive, setClauses, params);
-    AddSetParam("LastUpdatedBy", _customer.LastUpdatedBy, setClauses, params);
-    AddSetParam("UpdateDate", _customer.UpdateDate, setClauses, params);
+    AddSetParam("\"Code\"", _customer.Code, setClauses, params);
+    AddSetParam("\"Name\"", _customer.Name, setClauses, params);
+    AddSetParam("\"FirstName\"", _customer.FirstName, setClauses, params);
+    AddSetParam("\"MiddleName\"", _customer.MiddleName, setClauses, params);
+    AddSetParam("\"LastName\"", _customer.LastName, setClauses, params);
+    AddSetParam("\"SecondLastName\"", _customer.SecondLastName, setClauses, params);
+    AddSetParam("\"TaxID\"", _customer.TaxID, setClauses, params);
+    AddSetParam("\"Email\"", _customer.Email, setClauses, params);
+    AddSetParam("\"Phone\"", _customer.Phone, setClauses, params);
+    AddSetParam("\"PaymentTerms\"", _customer.PaymentTerms, setClauses, params);
+    AddSetParam("\"MaxDiscount\"", _customer.MaxDiscount, setClauses, params);
+    AddSetParam("\"CreditLimit\"", _customer.CreditLimit, setClauses, params);
+    AddSetParam("\"IsActive\"", _customer.IsActive, setClauses, params);
+    AddSetParam("\"LastUpdatedBy\"", _customer.LastUpdatedBy, setClauses, params);
+    AddSetParam("\"UpdateDate\"", _customer.UpdateDate, setClauses, params);
 
     if (setClauses.empty())
       return true;
@@ -133,7 +133,7 @@ bool Customer::Update(const omnisphere::dtos::UpdateCustomer &_customer) const {
         sQuery += ", ";
     }
 
-    sQuery += " WHERE Entry = ?";
+    sQuery += " WHERE \"Entry\" = ?";
     params.push_back(omnisphere::types::MakeSQLParam(_customer.Entry));
 
     if (!Database->RunPrepared(sQuery, params))
@@ -151,7 +151,7 @@ bool Customer::Update(const omnisphere::dtos::UpdateCustomer &_customer) const {
 
 omnisphere::types::DataTable Customer::Read(int entry) const {
   try {
-    std::string sQuery = "SELECT * FROM Customers WHERE Entry = ?";
+    std::string sQuery = "SELECT * FROM \"Customers\" WHERE \"Entry\" = ?";
     std::vector<omnisphere::types::SQLParam> params;
     params.push_back(omnisphere::types::MakeSQLParam(entry));
 
@@ -164,7 +164,7 @@ omnisphere::types::DataTable Customer::Read(int entry) const {
 
 omnisphere::types::DataTable Customer::ReadAll() const {
   try {
-    const std::string query = "SELECT * FROM Customers WHERE IsActive = 'Y'";
+    const std::string query = "SELECT * FROM \"Customers\" WHERE \"IsActive\" = true";
 
     return Database->FetchResults(query);
   } catch (const std::exception &e) {
@@ -174,8 +174,8 @@ omnisphere::types::DataTable Customer::ReadAll() const {
 }
 
 int Customer::GetCurrentSequence() const {
-  const std::string query = "SELECT COALESCE(CustomerSequence, 0) + 1 "
-                            "CustomerSequence FROM Sequences WHERE Entry = 1";
+  const std::string query = "SELECT COALESCE(\"CustomerSequence\", 0) + 1 "
+                            "\"CustomerSequence\" FROM \"Sequences\" WHERE \"Entry\" = 1";
   omnisphere::types::DataTable dataTable = Database->FetchResults(query);
 
   if (dataTable.IsEmpty())
@@ -185,8 +185,8 @@ int Customer::GetCurrentSequence() const {
 }
 
 bool Customer::UpdateCustomerSequence() const {
-  const std::string query = "UPDATE Sequences SET CustomerSequence = "
-                            "COALESCE(CustomerSequence, 0) + 1 WHERE Entry = 1";
+  const std::string query = "UPDATE \"Sequences\" SET \"CustomerSequence\" = "
+                            "COALESCE(\"CustomerSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
   if (!Database->RunStatement(query))
     throw std::runtime_error("[RunStatement exception]");

@@ -13,7 +13,7 @@ public:
            std::optional<std::string> _TaxID, std::optional<std::string> _Email,
            std::optional<std::string> _Phone, int _PaymentTerms,
            double _MaxDiscount, std::optional<double> _CreditLimit,
-           std::string _IsActive, int _CreatedBy, std::string _CreateDate,
+           bool _IsActive, int _CreatedBy, std::string _CreateDate,
            std::optional<int> _LastUpdatedBy,
            std::optional<std::string> _UpdateDate)
       : omnisphere::models::BaseModel(
@@ -24,7 +24,7 @@ public:
         SecondLastName(std::move(_SecondLastName)), TaxID(std::move(_TaxID)),
         Email(std::move(_Email)), Phone(std::move(_Phone)),
         PaymentTerms(_PaymentTerms), MaxDiscount(_MaxDiscount),
-        CreditLimit(_CreditLimit), IsActive(std::move(_IsActive)) {}
+        CreditLimit(_CreditLimit), IsActive(_IsActive) {}
 
   const std::string FirstName;
   const std::optional<std::string> MiddleName;
@@ -36,7 +36,7 @@ public:
   const int PaymentTerms;
   const double MaxDiscount;
   const std::optional<double> CreditLimit;
-  const std::string IsActive;
+  const bool IsActive;
 };
 
 } // namespace omnisphere::models

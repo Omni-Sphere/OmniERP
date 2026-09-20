@@ -16,9 +16,9 @@ AreaRepository::~AreaRepository() {}
 bool AreaRepository::Create(const omnisphere::dtos::CreateArea &area) const {
   try {
     const std::string query =
-        "INSERT INTO Areas (Entry, Code, Name, Color, Icon, Capacity, "
-        "FloorEntry, CreatedBy, CreateDate, IsActive) VALUES (?, ?, ?, ?, ?, "
-        "?, ?, ?, ?, 'Y')";
+        "INSERT INTO \"Areas\" (\"Entry\", \"Code\", \"Name\", \"Color\", \"Icon\", \"Capacity\", "
+        "\"FloorEntry\", \"CreatedBy\", \"CreateDate\", \"IsActive\") VALUES (?, ?, ?, ?, ?, "
+        "?, ?, ?, ?, true)";
 
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -49,40 +49,40 @@ bool AreaRepository::Create(const omnisphere::dtos::CreateArea &area) const {
 
 bool AreaRepository::Update(const omnisphere::dtos::UpdateArea &area) const {
   try {
-    std::string query = "UPDATE Areas SET ";
+    std::string query = "UPDATE \"Areas\" SET ";
     std::vector<omnisphere::types::SQLParam> parameters;
     std::vector<std::string> setClauses;
 
     if (area.Name.has_value()) {
-      setClauses.push_back("Name = ?");
+      setClauses.push_back("\"Name\" = ?");
       parameters.push_back(omnisphere::types::MakeSQLParam(area.Name.value()));
     }
 
     if (area.Color.has_value()) {
-      setClauses.push_back("Color = ?");
+      setClauses.push_back("\"Color\" = ?");
       parameters.push_back(omnisphere::types::MakeSQLParam(area.Color.value()));
     }
 
     if (area.Capacity.has_value()) {
-      setClauses.push_back("Capacity = ?");
+      setClauses.push_back("\"Capacity\" = ?");
       parameters.push_back(
           omnisphere::types::MakeSQLParam(area.Capacity.value()));
     }
 
     if (area.FloorEntry.has_value()) {
-      setClauses.push_back("FloorEntry = ?");
+      setClauses.push_back("\"FloorEntry\" = ?");
       parameters.push_back(
           omnisphere::types::MakeSQLParam(area.FloorEntry.value()));
     }
 
     if (area.Icon.has_value()) {
-      setClauses.push_back("Icon = ?");
+      setClauses.push_back("\"Icon\" = ?");
       parameters.push_back(omnisphere::types::MakeSQLParam(area.Icon.value()));
     }
-    setClauses.push_back("LastUpdatedBy = ?");
+    setClauses.push_back("\"LastUpdatedBy\" = ?");
     parameters.push_back(omnisphere::types::MakeSQLParam(area.LastUpdatedBy));
 
-    setClauses.push_back("UpdateDate = ?");
+    setClauses.push_back("\"UpdateDate\" = ?");
     parameters.push_back(omnisphere::types::MakeSQLParam(area.UpdateDate));
 
     if (setClauses.empty())
@@ -95,7 +95,7 @@ bool AreaRepository::Update(const omnisphere::dtos::UpdateArea &area) const {
         query += ", ";
     }
 
-    query += " WHERE Entry = ?";
+    query += " WHERE \"Entry\" = ?";
 
     if (area.Entry.has_value()) {
       parameters.push_back(omnisphere::types::MakeSQLParam(area.Entry.value()));
@@ -119,9 +119,9 @@ bool AreaRepository::Update(const omnisphere::dtos::UpdateArea &area) const {
 omnisphere::types::DataTable AreaRepository::ReadAll() const {
   try {
     const std::string query =
-        "SELECT Entry, Code, Name, Color, Icon, Capacity, FloorEntry, "
-        "CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Areas WHERE "
-        "IsActive = 'Y'";
+        "SELECT \"Entry\", \"Code\", \"Name\", \"Color\", \"Icon\", \"Capacity\", \"FloorEntry\", "
+        "\"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", \"UpdateDate\" FROM \"Areas\" WHERE "
+        "\"IsActive\" = true";
 
     omnisphere::types::DataTable dataTable =
         database->FetchResults(query, "AreaRepository::ReadAll");
@@ -136,21 +136,21 @@ omnisphere::types::DataTable AreaRepository::ReadAll() const {
 omnisphere::types::DataTable
 AreaRepository::Read(const omnisphere::dtos::GetArea &getArea) const {
   try {
-    std::string query = "SELECT Entry, Code, Name, Color, Icon, Capacity, "
-                        "FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, "
-                        "UpdateDate FROM Areas WHERE IsActive = 'Y'";
+    std::string query = "SELECT \"Entry\", \"Code\", \"Name\", \"Color\", \"Icon\", \"Capacity\", "
+                        "\"FloorEntry\", \"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", "
+                        "\"UpdateDate\" FROM \"Areas\" WHERE \"IsActive\" = true";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getArea.Entry.has_value()) {
-      query += " AND Entry = ?";
+      query += " AND \"Entry\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.Entry.value()));
     } else if (getArea.Code.has_value()) {
-      query += " AND Code = ?";
+      query += " AND \"Code\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.Code.value()));
     } else if (getArea.FloorEntry.has_value()) {
-      query += " AND FloorEntry = ?";
+      query += " AND \"FloorEntry\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.FloorEntry.value()));
     } else {
@@ -166,8 +166,8 @@ AreaRepository::Read(const omnisphere::dtos::GetArea &getArea) const {
 
 int AreaRepository::GetCurrentSequence() const {
   try {
-    const std::string query = "SELECT COALESCE(AreaSequence, 0) + 1 "
-                              "AreaSequence FROM Sequences WHERE Entry = 1";
+    const std::string query = "SELECT COALESCE(\"AreaSequence\", 0) + 1 "
+                              "\"AreaSequence\" FROM \"Sequences\" WHERE \"Entry\" = 1";
 
     omnisphere::types::DataTable dataTable =
         database->FetchResults(query, "AreaRepository::GetCurrentSequence");
@@ -182,7 +182,7 @@ int AreaRepository::GetCurrentSequence() const {
 bool AreaRepository::UpdateAreaSequence() const {
   try {
     const std::string query =
-        "UPDATE Sequences SET AreaSequence = COALESCE(AreaSequence, 0) + 1";
+        "UPDATE \"Sequences\" SET \"AreaSequence\" = COALESCE(\"AreaSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
     if (!database->RunStatement(query, "AreaRepository::UpdateAreaSequence"))
       throw std::runtime_error("[RunStatement exception]");
@@ -196,7 +196,7 @@ bool AreaRepository::UpdateAreaSequence() const {
 
 bool AreaRepository::Delete(int entry) const {
   try {
-    const std::string query = "UPDATE Areas SET IsActive = 'N' WHERE Entry = ?";
+    const std::string query = "UPDATE \"Areas\" SET \"IsActive\" = false WHERE \"Entry\" = ?";
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(entry)};
 

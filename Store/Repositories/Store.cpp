@@ -125,7 +125,7 @@ Store::ReadAll(const std::vector<std::string> &fields) const {
         fields.empty() ? storeSelectFields : fields;
     auto qp = omnisphere::types::BuildQueryParts(selectFields, {});
     std::string sQuery =
-        "SELECT " + qp.SelectClause + " FROM Stores WHERE IsActive = 'Y'";
+        "SELECT " + qp.SelectClause + " FROM \"Stores\" WHERE \"IsActive\" = true";
 
     return Database->FetchResults(sQuery, "Store::ReadAll");
   } catch (const std::exception &e) {
@@ -159,7 +159,7 @@ Store::Search(const std::vector<std::string> &fields,
         fields.empty() ? storeSelectFields : fields;
     auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
 
-    std::string sQuery = "SELECT " + qp.SelectClause + " FROM Stores";
+    std::string sQuery = "SELECT " + qp.SelectClause + " FROM \"Stores\"";
     if (!qp.WhereClause.empty()) {
       sQuery += " WHERE " + qp.WhereClause;
     }
@@ -173,8 +173,8 @@ Store::Search(const std::vector<std::string> &fields,
 
 int Store::GetCurrentSequence() const {
   try {
-    const std::string query = "SELECT COALESCE(StoreSequence, 0) + 1 "
-                              "StoreSequence FROM Sequences WHERE Entry = 1";
+    const std::string query = "SELECT COALESCE(\"StoreSequence\", 0) + 1 "
+                              "\"StoreSequence\" FROM \"Sequences\" WHERE \"Entry\" = 1";
     omnisphere::types::DataTable dataTable = Database->FetchResults(query);
 
     return dataTable[0]["StoreSequence"];
@@ -187,7 +187,7 @@ int Store::GetCurrentSequence() const {
 bool Store::UpdateStoreSequence() const {
   try {
     const std::string query =
-        "UPDATE Sequences SET StoreSequence = COALESCE(StoreSequence, 0) + 1";
+        "UPDATE \"Sequences\" SET \"StoreSequence\" = COALESCE(\"StoreSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
     if (!Database->RunStatement(query))
       throw std::runtime_error("[RunStatement exception]");

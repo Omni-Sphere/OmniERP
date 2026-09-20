@@ -18,10 +18,10 @@ bool EmployeeRepository::Create(
     const omnisphere::dtos::CreateEmployee &employee) const {
   try {
     const std::string query =
-        "INSERT INTO Employees (Entry, Code, Name, FirstName, SecondName, "
-        "LastName, SecondLastName, Phone, DateOfBirth, PlaceOfBirth, Comments, "
-        "CreatedBy, CreateDate, IsActive) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), 'Y')";
+        "INSERT INTO \"Employees\" (\"Entry\", \"Code\", \"Name\", \"FirstName\", \"MiddleName\", "
+        "\"LastName\", \"SecondLastName\", \"Phone\", \"DateOfBirth\", \"PlaceOfBirth\", \"Comments\", "
+        "\"CreatedBy\", \"CreateDate\", \"IsActive\") "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, true)";
 
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -56,76 +56,76 @@ bool EmployeeRepository::Create(
 bool EmployeeRepository::Update(
     const omnisphere::dtos::UpdateEmployee &employee) const {
   try {
-    std::string query = "UPDATE Employees SET UpdateDate = GETDATE()";
+    std::string query = "UPDATE \"Employees\" SET \"UpdateDate\" = CURRENT_TIMESTAMP";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (employee.Code.has_value()) {
-      query += ", Code = ?";
+      query += ", \"Code\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.Code.value()));
     }
 
     if (employee.Name.has_value()) {
-      query += ", Name = ?";
+      query += ", \"Name\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.Name.value()));
     }
 
     if (employee.FirstName.has_value()) {
-      query += ", FirstName = ?";
+      query += ", \"FirstName\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.FirstName.value()));
     }
 
     if (employee.SecondName.has_value()) {
-      query += ", SecondName = ?";
+      query += ", \"MiddleName\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.SecondName.value()));
     }
 
     if (employee.LastName.has_value()) {
-      query += ", LastName = ?";
+      query += ", \"LastName\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.LastName.value()));
     }
 
     if (employee.SecondLastName.has_value()) {
-      query += ", SecondLastName = ?";
+      query += ", \"SecondLastName\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.SecondLastName.value()));
     }
 
     if (employee.Phone.has_value()) {
-      query += ", Phone = ?";
+      query += ", \"Phone\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.Phone.value()));
     }
 
     if (employee.DateOfBirth.has_value()) {
-      query += ", DateOfBirth = ?";
+      query += ", \"DateOfBirth\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.DateOfBirth.value()));
     }
 
     if (employee.PlaceOfBirth.has_value()) {
-      query += ", PlaceOfBirth = ?";
+      query += ", \"PlaceOfBirth\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.PlaceOfBirth.value()));
     }
 
     if (employee.Comments.has_value()) {
-      query += ", Comments = ?";
+      query += ", \"Comments\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(employee.Comments.value()));
     }
 
     if (employee.IsActive.has_value()) {
-      query += ", IsActive = ?";
+      query += ", \"IsActive\" = ?";
       parameters.push_back(omnisphere::types::MakeSQLParam(
-          employee.IsActive.value() ? "Y" : "N"));
+          employee.IsActive.value()));
     }
 
-    query += ", LastUpdatedBy = ? WHERE Entry = ?";
+    query += ", \"LastUpdatedBy\" = ? WHERE \"Entry\" = ?";
     parameters.push_back(omnisphere::types::MakeSQLParam(employee.UpdatedBy));
     parameters.push_back(omnisphere::types::MakeSQLParam(employee.Entry));
 
@@ -144,7 +144,7 @@ bool EmployeeRepository::Update(
 
 omnisphere::types::DataTable EmployeeRepository::ReadAll() const {
   try {
-    const std::string query = "SELECT * FROM Employees WHERE IsActive = 'Y'";
+    const std::string query = "SELECT * FROM \"Employees\" WHERE \"IsActive\" = true";
 
     return database->FetchResults(query, "EmployeeRepository::ReadAll");
   } catch (const std::exception &e) {
@@ -156,17 +156,17 @@ omnisphere::types::DataTable EmployeeRepository::ReadAll() const {
 omnisphere::types::DataTable EmployeeRepository::Read(
     const omnisphere::dtos::GetEmployee &getEmployee) const {
   try {
-    std::string query = "SELECT * FROM Employees WHERE 1=1";
+    std::string query = "SELECT * FROM \"Employees\" WHERE 1=1";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getEmployee.Entry.has_value()) {
-      query += " AND Entry = ?";
+      query += " AND \"Entry\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getEmployee.Entry.value()));
     }
 
     if (getEmployee.Code.has_value()) {
-      query += " AND Code = ?";
+      query += " AND \"Code\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getEmployee.Code.value()));
     }
@@ -182,7 +182,7 @@ omnisphere::types::DataTable EmployeeRepository::Read(
 bool EmployeeRepository::Delete(int entry) const {
   try {
     const std::string query =
-        "UPDATE Employees SET IsActive = 'N' WHERE Entry = ?";
+        "UPDATE \"Employees\" SET \"IsActive\" = false WHERE \"Entry\" = ?";
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(entry)};
 
@@ -201,8 +201,8 @@ bool EmployeeRepository::Delete(int entry) const {
 
 int EmployeeRepository::GetCurrentSequence() const {
   try {
-    const std::string query = "SELECT COALESCE(EmpSequence, 0) + 1 EmpSequence "
-                              "FROM Sequences WHERE Entry = 1";
+    const std::string query = "SELECT COALESCE(\"EmployeeSequence\", 0) + 1 \"EmpSequence\" "
+                              "FROM \"Sequences\" WHERE \"Entry\" = 1";
     omnisphere::types::DataTable dataTable =
         database->FetchResults(query, "EmployeeRepository::GetCurrentSequence");
 
@@ -215,8 +215,8 @@ int EmployeeRepository::GetCurrentSequence() const {
 
 bool EmployeeRepository::UpdateSequence() const {
   try {
-    const std::string query = "UPDATE Sequences SET EmpSequence = "
-                              "COALESCE(EmpSequence, 0) + 1 WHERE Entry = 1";
+    const std::string query = "UPDATE \"Sequences\" SET \"EmployeeSequence\" = "
+                              "COALESCE(\"EmployeeSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
     if (!database->RunStatement(query, "EmployeeRepository::UpdateSequence"))
       throw std::runtime_error("[RunStatement exception]");

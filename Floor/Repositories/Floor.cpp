@@ -16,8 +16,8 @@ FloorRepository::~FloorRepository() = default;
 bool FloorRepository::Create(const omnisphere::dtos::CreateFloor &floor) const {
   try {
     const std::string query =
-        "INSERT INTO Floors (Entry, Code, Name, CreatedBy, CreateDate, "
-        "IsActive) VALUES (?, ?, ?, ?, ?, 'Y')";
+        "INSERT INTO \"Floors\" (\"Entry\", \"Code\", \"Name\", \"CreatedBy\", \"CreateDate\", "
+        "\"IsActive\") VALUES (?, ?, ?, ?, ?, true)";
 
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -44,8 +44,8 @@ bool FloorRepository::Create(const omnisphere::dtos::CreateFloor &floor) const {
 
 bool FloorRepository::Update(const omnisphere::dtos::UpdateFloor &floor) const {
   try {
-    const std::string query = "UPDATE Floors SET Name = ?, LastUpdatedBy = ?, "
-                              "UpdateDate = ? WHERE Code = ?";
+    const std::string query = "UPDATE \"Floors\" SET \"Name\" = ?, \"LastUpdatedBy\" = ?, "
+                              "\"UpdateDate\" = ? WHERE \"Code\" = ?";
 
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(floor.Name),
@@ -69,8 +69,8 @@ bool FloorRepository::Update(const omnisphere::dtos::UpdateFloor &floor) const {
 omnisphere::types::DataTable FloorRepository::ReadAll() const {
   try {
     const std::string query =
-        "SELECT Entry, Code, Name, CreatedBy, CreateDate, LastUpdatedBy, "
-        "UpdateDate FROM Floors WHERE IsActive = 'Y'";
+        "SELECT \"Entry\", \"Code\", \"Name\", \"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", "
+        "\"UpdateDate\" FROM \"Floors\" WHERE \"IsActive\" = true";
 
     omnisphere::types::DataTable dataTable =
         database->FetchResults(query, "FloorRepository::ReadAll");
@@ -86,16 +86,16 @@ omnisphere::types::DataTable
 FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor) const {
   try {
     std::string query =
-        "SELECT Entry, Code, Name, CreatedBy, CreateDate, "
-        "LastUpdatedBy, UpdateDate FROM Floors WHERE IsActive = 'Y'";
+        "SELECT \"Entry\", \"Code\", \"Name\", \"CreatedBy\", \"CreateDate\", "
+        "\"LastUpdatedBy\", \"UpdateDate\" FROM \"Floors\" WHERE \"IsActive\" = true";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getFloor.Entry.has_value()) {
-      query += " AND Entry = ?";
+      query += " AND \"Entry\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Entry.value()));
     } else if (getFloor.Code.has_value()) {
-      query += " AND Code = ?";
+      query += " AND \"Code\" = ?";
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Code.value()));
     }
@@ -113,8 +113,8 @@ FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor) const {
 int FloorRepository::GetCurrentSequence() const {
   try {
     const std::string query =
-        "SELECT COALESCE(FloorSequence, 0) + 1 FloorSequence FROM Sequences "
-        "WHERE Entry = 1";
+        "SELECT COALESCE(\"FloorSequence\", 0) + 1 \"FloorSequence\" FROM \"Sequences\" "
+        "WHERE \"Entry\" = 1";
 
     omnisphere::types::DataTable dataTable =
         database->FetchResults(query, "FloorRepository::GetCurrentSequence");
@@ -122,10 +122,10 @@ int FloorRepository::GetCurrentSequence() const {
     if (dataTable.IsEmpty()) {
       // Initialize Sequences table with default row
       database->RunStatement(
-          "INSERT INTO Sequences (Entry, Code, Name, UserSequence, CreatedBy, "
-          "CreateDate, StoreSequence, CustomerSequence, AreaSequence, "
-          "FloorSequence, DeparmentSequence) VALUES (1, 'SEQ001', 'Sequence "
-          "Manager', 1, 1, GETDATE(), NULL, NULL, NULL, NULL, NULL)",
+          "INSERT INTO \"Sequences\" (\"Entry\", \"Code\", \"Name\", \"UserSequence\", \"CreatedBy\", "
+          "\"CreateDate\", \"StoreSequence\", \"CustomerSequence\", \"AreaSequence\", "
+          "\"FloorSequence\", \"DeparmentSequence\") VALUES (1, 'SEQ001', 'Sequence "
+          "Manager', 1, 1, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL) ON CONFLICT (\"Entry\") DO NOTHING",
           "FloorRepository::InitializeSequences");
       dataTable = database->FetchResults(
           query, "FloorRepository::GetCurrentSequence-Retry");
@@ -143,7 +143,7 @@ int FloorRepository::GetCurrentSequence() const {
 bool FloorRepository::UpdateFloorSequence() const {
   try {
     const std::string query =
-        "UPDATE Sequences SET FloorSequence = COALESCE(FloorSequence, 0) + 1";
+        "UPDATE \"Sequences\" SET \"FloorSequence\" = COALESCE(\"FloorSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
     if (!database->RunStatement(query, "FloorRepository::UpdateFloorSequence"))
       throw std::runtime_error("[RunStatement exception]");
@@ -158,7 +158,7 @@ bool FloorRepository::UpdateFloorSequence() const {
 bool FloorRepository::Delete(int entry) const {
   try {
     const std::string query =
-        "UPDATE Floors SET IsActive = 'N' WHERE Entry = ?";
+        "UPDATE \"Floors\" SET \"IsActive\" = false WHERE \"Entry\" = ?";
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(entry)};
 

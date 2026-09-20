@@ -259,8 +259,8 @@ int Item::GetCurrentSequence() const {
   if (!Database) return 0;
   auto conn = Database->Acquire();
   try {
-    const std::string sQuery = "SELECT COALESCE(ItemSequence, 0) + 1 "
-                               "ItemSequence FROM Sequences WHERE Entry = 1";
+    const std::string sQuery = "SELECT COALESCE(\"ItemSequence\", 0) + 1 "
+                               "\"ItemSequence\" FROM \"Sequences\" WHERE \"Entry\" = 1";
 
     omnisphere::types::DataTable data =
         conn->FetchResults(sQuery, "Item::GetCurrentSequence");
@@ -280,7 +280,7 @@ bool Item::UpdateUserSequence() const {
   auto conn = Database->Acquire();
   try {
     const std::string sQuery =
-        "UPDATE Sequences SET ItemSequence = COALESCE(ItemSequence,0) + 1";
+        "UPDATE \"Sequences\" SET \"ItemSequence\" = COALESCE(\"ItemSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
     if (!conn->RunStatement(sQuery, "Item::UpdateUserSequence"))
       return false;

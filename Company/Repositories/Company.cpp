@@ -104,7 +104,7 @@ bool Company::Create(const omnisphere::dtos::CreateCompany &_company) const {
       size_t valuesCloseParen = sQuery.find(")", insertCloseParen + 1);
 
       if (valuesCloseParen != std::string::npos) {
-        sQuery.insert(valuesCloseParen, ", 'Y'");
+        sQuery.insert(valuesCloseParen, ", true");
       }
     }
 

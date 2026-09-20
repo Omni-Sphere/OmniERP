@@ -13,10 +13,10 @@ TableRepository::~TableRepository() = default;
 
 bool TableRepository::Create(const omnisphere::dtos::CreateTable &table) const {
   try {
-    const std::string query = "INSERT INTO Tables (Entry, Code, Name, "
-                              "Capacity, Type, AreaEntry, FloorEntry, "
-                              "CreatedBy, CreateDate, IsActive) VALUES (?, ?, "
-                              "?, ?, ?, ?, ?, ?, ?, 'Y')";
+    const std::string query = "INSERT INTO \"Tables\" (\"Entry\", \"Code\", \"Name\", "
+                              "\"Capacity\", \"Type\", \"AreaEntry\", \"FloorEntry\", "
+                              "\"CreatedBy\", \"CreateDate\", \"IsActive\") VALUES (?, ?, "
+                              "?, ?, ?, ?, ?, ?, ?, true)";
 
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(GetCurrentSequence()),
@@ -47,13 +47,13 @@ bool TableRepository::Create(const omnisphere::dtos::CreateTable &table) const {
 
 bool TableRepository::Update(const omnisphere::dtos::UpdateTable &table) const {
   try {
-    std::string query = "UPDATE Tables SET ";
+    std::string query = "UPDATE \"Tables\" SET ";
     std::vector<omnisphere::types::SQLParam> parameters;
     std::vector<std::string> setClauses;
 
     auto addSetParam = [&](const std::string &field, auto &value) {
       if (value.has_value()) {
-        setClauses.push_back(field + " = ?");
+        setClauses.push_back("\"" + field + "\" = ?");
         parameters.push_back(omnisphere::types::MakeSQLParam(value.value()));
       }
     };
@@ -64,10 +64,10 @@ bool TableRepository::Update(const omnisphere::dtos::UpdateTable &table) const {
     addSetParam("AreaEntry", table.AreaEntry);
     addSetParam("FloorEntry", table.FloorEntry);
 
-    setClauses.push_back("LastUpdatedBy = ?");
+    setClauses.push_back("\"LastUpdatedBy\" = ?");
     parameters.push_back(omnisphere::types::MakeSQLParam(table.LastUpdatedBy));
 
-    setClauses.push_back("UpdateDate = ?");
+    setClauses.push_back("\"UpdateDate\" = ?");
     parameters.push_back(omnisphere::types::MakeSQLParam(table.UpdateDate));
 
     for (size_t i = 0; i < setClauses.size(); ++i) {
@@ -77,7 +77,7 @@ bool TableRepository::Update(const omnisphere::dtos::UpdateTable &table) const {
         query += ", ";
     }
 
-    query += " WHERE Entry = ?";
+    query += " WHERE \"Entry\" = ?";
     parameters.push_back(omnisphere::types::MakeSQLParam(table.Entry));
 
     if (!database->RunPrepared(query, parameters, "TableRepository::Update"))
@@ -96,9 +96,9 @@ bool TableRepository::Update(const omnisphere::dtos::UpdateTable &table) const {
 omnisphere::types::DataTable TableRepository::ReadAll() const {
   try {
     const std::string query =
-        "SELECT Entry, Code, Name, Capacity, Type, AreaEntry, FloorEntry, "
-        "CreatedBy, CreateDate, LastUpdatedBy, UpdateDate FROM Tables WHERE "
-        "IsActive = 'Y'";
+        "SELECT \"Entry\", \"Code\", \"Name\", \"Capacity\", \"Type\", \"AreaEntry\", \"FloorEntry\", "
+        "\"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", \"UpdateDate\" FROM \"Tables\" WHERE "
+        "\"IsActive\" = true";
 
     return database->FetchResults(query, "TableRepository::ReadAll");
   } catch (const std::exception &e) {
@@ -110,14 +110,14 @@ omnisphere::types::DataTable TableRepository::ReadAll() const {
 omnisphere::types::DataTable
 TableRepository::Read(const omnisphere::dtos::GetTable &getTable) const {
   try {
-    std::string query = "SELECT Entry, Code, Name, Capacity, Type, AreaEntry, "
-                        "FloorEntry, CreatedBy, CreateDate, LastUpdatedBy, "
-                        "UpdateDate FROM Tables WHERE IsActive = 'Y'";
+    std::string query = "SELECT \"Entry\", \"Code\", \"Name\", \"Capacity\", \"Type\", \"AreaEntry\", "
+                        "\"FloorEntry\", \"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", "
+                        "\"UpdateDate\" FROM \"Tables\" WHERE \"IsActive\" = true";
     std::vector<omnisphere::types::SQLParam> parameters;
 
     auto extractFilter = [&](const char *field, const auto &value) {
       if (value.has_value()) {
-        query += " AND " + std::string(field) + " = ?";
+        query += " AND \"" + std::string(field) + "\" = ?";
         parameters.push_back(omnisphere::types::MakeSQLParam(value.value()));
 
         return true;
@@ -126,7 +126,7 @@ TableRepository::Read(const omnisphere::dtos::GetTable &getTable) const {
       return false;
     };
 
-    if (!(extractFilter("TablEntry", getTable.Entry) ||
+    if (!(extractFilter("Entry", getTable.Entry) ||
           extractFilter("Code", getTable.Code) ||
           extractFilter("AreaEntry", getTable.AreaEntry) ||
           extractFilter("FloorEntry", getTable.FloorEntry))) {
@@ -142,8 +142,8 @@ TableRepository::Read(const omnisphere::dtos::GetTable &getTable) const {
 
 int TableRepository::GetCurrentSequence() const {
   try {
-    const std::string query = "SELECT COALESCE(TableSequence, 0) + 1 "
-                              "TableSequence FROM Sequences WHERE Entry = 1";
+    const std::string query = "SELECT COALESCE(\"TableSequence\", 0) + 1 "
+                              "\"TableSequence\" FROM \"Sequences\" WHERE \"Entry\" = 1";
     omnisphere::types::DataTable dataTable =
         database->FetchResults(query, "TableRepository::GetCurrentSequence");
 
@@ -157,7 +157,7 @@ int TableRepository::GetCurrentSequence() const {
 bool TableRepository::UpdateTableSequence() const {
   try {
     const std::string query =
-        "UPDATE Sequences SET TableSequence = COALESCE(TableSequence, 0) + 1";
+        "UPDATE \"Sequences\" SET \"TableSequence\" = COALESCE(\"TableSequence\", 0) + 1 WHERE \"Entry\" = 1";
 
     if (!database->RunStatement(query, "TableRepository::UpdateTableSequence"))
       throw std::runtime_error("[RunStatement exception]");
@@ -172,7 +172,7 @@ bool TableRepository::UpdateTableSequence() const {
 bool TableRepository::Delete(int entry) const {
   try {
     const std::string query =
-        "UPDATE Tables SET IsActive = 'N' WHERE TablEntry = ?";
+        "UPDATE \"Tables\" SET \"IsActive\" = false WHERE \"Entry\" = ?";
     std::vector<omnisphere::types::SQLParam> parameters = {
         omnisphere::types::MakeSQLParam(entry)};
 
