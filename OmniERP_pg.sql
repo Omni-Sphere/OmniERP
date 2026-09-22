@@ -438,3 +438,25 @@ CREATE INDEX IF NOT EXISTS "IX_Customers_IsActive" ON "Customers" ("IsActive");
 
 CREATE INDEX IF NOT EXISTS "IX_Areas_FloorEntry" ON "Areas" ("FloorEntry");
 CREATE INDEX IF NOT EXISTS "IX_Areas_IsActive" ON "Areas" ("IsActive");
+
+-- -----------------------------------------------------------------------------
+-- 9. Migración IsCanceled (Soft Delete Estándar)
+-- -----------------------------------------------------------------------------
+ALTER TABLE "Company" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Stores" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Departments" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Employees" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Floors" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Areas" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Tables" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Nodes" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "ItemBrands" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "ItemGroups" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Items" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Customers" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Modules" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Permissions" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Roles" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
+
+CREATE INDEX IF NOT EXISTS "IX_Items_IsCanceled" ON "Items" ("IsCanceled");
+CREATE INDEX IF NOT EXISTS "IX_Customers_IsCanceled" ON "Customers" ("IsCanceled");
