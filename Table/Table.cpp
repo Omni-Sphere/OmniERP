@@ -1,5 +1,6 @@
 #include "Table/Repositories/Table.hpp"
 #include "Table/Table.hpp"
+#include <OmniData/DataMapper.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -49,21 +50,10 @@ Table::Modify(const omnisphere::dtos::UpdateTable &table) const {
   }
 }
 
-std::vector<omnisphere::models::Table> Table::GetAll() const {
+std::vector<omnisphere::models::Table> Table::GetAll(const std::vector<std::string>& fields) const {
   try {
-    std::vector<omnisphere::models::Table> tables;
-    omnisphere::types::DataTable data = pImpl->tableRepository->ReadAll();
-
-    for (int i = 0; i < data.RowsCount(); i++) {
-      tables.emplace_back(data[i]["Entry"], data[i]["Code"], data[i]["Name"],
-                          data[i]["Capacity"], data[i]["Type"],
-                          data[i]["AreaEntry"], data[i]["FloorEntry"],
-                          data[i]["CreatedBy"], data[i]["CreateDate"],
-                          data[i]["LastUpdatedBy"].GetOptional<int>(),
-                          data[i]["UpdateDate"].GetOptional<std::string>());
-    }
-
-    return tables;
+    omnisphere::types::DataTable data = pImpl->tableRepository->ReadAll(fields);
+    return omnisphere::types::DataTableToModels<omnisphere::models::Table>(data);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[GetAllTables Exception] ") +
                              e.what());
@@ -71,40 +61,24 @@ std::vector<omnisphere::models::Table> Table::GetAll() const {
 }
 
 omnisphere::models::Table
-Table::Get(const omnisphere::dtos::GetTable &getTable) const {
+Table::Get(const omnisphere::dtos::GetTable &getTable, const std::vector<std::string>& fields) const {
   try {
-    omnisphere::types::DataTable data = pImpl->tableRepository->Read(getTable);
+    omnisphere::types::DataTable data = pImpl->tableRepository->Read(getTable, fields);
 
     if (data.RowsCount() == 0)
       throw std::runtime_error("Table doesn't exists");
 
-    return omnisphere::models::Table(
-        data[0]["Entry"], data[0]["Code"], data[0]["Name"], data[0]["Capacity"],
-        data[0]["Type"], data[0]["AreaEntry"], data[0]["FloorEntry"],
-        data[0]["CreatedBy"], data[0]["CreateDate"],
-        data[0]["LastUpdatedBy"].GetOptional<int>(),
-        data[0]["UpdateDate"].GetOptional<std::string>());
+    return omnisphere::types::FromDataRow<omnisphere::models::Table>(data[0]);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[GetTable Exception] ") + e.what());
   }
 }
 
 std::vector<omnisphere::models::Table>
-Table::Search(const omnisphere::dtos::GetTable &getTable) const {
+Table::Search(const omnisphere::dtos::GetTable &getTable, const std::vector<std::string>& fields) const {
   try {
-    std::vector<omnisphere::models::Table> tables;
-    omnisphere::types::DataTable data = pImpl->tableRepository->Read(getTable);
-
-    for (int i = 0; i < data.RowsCount(); i++) {
-      tables.emplace_back(data[i]["Entry"], data[i]["Code"], data[i]["Name"],
-                          data[i]["Capacity"], data[i]["Type"],
-                          data[i]["AreaEntry"], data[i]["FloorEntry"],
-                          data[i]["CreatedBy"], data[i]["CreateDate"],
-                          data[i]["LastUpdatedBy"].GetOptional<int>(),
-                          data[i]["UpdateDate"].GetOptional<std::string>());
-    }
-
-    return tables;
+    omnisphere::types::DataTable data = pImpl->tableRepository->Read(getTable, fields);
+    return omnisphere::types::DataTableToModels<omnisphere::models::Table>(data);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[SearchTables Exception] ") +
                              e.what());

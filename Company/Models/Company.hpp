@@ -1,12 +1,14 @@
 #pragma once
 
 #include <OmniCore/Base/BaseModel.hpp>
+#include <boost/describe.hpp>
 #include <optional>
 #include <string>
 
 namespace omnisphere::models {
 class Company : public omnisphere::models::BaseModel {
 public:
+  Company() = default;
   Company(int _Entry, std::string _Code, std::string _Name,
           std::optional<std::string> _CommercialName,
           std::optional<std::string> _Address,
@@ -35,23 +37,27 @@ public:
         XProfile(std::move(_XProfile)), LogoFile(std::move(_LogoFile)),
         CommercialName(std::move(_CommercialName)), IsActive(_IsActive) {}
 
-  const std::optional<std::string> Address;
-  const std::optional<std::string> Address2;
-  const std::optional<int> City;
-  const std::optional<int> State;
-  const std::optional<int> ZipCode;
-  const std::optional<int> Country;
-  const std::optional<std::string> TaxID;
-  const int Currency;
-  const std::optional<std::string> Phone1;
-  const std::optional<std::string> Phone2;
-  const std::optional<std::string> Email;
-  const std::optional<std::string> WebSite;
-  const std::optional<std::string> FacebookProfile;
-  const std::optional<std::string> InstagramProfile;
-  const std::optional<std::string> XProfile;
-  const std::optional<std::string> LogoFile;
-  const std::optional<std::string> CommercialName;
-  const bool IsActive;
+  std::optional<std::string> Address;
+  std::optional<std::string> Address2;
+  std::optional<int> City;
+  std::optional<int> State;
+  std::optional<int> ZipCode;
+  std::optional<int> Country;
+  std::optional<std::string> TaxID;
+  int Currency{0};
+  std::optional<std::string> Phone1;
+  std::optional<std::string> Phone2;
+  std::optional<std::string> Email;
+  std::optional<std::string> WebSite;
+  std::optional<std::string> FacebookProfile;
+  std::optional<std::string> InstagramProfile;
+  std::optional<std::string> XProfile;
+  std::optional<std::string> LogoFile;
+  std::optional<std::string> CommercialName;
+  bool IsActive{true};
 };
+BOOST_DESCRIBE_STRUCT(Company, (omnisphere::models::BaseModel),
+                      (Address, Address2, City, State, ZipCode, Country, TaxID, Currency,
+                       Phone1, Phone2, Email, WebSite, FacebookProfile, InstagramProfile,
+                       XProfile, LogoFile, CommercialName, IsActive))
 } // namespace omnisphere::models

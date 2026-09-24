@@ -16,7 +16,7 @@ public:
   ~Company();
 
   omnisphere::models::Company
-  Get(const omnisphere::dtos::GetCompany &_company) const;
+  Get(const omnisphere::dtos::GetCompany &_company, const std::vector<std::string>& fields = {}) const;
   bool Add(const omnisphere::dtos::CreateCompany &_company) const;
   bool Modify(const omnisphere::dtos::UpdateCompany &_company) const;
 

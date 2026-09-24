@@ -15,8 +15,8 @@ public:
   explicit Customer(std::shared_ptr<omnisphere::data::Database> database);
   ~Customer();
 
-  std::optional<omnisphere::models::Customer> Get(int entry) const;
-  std::vector<omnisphere::models::Customer> GetAll() const;
+  std::optional<omnisphere::models::Customer> Get(int entry, const std::vector<std::string>& fields = {}) const;
+  std::vector<omnisphere::models::Customer> GetAll(const std::vector<std::string>& fields = {}) const;
   bool Add(const omnisphere::dtos::CreateCustomer &_customer) const;
   bool Modify(const omnisphere::dtos::UpdateCustomer &_customer) const;
 

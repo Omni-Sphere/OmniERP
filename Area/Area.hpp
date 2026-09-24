@@ -20,10 +20,10 @@ public:
   omnisphere::models::Area Add(const omnisphere::dtos::CreateArea &area) const;
   omnisphere::models::Area
   Modify(const omnisphere::dtos::UpdateArea &area) const;
-  std::vector<omnisphere::models::Area> GetAll() const;
-  omnisphere::models::Area Get(const omnisphere::dtos::GetArea &getArea) const;
+  std::vector<omnisphere::models::Area> GetAll(const std::vector<std::string>& fields = {}) const;
+  omnisphere::models::Area Get(const omnisphere::dtos::GetArea &getArea, const std::vector<std::string>& fields = {}) const;
   std::vector<omnisphere::models::Area>
-  Search(const omnisphere::dtos::GetArea &getArea) const;
+  Search(const omnisphere::dtos::GetArea &getArea, const std::vector<std::string>& fields = {}) const;
   bool Remove(int entry) const;
 };
 } // namespace omnisphere::area

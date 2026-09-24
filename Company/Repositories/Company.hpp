@@ -20,7 +20,7 @@ public:
   bool Create(const omnisphere::dtos::CreateCompany &_company) const;
   bool Update(const omnisphere::dtos::UpdateCompany &_company) const;
   omnisphere::types::DataTable
-  Read(const omnisphere::dtos::GetCompany &_company) const;
+  Read(const omnisphere::dtos::GetCompany &_company, const std::vector<std::string>& fields = {}) const;
 
 private:
   std::shared_ptr<omnisphere::data::Database> Database;

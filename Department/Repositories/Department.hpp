@@ -12,9 +12,9 @@ public:
 
   bool Create(const omnisphere::dtos::CreateDepartment &department) const;
   bool Update(const omnisphere::dtos::UpdateDepartment &department) const;
-  omnisphere::types::DataTable ReadAll() const;
+  omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
   omnisphere::types::DataTable
-  Read(const omnisphere::dtos::GetDepartment &getDepartment) const;
+  Read(const omnisphere::dtos::GetDepartment &getDepartment, const std::vector<std::string>& fields = {}) const;
   bool Delete(int entry) const;
 
 private:

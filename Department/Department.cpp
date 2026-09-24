@@ -2,6 +2,7 @@
 #include "Department/Repositories/Department.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
+#include <OmniData/DataMapper.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -54,22 +55,11 @@ Department::Modify(const omnisphere::dtos::UpdateDepartment &department) const {
   }
 }
 
-std::vector<omnisphere::models::Department> Department::GetAll() const {
+std::vector<omnisphere::models::Department> Department::GetAll(const std::vector<std::string>& fields) const {
   try {
-    std::vector<omnisphere::models::Department> list;
-    omnisphere::types::DataTable data = pImpl->repository->ReadAll();
-
-    for (int i = 0; i < data.RowsCount(); i++) {
-      list.emplace_back(data[i]["Entry"], data[i]["Code"], data[i]["Name"],
-                        data[i]["IsActive"], data[i]["CreatedBy"],
-                        data[i]["CreateDate"],
-                        data[i]["LastUpdatedBy"].GetOptional<int>(),
-                        data[i]["UpdateDate"].GetOptional<std::string>());
-    }
-
-    return list;
+    omnisphere::types::DataTable data = pImpl->repository->ReadAll(fields);
+    return omnisphere::types::DataTableToModels<omnisphere::models::Department>(data);
   } catch (const std::exception &e)
-
   {
     throw std::runtime_error(std::string("[GetAllDepartments Exception] ") +
                              e.what());
@@ -77,20 +67,15 @@ std::vector<omnisphere::models::Department> Department::GetAll() const {
 }
 
 omnisphere::models::Department
-Department::Get(const omnisphere::dtos::GetDepartment &getDepartment) const {
+Department::Get(const omnisphere::dtos::GetDepartment &getDepartment, const std::vector<std::string>& fields) const {
   try {
-    omnisphere::types::DataTable data = pImpl->repository->Read(getDepartment);
+    omnisphere::types::DataTable data = pImpl->repository->Read(getDepartment, fields);
 
     if (data.RowsCount() == 0)
       throw std::runtime_error("Department doesn't exist");
 
-    return omnisphere::models::Department(
-        data[0]["Entry"], data[0]["Code"], data[0]["Name"], data[0]["IsActive"],
-        data[0]["CreatedBy"], data[0]["CreateDate"],
-        data[0]["LastUpdatedBy"].GetOptional<int>(),
-        data[0]["UpdateDate"].GetOptional<std::string>());
+    return omnisphere::types::FromDataRow<omnisphere::models::Department>(data[0]);
   } catch (const std::exception &e)
-
   {
     throw std::runtime_error(std::string("[GetDepartment Exception] ") +
                              e.what());

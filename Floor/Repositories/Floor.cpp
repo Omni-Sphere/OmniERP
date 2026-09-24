@@ -1,6 +1,8 @@
 #include "Floor/Repositories/Floor.hpp"
+#include "Floor/Models/Floor.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
+#include <OmniData/QueryBuilder.hpp>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -66,44 +68,41 @@ bool FloorRepository::Update(const omnisphere::dtos::UpdateFloor &floor) const {
   }
 }
 
-omnisphere::types::DataTable FloorRepository::ReadAll() const {
+omnisphere::types::DataTable FloorRepository::ReadAll(const std::vector<std::string>& fields) const {
   try {
-    const std::string query =
-        "SELECT \"Entry\", \"Code\", \"Name\", \"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", "
-        "\"UpdateDate\" FROM \"Floors\" WHERE \"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Floor>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Floors\" WHERE " + qp.WhereClause;
 
-    omnisphere::types::DataTable dataTable =
-        database->FetchResults(query, "FloorRepository::ReadAll");
-
-    return dataTable;
+    return database->FetchResults(query, "FloorRepository::ReadAll");
   } catch (const std::exception &e) {
-    throw(std::runtime_error(std::string("[ReadAllFloor Exception]") + " " +
+    throw(std::runtime_error(std::string("[ReadAllFloor Exception] ") + " " +
                              e.what()));
   }
 }
 
 omnisphere::types::DataTable
-FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor) const {
+FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor, const std::vector<std::string>& fields) const {
   try {
-    std::string query =
-        "SELECT \"Entry\", \"Code\", \"Name\", \"CreatedBy\", \"CreateDate\", "
-        "\"LastUpdatedBy\", \"UpdateDate\" FROM \"Floors\" WHERE \"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Floor>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getFloor.Entry.has_value()) {
-      query += " AND \"Entry\" = ?";
+      conditions.push_back({"AND", "\"Entry\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Entry.value()));
     } else if (getFloor.Code.has_value()) {
-      query += " AND \"Code\" = ?";
+      conditions.push_back({"AND", "\"Code\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Code.value()));
     }
 
-    omnisphere::types::DataTable dataTable =
-        database->FetchPrepared(query, parameters, "FloorRepository::Read");
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Floors\" WHERE " + qp.WhereClause;
 
-    return dataTable;
+    return database->FetchPrepared(query, parameters, "FloorRepository::Read");
   } catch (const std::exception &e) {
     throw(std::runtime_error(std::string("[ReadFloor Exception]") + " " +
                              e.what()));

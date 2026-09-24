@@ -1,7 +1,9 @@
 #include "Department.hpp"
+#include "Department/Models/Department.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
 #include <OmniData/SQLParams.hpp>
+#include <OmniData/QueryBuilder.hpp>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -86,11 +88,12 @@ bool DepartmentRepository::Update(
   }
 }
 
-omnisphere::types::DataTable DepartmentRepository::ReadAll() const {
+omnisphere::types::DataTable DepartmentRepository::ReadAll(const std::vector<std::string>& fields) const {
   try {
-    const std::string query =
-        "SELECT \"Entry\", \"Code\", \"Name\", \"IsActive\", \"CreatedBy\", \"CreateDate\", "
-        "\"LastUpdatedBy\", \"UpdateDate\" FROM \"Departments\" WHERE \"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Department>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Departments\" WHERE " + qp.WhereClause;
 
     return database->FetchResults(query, "DepartmentRepository::ReadAll");
   } catch (const std::exception &e) {
@@ -100,30 +103,34 @@ omnisphere::types::DataTable DepartmentRepository::ReadAll() const {
 }
 
 omnisphere::types::DataTable DepartmentRepository::Read(
-    const omnisphere::dtos::GetDepartment &getDepartment) const {
+    const omnisphere::dtos::GetDepartment &getDepartment,
+    const std::vector<std::string>& fields) const {
   try {
-    std::string query =
-        "SELECT \"Entry\", \"Code\", \"Name\", \"IsActive\", \"CreatedBy\", \"CreateDate\", "
-        "\"LastUpdatedBy\", \"UpdateDate\" FROM \"Departments\" WHERE 1=1";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Department>(fields);
+    std::vector<omnisphere::types::Condition> conditions;
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getDepartment.Entry.has_value()) {
-      query += " AND \"Entry\" = ?";
+      conditions.push_back({conditions.empty() ? "" : "AND", "\"Entry\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getDepartment.Entry.value()));
     }
 
     if (getDepartment.Code.has_value()) {
-      query += " AND \"Code\" = ?";
+      conditions.push_back({conditions.empty() ? "" : "AND", "\"Code\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getDepartment.Code.value()));
     }
 
     if (getDepartment.Name.has_value()) {
-      query += " AND \"Name\" = ?";
+      conditions.push_back({conditions.empty() ? "" : "AND", "\"Name\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getDepartment.Name.value()));
     }
+
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Departments\"" +
+                        (qp.WhereClause.empty() ? "" : " WHERE " + qp.WhereClause);
 
     return database->FetchPrepared(query, parameters,
                                    "DepartmentRepository::Read");

@@ -1,7 +1,9 @@
 #include "Company/Repositories/Company.hpp"
+#include "Company/Models/Company.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
 #include <OmniData/SQLParams.hpp>
+#include <OmniData/QueryBuilder.hpp>
 
 namespace omnisphere::repositories {
 Company::Company(std::shared_ptr<omnisphere::data::Database> database)
@@ -174,14 +176,12 @@ bool Company::Update(const omnisphere::dtos::UpdateCompany &_company) const {
 }
 
 omnisphere::types::DataTable
-Company::Read(const omnisphere::dtos::GetCompany &getCompany) const {
+Company::Read(const omnisphere::dtos::GetCompany &getCompany, const std::vector<std::string>& fields) const {
   try {
-    std::string sQuery =
-        "SELECT Entry, Code, Name, CommercialName, Address, "
-        "Address2, City, State, ZipCode, Country, TaxID, Currency, Phone1, "
-        "Phone2, Email, WebSite, "
-        "FacebookProfile, InstagramProfile, XProfile, LogoFile, IsActive "
-        "FROM Company ";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Company>(fields);
+    std::vector<omnisphere::types::Condition> conditions;
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string sQuery = "SELECT " + qp.SelectClause + " FROM \"Company\"";
 
     return Database->FetchResults(sQuery, "Company::Read");
   } catch (const std::exception &e) {

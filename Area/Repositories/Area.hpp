@@ -19,9 +19,9 @@ public:
   int GetCurrentSequence() const;
   bool Create(const omnisphere::dtos::CreateArea &area) const;
   bool Update(const omnisphere::dtos::UpdateArea &area) const;
-  omnisphere::types::DataTable ReadAll() const;
+  omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
   omnisphere::types::DataTable
-  Read(const omnisphere::dtos::GetArea &getArea) const;
+  Read(const omnisphere::dtos::GetArea &getArea, const std::vector<std::string>& fields = {}) const;
   bool Delete(int entry) const;
 };
 }; // namespace omnisphere::repositories

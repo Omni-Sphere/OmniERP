@@ -1,11 +1,13 @@
 #pragma once
 #include <OmniCore/Base/BaseModel.hpp>
+#include <boost/describe.hpp>
 #include <optional>
 #include <string>
 
 namespace omnisphere::models {
 class Department : public BaseModel {
 public:
+  Department() = default;
   Department(int _Entry, std::string _Code, std::string _Name, bool _IsActive,
              int _CreatedBy, std::string _CreateDate,
              std::optional<int> _LastUpdatedBy,
@@ -15,6 +17,7 @@ public:
                   std::move(_UpdateDate)),
         IsActive(_IsActive) {}
 
-  bool IsActive;
+  bool IsActive{true};
 };
+BOOST_DESCRIBE_STRUCT(Department, (BaseModel), (IsActive))
 } // namespace omnisphere::models

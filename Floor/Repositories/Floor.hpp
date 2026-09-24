@@ -21,9 +21,9 @@ public:
   ~FloorRepository();
   bool Create(const omnisphere::dtos::CreateFloor &floor) const;
   bool Update(const omnisphere::dtos::UpdateFloor &floor) const;
-  omnisphere::types::DataTable ReadAll() const;
+  omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
   omnisphere::types::DataTable
-  Read(const omnisphere::dtos::GetFloor &getFloor) const;
+  Read(const omnisphere::dtos::GetFloor &getFloor, const std::vector<std::string>& fields = {}) const;
   bool Delete(int entry) const;
 };
 }; // namespace omnisphere::repositories

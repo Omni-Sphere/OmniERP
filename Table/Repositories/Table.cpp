@@ -1,4 +1,6 @@
 #include <OmniData/SQLParams.hpp>
+#include <OmniData/QueryBuilder.hpp>
+#include "Table/Models/Table.hpp"
 #include "Table/Repositories/Table.hpp"
 #include <stdexcept>
 #include <string>
@@ -93,12 +95,12 @@ bool TableRepository::Update(const omnisphere::dtos::UpdateTable &table) const {
   }
 }
 
-omnisphere::types::DataTable TableRepository::ReadAll() const {
+omnisphere::types::DataTable TableRepository::ReadAll(const std::vector<std::string>& fields) const {
   try {
-    const std::string query =
-        "SELECT \"Entry\", \"Code\", \"Name\", \"Capacity\", \"Type\", \"AreaEntry\", \"FloorEntry\", "
-        "\"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", \"UpdateDate\" FROM \"Tables\" WHERE "
-        "\"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Table>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Tables\" WHERE " + qp.WhereClause;
 
     return database->FetchResults(query, "TableRepository::ReadAll");
   } catch (const std::exception &e) {
@@ -108,16 +110,15 @@ omnisphere::types::DataTable TableRepository::ReadAll() const {
 }
 
 omnisphere::types::DataTable
-TableRepository::Read(const omnisphere::dtos::GetTable &getTable) const {
+TableRepository::Read(const omnisphere::dtos::GetTable &getTable, const std::vector<std::string>& fields) const {
   try {
-    std::string query = "SELECT \"Entry\", \"Code\", \"Name\", \"Capacity\", \"Type\", \"AreaEntry\", "
-                        "\"FloorEntry\", \"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", "
-                        "\"UpdateDate\" FROM \"Tables\" WHERE \"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Table>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
     std::vector<omnisphere::types::SQLParam> parameters;
 
     auto extractFilter = [&](const char *field, const auto &value) {
       if (value.has_value()) {
-        query += " AND \"" + std::string(field) + "\" = ?";
+        conditions.push_back({"AND", "\"" + std::string(field) + "\"", "=", "?"});
         parameters.push_back(omnisphere::types::MakeSQLParam(value.value()));
 
         return true;
@@ -133,6 +134,9 @@ TableRepository::Read(const omnisphere::dtos::GetTable &getTable) const {
       throw std::runtime_error("GetTable: 'Entry', 'Code', 'AreaEntry' or "
                                "'FloorEntry' is required for Read");
     }
+
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Tables\" WHERE " + qp.WhereClause;
 
     return database->FetchPrepared(query, parameters, "TableRepository::Read");
   } catch (const std::exception &e) {

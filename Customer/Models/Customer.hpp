@@ -1,12 +1,15 @@
 #pragma once
 
 #include <OmniCore/Base/BaseModel.hpp>
+#include <boost/describe.hpp>
 #include <optional>
 #include <string>
 
 namespace omnisphere::models {
 class Customer : public omnisphere::models::BaseModel {
 public:
+  Customer() = default;
+
   Customer(int _Entry, std::string _Code, std::string _Name,
            std::string _FirstName, std::optional<std::string> _MiddleName,
            std::string _LastName, std::optional<std::string> _SecondLastName,
@@ -26,17 +29,23 @@ public:
         PaymentTerms(_PaymentTerms), MaxDiscount(_MaxDiscount),
         CreditLimit(_CreditLimit), IsActive(_IsActive) {}
 
-  const std::string FirstName;
-  const std::optional<std::string> MiddleName;
-  const std::string LastName;
-  const std::optional<std::string> SecondLastName;
-  const std::optional<std::string> TaxID;
-  const std::optional<std::string> Email;
-  const std::optional<std::string> Phone;
-  const int PaymentTerms;
-  const double MaxDiscount;
-  const std::optional<double> CreditLimit;
-  const bool IsActive;
+  std::string FirstName;
+  std::optional<std::string> MiddleName;
+  std::string LastName;
+  std::optional<std::string> SecondLastName;
+  std::optional<std::string> TaxID;
+  std::optional<std::string> Email;
+  std::optional<std::string> Phone;
+  int PaymentTerms = 0;
+  double MaxDiscount = 0.0;
+  std::optional<double> CreditLimit;
+  bool IsActive = true;
 };
+
+BOOST_DESCRIBE_STRUCT(Customer, (),
+                      (Entry, Code, Name, FirstName, MiddleName, LastName,
+                       SecondLastName, TaxID, Email, Phone, PaymentTerms,
+                       MaxDiscount, CreditLimit, IsActive, CreatedBy,
+                       CreateDate, LastUpdatedBy, UpdateDate))
 
 } // namespace omnisphere::models

@@ -18,8 +18,8 @@ public:
 
   bool Create(const omnisphere::dtos::CreateCustomer &_customer) const;
   bool Update(const omnisphere::dtos::UpdateCustomer &_customer) const;
-  omnisphere::types::DataTable Read(int entry) const;
-  omnisphere::types::DataTable ReadAll() const;
+  omnisphere::types::DataTable Read(int entry, const std::vector<std::string>& fields = {}) const;
+  omnisphere::types::DataTable ReadAll(const std::vector<std::string>& fields = {}) const;
 
 private:
   std::shared_ptr<omnisphere::data::Database> Database;

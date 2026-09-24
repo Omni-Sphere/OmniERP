@@ -22,11 +22,11 @@ public:
   Add(const omnisphere::dtos::CreateTable &table) const;
   omnisphere::models::Table
   Modify(const omnisphere::dtos::UpdateTable &table) const;
-  std::vector<omnisphere::models::Table> GetAll() const;
+  std::vector<omnisphere::models::Table> GetAll(const std::vector<std::string>& fields = {}) const;
   omnisphere::models::Table
-  Get(const omnisphere::dtos::GetTable &getTable) const;
+  Get(const omnisphere::dtos::GetTable &getTable, const std::vector<std::string>& fields = {}) const;
   std::vector<omnisphere::models::Table>
-  Search(const omnisphere::dtos::GetTable &getTable) const;
+  Search(const omnisphere::dtos::GetTable &getTable, const std::vector<std::string>& fields = {}) const;
   bool Remove(int entry) const;
 };
 } // namespace omnisphere::table

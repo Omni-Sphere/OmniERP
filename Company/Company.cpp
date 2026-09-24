@@ -2,6 +2,7 @@
 #include "Company/Repositories/Company.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
+#include <OmniData/DataMapper.hpp>
 
 namespace omnisphere::services {
 struct Company::Impl {
@@ -17,36 +18,14 @@ Company::Company(std::shared_ptr<omnisphere::data::Database> database)
 Company::~Company() = default;
 
 omnisphere::models::Company
-Company::Get(const omnisphere::dtos::GetCompany &_company) const {
-  omnisphere::types::DataTable dataTable = pimpl->repository.Read(_company);
+Company::Get(const omnisphere::dtos::GetCompany &_company, const std::vector<std::string>& fields) const {
+  omnisphere::types::DataTable dataTable = pimpl->repository.Read(_company, fields);
 
   if (dataTable.IsEmpty()) {
     throw std::runtime_error("Business Configuration not found.");
   }
 
-  return omnisphere::models::Company(
-      dataTable[0]["Entry"], dataTable[0]["Code"], dataTable[0]["Name"],
-      dataTable[0]["CommercialName"].GetOptional<std::string>(),
-      dataTable[0]["Address"].GetOptional<std::string>(),
-      dataTable[0]["Address2"].GetOptional<std::string>(),
-      dataTable[0]["City"].GetOptional<int>(),
-      dataTable[0]["State"].GetOptional<int>(),
-      dataTable[0]["ZipCode"].GetOptional<int>(),
-      dataTable[0]["Country"].GetOptional<int>(),
-      dataTable[0]["TaxID"].GetOptional<std::string>(),
-      dataTable[0]["Currency"],
-      dataTable[0]["Phone1"].GetOptional<std::string>(),
-      dataTable[0]["Phone2"].GetOptional<std::string>(),
-      dataTable[0]["Email"].GetOptional<std::string>(),
-      dataTable[0]["WebSite"].GetOptional<std::string>(),
-      dataTable[0]["FacebookProfile"].GetOptional<std::string>(),
-      dataTable[0]["InstagramProfile"].GetOptional<std::string>(),
-      dataTable[0]["XProfile"].GetOptional<std::string>(),
-      dataTable[0]["LogoFile"].GetOptional<std::string>(),
-      dataTable[0]["IsActive"],
-      1,            // Placeholder for CreatedBy
-      "2024-01-01", // Placeholder for CreateDate
-      std::nullopt, std::nullopt);
+  return omnisphere::types::FromDataRow<omnisphere::models::Company>(dataTable[0]);
 }
 
 bool Company::Add(const omnisphere::dtos::CreateCompany &_company) const {

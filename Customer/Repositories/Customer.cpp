@@ -1,7 +1,9 @@
 #include "Customer/Repositories/Customer.hpp"
+#include "Customer/Models/Customer.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
 #include <OmniData/SQLParams.hpp>
+#include <OmniData/QueryBuilder.hpp>
 
 namespace omnisphere::repositories {
 Customer::Customer(std::shared_ptr<omnisphere::data::Database> database)
@@ -149,9 +151,12 @@ bool Customer::Update(const omnisphere::dtos::UpdateCustomer &_customer) const {
   }
 }
 
-omnisphere::types::DataTable Customer::Read(int entry) const {
+omnisphere::types::DataTable Customer::Read(int entry, const std::vector<std::string>& fields) const {
   try {
-    std::string sQuery = "SELECT * FROM \"Customers\" WHERE \"Entry\" = ?";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Customer>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"Entry\"", "=", "?"}};
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string sQuery = "SELECT " + qp.SelectClause + " FROM \"Customers\" WHERE " + qp.WhereClause;
     std::vector<omnisphere::types::SQLParam> params;
     params.push_back(omnisphere::types::MakeSQLParam(entry));
 
@@ -162,9 +167,12 @@ omnisphere::types::DataTable Customer::Read(int entry) const {
   }
 }
 
-omnisphere::types::DataTable Customer::ReadAll() const {
+omnisphere::types::DataTable Customer::ReadAll(const std::vector<std::string>& fields) const {
   try {
-    const std::string query = "SELECT * FROM \"Customers\" WHERE \"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Customer>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Customers\" WHERE " + qp.WhereClause;
 
     return Database->FetchResults(query);
   } catch (const std::exception &e) {

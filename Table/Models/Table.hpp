@@ -1,11 +1,13 @@
 #pragma once
 #include <OmniCore/Base/BaseModel.hpp>
+#include <boost/describe.hpp>
 #include <optional>
 #include <string>
 
 namespace omnisphere::models {
 class Table : public omnisphere::models::BaseModel {
 public:
+  Table() = default;
   Table(int _Entry, std::string _Code, std::string _Name, int _Capacity,
         std::string _Type, int _AreaEntry, int _FloorEntry, int _CreatedBy,
         std::string _CreateDate, std::optional<int> _LastUpdatedBy,
@@ -17,11 +19,12 @@ public:
         Capacity(_Capacity), Type(std::move(_Type)), AreaEntry(_AreaEntry),
         FloorEntry(_FloorEntry), Status(std::move(_Status)), IsActive(_IsActive) {}
 
-  int Capacity;
+  int Capacity{0};
   std::string Type;
-  int AreaEntry;
-  int FloorEntry;
+  int AreaEntry{0};
+  int FloorEntry{0};
   std::string Status = "AVAILABLE";
   bool IsActive = true;
 };
+BOOST_DESCRIBE_STRUCT(Table, (omnisphere::models::BaseModel), (Capacity, Type, AreaEntry, FloorEntry, Status, IsActive))
 } // namespace omnisphere::models

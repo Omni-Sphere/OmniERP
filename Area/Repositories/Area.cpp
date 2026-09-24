@@ -2,6 +2,7 @@
 #include "Area/DTOs/CreateArea.hpp"
 #include "Area/DTOs/UpdateArea.hpp"
 #include "Area/Repositories/Area.hpp"
+#include <OmniData/QueryBuilder.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -116,17 +117,14 @@ bool AreaRepository::Update(const omnisphere::dtos::UpdateArea &area) const {
   }
 }
 
-omnisphere::types::DataTable AreaRepository::ReadAll() const {
+omnisphere::types::DataTable AreaRepository::ReadAll(const std::vector<std::string>& fields) const {
   try {
-    const std::string query =
-        "SELECT \"Entry\", \"Code\", \"Name\", \"Color\", \"Icon\", \"Capacity\", \"FloorEntry\", "
-        "\"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", \"UpdateDate\" FROM \"Areas\" WHERE "
-        "\"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Area>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Areas\" WHERE " + qp.WhereClause;
 
-    omnisphere::types::DataTable dataTable =
-        database->FetchResults(query, "AreaRepository::ReadAll");
-
-    return dataTable;
+    return database->FetchResults(query, "AreaRepository::ReadAll");
   } catch (const std::exception &e) {
     throw(std::runtime_error(std::string("[ReadAll Exception]") + " " +
                              e.what()));
@@ -134,29 +132,31 @@ omnisphere::types::DataTable AreaRepository::ReadAll() const {
 }
 
 omnisphere::types::DataTable
-AreaRepository::Read(const omnisphere::dtos::GetArea &getArea) const {
+AreaRepository::Read(const omnisphere::dtos::GetArea &getArea, const std::vector<std::string>& fields) const {
   try {
-    std::string query = "SELECT \"Entry\", \"Code\", \"Name\", \"Color\", \"Icon\", \"Capacity\", "
-                        "\"FloorEntry\", \"CreatedBy\", \"CreateDate\", \"LastUpdatedBy\", "
-                        "\"UpdateDate\" FROM \"Areas\" WHERE \"IsActive\" = true";
+    auto selectFields = omnisphere::types::FilterModelFields<omnisphere::models::Area>(fields);
+    std::vector<omnisphere::types::Condition> conditions = {{"", "\"IsActive\"", "=", "true"}};
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getArea.Entry.has_value()) {
-      query += " AND \"Entry\" = ?";
+      conditions.push_back({"AND", "\"Entry\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.Entry.value()));
     } else if (getArea.Code.has_value()) {
-      query += " AND \"Code\" = ?";
+      conditions.push_back({"AND", "\"Code\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.Code.value()));
     } else if (getArea.FloorEntry.has_value()) {
-      query += " AND \"FloorEntry\" = ?";
+      conditions.push_back({"AND", "\"FloorEntry\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.FloorEntry.value()));
     } else {
       throw std::runtime_error(
           "GetArea: 'Entry', 'Code' or 'FloorEntry' is required for Read");
     }
+
+    auto qp = omnisphere::types::BuildQueryParts(selectFields, conditions);
+    std::string query = "SELECT " + qp.SelectClause + " FROM \"Areas\" WHERE " + qp.WhereClause;
 
     return database->FetchPrepared(query, parameters, "AreaRepository::Read");
   } catch (const std::exception &e) {

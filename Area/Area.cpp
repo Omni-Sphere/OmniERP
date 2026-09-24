@@ -2,6 +2,7 @@
 #include "Area/Repositories/Area.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
+#include <OmniData/DataMapper.hpp>
 #include "Table/Repositories/Table.hpp"
 #include <stdexcept>
 #include <string>
@@ -54,60 +55,33 @@ Area::Modify(const omnisphere::dtos::UpdateArea &area) const {
   }
 }
 
-std::vector<omnisphere::models::Area> Area::GetAll() const {
+std::vector<omnisphere::models::Area> Area::GetAll(const std::vector<std::string>& fields) const {
   try {
-    std::vector<omnisphere::models::Area> areas;
-    omnisphere::types::DataTable data = pImpl->areaRepository->ReadAll();
-
-    for (int i = 0; i < data.RowsCount(); i++) {
-      areas.emplace_back(data[i]["Entry"], data[i]["Code"], data[i]["Name"],
-                         data[i]["Color"], data[i]["Icon"], data[i]["Capacity"],
-                         data[i]["FloorEntry"], data[i]["CreatedBy"],
-                         data[i]["CreateDate"],
-                         data[i]["LastUpdatedBy"].GetOptional<int>(),
-                         data[i]["UpdateDate"].GetOptional<std::string>());
-    }
-
-    return areas;
+    omnisphere::types::DataTable data = pImpl->areaRepository->ReadAll(fields);
+    return omnisphere::types::DataTableToModels<omnisphere::models::Area>(data);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[GetAllAreas Exception] ") +
                              e.what());
   }
 }
 omnisphere::models::Area
-Area::Get(const omnisphere::dtos::GetArea &getArea) const {
+Area::Get(const omnisphere::dtos::GetArea &getArea, const std::vector<std::string>& fields) const {
   try {
-    omnisphere::types::DataTable data = pImpl->areaRepository->Read(getArea);
+    omnisphere::types::DataTable data = pImpl->areaRepository->Read(getArea, fields);
 
     if (data.RowsCount() == 0)
       throw std::runtime_error("Area doesn't exists");
 
-    return omnisphere::models::Area(
-        data[0]["Entry"], data[0]["Code"], data[0]["Name"], data[0]["Color"],
-        data[0]["Icon"], data[0]["Capacity"], data[0]["FloorEntry"],
-        data[0]["CreatedBy"], data[0]["CreateDate"],
-        data[0]["LastUpdatedBy"].GetOptional<int>(),
-        data[0]["UpdateDate"].GetOptional<std::string>());
+    return omnisphere::types::FromDataRow<omnisphere::models::Area>(data[0]);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[GetArea Exception] ") + e.what());
   }
 }
 std::vector<omnisphere::models::Area>
-Area::Search(const omnisphere::dtos::GetArea &getArea) const {
+Area::Search(const omnisphere::dtos::GetArea &getArea, const std::vector<std::string>& fields) const {
   try {
-    std::vector<omnisphere::models::Area> areas;
-    omnisphere::types::DataTable data = pImpl->areaRepository->Read(getArea);
-
-    for (int i = 0; i < data.RowsCount(); i++) {
-      areas.emplace_back(data[i]["Entry"], data[i]["Code"], data[i]["Name"],
-                         data[i]["Color"], data[i]["Icon"], data[i]["Capacity"],
-                         data[i]["FloorEntry"], data[i]["CreatedBy"],
-                         data[i]["CreateDate"],
-                         data[i]["LastUpdatedBy"].GetOptional<int>(),
-                         data[i]["UpdateDate"].GetOptional<std::string>());
-    }
-
-    return areas;
+    omnisphere::types::DataTable data = pImpl->areaRepository->Read(getArea, fields);
+    return omnisphere::types::DataTableToModels<omnisphere::models::Area>(data);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[SearchAreas Exception] ") +
                              e.what());

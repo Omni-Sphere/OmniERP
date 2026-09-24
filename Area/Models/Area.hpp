@@ -1,11 +1,13 @@
 #pragma once
 #include <OmniCore/Base/BaseModel.hpp>
+#include <boost/describe.hpp>
 #include <optional>
 #include <string>
 
 namespace omnisphere::models {
 class Area : public omnisphere::models::BaseModel {
 public:
+  Area() = default;
   Area(int _Entry, std::string _Code, std::string _Name, std::string _Color,
        std::string _Icon, int _Capacity, int _FloorEntry, int _CreatedBy,
        std::string _CreateDate, std::optional<int> _LastUpdatedBy,
@@ -17,8 +19,9 @@ public:
         FloorEntry(_FloorEntry) {}
 
   std::string Color;
-  int Capacity;
-  int FloorEntry;
+  int Capacity{0};
+  int FloorEntry{0};
   std::string Icon;
 };
+BOOST_DESCRIBE_STRUCT(Area, (omnisphere::models::BaseModel), (Color, Capacity, FloorEntry, Icon))
 } // namespace omnisphere::models

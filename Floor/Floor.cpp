@@ -3,6 +3,7 @@
 #include "Floor/Repositories/Floor.hpp"
 #include <OmniData/DataTable.hpp>
 #include <OmniData/Database.hpp>
+#include <OmniData/DataMapper.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -55,37 +56,24 @@ Floor::Modify(const omnisphere::dtos::UpdateFloor &floor) const {
   }
 }
 
-std::vector<omnisphere::models::Floor> Floor::GetAll() const {
+std::vector<omnisphere::models::Floor> Floor::GetAll(const std::vector<std::string>& fields) const {
   try {
-    std::vector<omnisphere::models::Floor> floors;
-    omnisphere::types::DataTable data = pImpl->floorRepository->ReadAll();
-
-    for (int i = 0; i < data.RowsCount(); i++) {
-      floors.emplace_back(data[i]["Entry"], data[i]["Code"], data[i]["Name"],
-                          data[i]["CreatedBy"], data[i]["CreateDate"],
-                          data[i]["LastUpdatedBy"].GetOptional<int>(),
-                          data[i]["UpdateDate"].GetOptional<std::string>());
-    }
-
-    return floors;
+    omnisphere::types::DataTable data = pImpl->floorRepository->ReadAll(fields);
+    return omnisphere::types::DataTableToModels<omnisphere::models::Floor>(data);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[GetAllFloors Exception] ") +
                              e.what());
   }
 }
 omnisphere::models::Floor
-Floor::Get(const omnisphere::dtos::GetFloor &getFloor) const {
+Floor::Get(const omnisphere::dtos::GetFloor &getFloor, const std::vector<std::string>& fields) const {
   try {
-    omnisphere::types::DataTable data = pImpl->floorRepository->Read(getFloor);
+    omnisphere::types::DataTable data = pImpl->floorRepository->Read(getFloor, fields);
 
     if (data.RowsCount() == 0)
       throw std::runtime_error("Floor doesn't exists");
 
-    return omnisphere::models::Floor(
-        data[0]["Entry"], data[0]["Code"], data[0]["Name"],
-        data[0]["CreatedBy"], data[0]["CreateDate"],
-        data[0]["LastUpdatedBy"].GetOptional<int>(),
-        data[0]["UpdateDate"].GetOptional<std::string>());
+    return omnisphere::types::FromDataRow<omnisphere::models::Floor>(data[0]);
   } catch (const std::exception &e) {
     throw std::runtime_error(std::string("[GetFloor Exception] ") + e.what());
   }

@@ -13,9 +13,9 @@ public:
   Add(const omnisphere::dtos::CreateDepartment &department) const;
   omnisphere::models::Department
   Modify(const omnisphere::dtos::UpdateDepartment &department) const;
-  std::vector<omnisphere::models::Department> GetAll() const;
+  std::vector<omnisphere::models::Department> GetAll(const std::vector<std::string>& fields = {}) const;
   omnisphere::models::Department
-  Get(const omnisphere::dtos::GetDepartment &getDepartment) const;
+  Get(const omnisphere::dtos::GetDepartment &getDepartment, const std::vector<std::string>& fields = {}) const;
   bool Remove(int entry) const;
 
 private:
