@@ -90,11 +90,11 @@ FloorRepository::Read(const omnisphere::dtos::GetFloor &getFloor, const std::vec
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getFloor.Entry.has_value()) {
-      conditions.push_back({"AND", "\"Entry\"", "=", "?"});
+      conditions.push_back({"", "\"Entry\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Entry.value()));
     } else if (getFloor.Code.has_value()) {
-      conditions.push_back({"AND", "\"Code\"", "=", "?"});
+      conditions.push_back({"", "\"Code\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getFloor.Code.value()));
     }

@@ -139,15 +139,15 @@ AreaRepository::Read(const omnisphere::dtos::GetArea &getArea, const std::vector
     std::vector<omnisphere::types::SQLParam> parameters;
 
     if (getArea.Entry.has_value()) {
-      conditions.push_back({"AND", "\"Entry\"", "=", "?"});
+      conditions.push_back({"", "\"Entry\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.Entry.value()));
     } else if (getArea.Code.has_value()) {
-      conditions.push_back({"AND", "\"Code\"", "=", "?"});
+      conditions.push_back({"", "\"Code\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.Code.value()));
     } else if (getArea.FloorEntry.has_value()) {
-      conditions.push_back({"AND", "\"FloorEntry\"", "=", "?"});
+      conditions.push_back({"", "\"FloorEntry\"", "=", "?"});
       parameters.push_back(
           omnisphere::types::MakeSQLParam(getArea.FloorEntry.value()));
     } else {

@@ -118,7 +118,7 @@ TableRepository::Read(const omnisphere::dtos::GetTable &getTable, const std::vec
 
     auto extractFilter = [&](const char *field, const auto &value) {
       if (value.has_value()) {
-        conditions.push_back({"AND", "\"" + std::string(field) + "\"", "=", "?"});
+        conditions.push_back({"", "\"" + std::string(field) + "\"", "=", "?"});
         parameters.push_back(omnisphere::types::MakeSQLParam(value.value()));
 
         return true;
