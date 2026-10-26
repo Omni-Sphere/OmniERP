@@ -1,8 +1,10 @@
 -- =============================================================================
--- OmniERP_pg.sql - Master ERP & POS Schema DDL for PostgreSQL
+-- OmniERP_pg.sql - Master ERP & POS Schema DDL for PostgreSQL (Clean Install)
 -- Native PostgreSQL Types: ENUMs, BOOLEAN, NUMERIC(19,4), TIMESTAMPTZ
 -- Strict Case Preservation with Double Quotes
 -- Fully Idempotent Execution (DO $$ ... $$ and CREATE TABLE IF NOT EXISTS)
+-- Order: Entry, Code, Name, [Business Fields], IsActive, IsCanceled, CreatedBy, CreateDate, LastUpdatedBy, UpdateDate
+-- ZERO ALTER STATEMENTS
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
@@ -59,11 +61,6 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'PermissionAction') THEN
         CREATE TYPE "PermissionAction" AS ENUM ('CREATE', 'READ', 'UPDATE', 'DELETE', 'EXECUTE');
     END IF;
-
-    -- Permission Mode
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'PermissionMode') THEN
-        CREATE TYPE "PermissionMode" AS ENUM ('P', 'R');
-    END IF;
 END $$;
 
 -- -----------------------------------------------------------------------------
@@ -93,6 +90,7 @@ CREATE TABLE IF NOT EXISTS "Company" (
     "AttachmentsPath" VARCHAR(255),
     "ImagePath" VARCHAR(255),
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -121,6 +119,7 @@ CREATE TABLE IF NOT EXISTS "Stores" (
     "XProfile" VARCHAR(50),
     "LogoFile" VARCHAR(50),
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -132,6 +131,7 @@ CREATE TABLE IF NOT EXISTS "Departments" (
     "Code" VARCHAR(20) NOT NULL UNIQUE,
     "Name" VARCHAR(100) NOT NULL UNIQUE,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -152,6 +152,7 @@ CREATE TABLE IF NOT EXISTS "Employees" (
     "Comments" VARCHAR(200),
     "Status" "EmployeeStatus" NOT NULL DEFAULT 'ACTIVE',
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -166,6 +167,7 @@ CREATE TABLE IF NOT EXISTS "Floors" (
     "Code" VARCHAR(20) NOT NULL UNIQUE,
     "Name" VARCHAR(100) NOT NULL UNIQUE,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -181,6 +183,7 @@ CREATE TABLE IF NOT EXISTS "Areas" (
     "Capacity" INT NOT NULL CHECK ("Capacity" > 0),
     "FloorEntry" INT NOT NULL,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -197,6 +200,7 @@ CREATE TABLE IF NOT EXISTS "Tables" (
     "AreaEntry" INT NOT NULL,
     "FloorEntry" INT NOT NULL,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -213,6 +217,7 @@ CREATE TABLE IF NOT EXISTS "Nodes" (
     "CashDrawerPort" VARCHAR(50),
     "DefaultPrinter" VARCHAR(100),
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -227,6 +232,7 @@ CREATE TABLE IF NOT EXISTS "ItemBrands" (
     "Code" VARCHAR(20) NOT NULL UNIQUE,
     "Name" VARCHAR(100) NOT NULL UNIQUE,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -238,6 +244,7 @@ CREATE TABLE IF NOT EXISTS "ItemGroups" (
     "Code" VARCHAR(20) NOT NULL UNIQUE,
     "Name" VARCHAR(100) NOT NULL UNIQUE,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -255,6 +262,7 @@ CREATE TABLE IF NOT EXISTS "Items" (
     "SellItem" BOOLEAN NOT NULL DEFAULT TRUE,
     "InventoryItem" BOOLEAN NOT NULL DEFAULT TRUE,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "Price" NUMERIC(19, 4) NOT NULL DEFAULT 0.0000,
     "TaxRate" NUMERIC(6, 4) NOT NULL DEFAULT 0.1600,
     "Brand" INT,
@@ -293,6 +301,7 @@ CREATE TABLE IF NOT EXISTS "Customers" (
     "CreditLimit" NUMERIC(19, 6) DEFAULT 0.000000,
     "Status" "CustomerStatus" NOT NULL DEFAULT 'ACTIVE',
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -308,6 +317,7 @@ CREATE TABLE IF NOT EXISTS "Modules" (
     "Name" VARCHAR(100) NOT NULL UNIQUE,
     "DepartmentEntry" INT NOT NULL DEFAULT -1,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -320,6 +330,7 @@ CREATE TABLE IF NOT EXISTS "Permissions" (
     "Name" VARCHAR(100) NOT NULL UNIQUE,
     "Action" "PermissionAction" NOT NULL DEFAULT 'READ',
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -332,6 +343,7 @@ CREATE TABLE IF NOT EXISTS "Roles" (
     "Name" VARCHAR(100) NOT NULL UNIQUE,
     "DepartmentEntry" INT,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -345,6 +357,7 @@ CREATE TABLE IF NOT EXISTS "RoleModules" (
     "RoleEntry" INT NOT NULL,
     "ModuleEntry" INT NOT NULL,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -358,6 +371,7 @@ CREATE TABLE IF NOT EXISTS "RolePermissions" (
     "RoleEntry" INT NOT NULL,
     "PermissionEntry" INT NOT NULL,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -371,6 +385,7 @@ CREATE TABLE IF NOT EXISTS "UserPermissions" (
     "UserEntry" INT NOT NULL,
     "PermissionEntry" INT NOT NULL,
     "IsActive" BOOLEAN NOT NULL DEFAULT TRUE,
+    "IsCanceled" BOOLEAN NOT NULL DEFAULT false,
     "CreatedBy" INT NOT NULL DEFAULT 0,
     "CreateDate" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "LastUpdatedBy" INT,
@@ -432,31 +447,11 @@ CREATE INDEX IF NOT EXISTS "IX_Items_Group" ON "Items" ("Group");
 CREATE INDEX IF NOT EXISTS "IX_Items_Brand" ON "Items" ("Brand");
 CREATE INDEX IF NOT EXISTS "IX_Items_ItemType" ON "Items" ("ItemType");
 CREATE INDEX IF NOT EXISTS "IX_Items_IsActive" ON "Items" ("IsActive");
+CREATE INDEX IF NOT EXISTS "IX_Items_IsCanceled" ON "Items" ("IsCanceled");
 
 CREATE INDEX IF NOT EXISTS "IX_Customers_Status" ON "Customers" ("Status");
 CREATE INDEX IF NOT EXISTS "IX_Customers_IsActive" ON "Customers" ("IsActive");
+CREATE INDEX IF NOT EXISTS "IX_Customers_IsCanceled" ON "Customers" ("IsCanceled");
 
 CREATE INDEX IF NOT EXISTS "IX_Areas_FloorEntry" ON "Areas" ("FloorEntry");
 CREATE INDEX IF NOT EXISTS "IX_Areas_IsActive" ON "Areas" ("IsActive");
-
--- -----------------------------------------------------------------------------
--- 9. Migración IsCanceled (Soft Delete Estándar)
--- -----------------------------------------------------------------------------
-ALTER TABLE "Company" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Stores" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Departments" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Employees" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Floors" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Areas" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Tables" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Nodes" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "ItemBrands" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "ItemGroups" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Items" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Customers" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Modules" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Permissions" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-ALTER TABLE "Roles" ADD COLUMN IF NOT EXISTS "IsCanceled" BOOLEAN NOT NULL DEFAULT false;
-
-CREATE INDEX IF NOT EXISTS "IX_Items_IsCanceled" ON "Items" ("IsCanceled");
-CREATE INDEX IF NOT EXISTS "IX_Customers_IsCanceled" ON "Customers" ("IsCanceled");
